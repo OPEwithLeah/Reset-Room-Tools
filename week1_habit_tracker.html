@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Week 1 Habit Tracker — The Reset Room</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/@tabler/icons-webfont/2.47.0/tabler-icons.min.css">
+<style>
+  * { box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    background: #ffffff;
+    color: #332840;
+    margin: 0;
+    padding: 24px;
+    max-width: 600px;
+    margin: 0 auto;
+  }
+  .tracker-wrap{padding:1rem 0}
+  .tracker-header{margin-bottom:1.25rem}
+  .tracker-title{font-size:18px;font-weight:600;margin:0 0 4px;color:#2a1b3d}
+  .tracker-sub{font-size:14px;color:#6f6280;margin:0}
+  .week-row{display:grid;grid-template-columns:1fr repeat(7,36px);align-items:center;gap:4px;margin-bottom:6px}
+  .week-row.head{font-size:12px;color:#6f6280;font-weight:500;text-align:center}
+  .week-row.head .habit-label{text-align:left}
+  .habit-label{font-size:13px;font-weight:500}
+  .habit-label.bonus{font-weight:400;color:#6f6280}
+  .day-cell{display:flex;justify-content:center}
+  .day-btn{width:28px;height:28px;border-radius:50%;border:1px solid #d8d3e0;background:#ffffff;cursor:pointer;transition:all .15s;display:flex;align-items:center;justify-content:center}
+  .day-btn.checked{background:#4a3468;border-color:#4a3468;color:#fff}
+  .progress-summary{background:#f7f3ec;border-radius:12px;padding:1rem;margin-top:1rem;text-align:center}
+  .progress-num{font-size:24px;font-weight:600;color:#2a1b3d}
+  .progress-label{font-size:12px;color:#6f6280;margin-top:2px}
+  .week-label{font-size:13px;color:#6f6280;margin-bottom:1rem}
+  .status-msg{font-size:12px;color:#6f6280;text-align:right;margin-top:8px;min-height:16px}
+</style>
+</head>
+<body>
+
+<div class="tracker-wrap">
+  <div class="tracker-header">
+    <p class="tracker-title">Week 1 habit tracker</p>
+    <p class="tracker-sub">Your morning routine, piece by piece. Tap each day you complete a habit — consistency over intensity.</p>
+  </div>
+
+  <div class="week-label" id="week-label"></div>
+
+  <div class="week-row head">
+    <div class="habit-label"></div>
+    <div>M</div><div>T</div><div>W</div><div>T</div><div>F</div><div>S</div><div>S</div>
+  </div>
+
+  <div id="habit-rows"></div>
+
+  <div class="progress-summary">
+    <div class="progress-num" id="progress-num">0 / 42</div>
+    <div class="progress-label" id="progress-label">Tap a day to begin tracking</div>
+  </div>
+
+  <div class="status-msg" id="status-msg"></div>
+</div>
+
+<script>
+const STORAGE_KEY = 'reset-room-week1-tracker';
+
+const habits = [
+  {key:'hydration', label:'Hydration', bonus:false},
+  {key:'stretch', label:'Stretch / movement', bonus:false},
+  {key:'meditate', label:'Meditate', bonus:false},
+  {key:'gratitude', label:'Gratitude journal', bonus:false},
+  {key:'selfcare', label:'Self-care', bonus:false},
+  {key:'bonus', label:'Bonus habit', bonus:true},
+];
+
+let data = {};
+habits.forEach(h => data[h.key] = [false,false,false,false,false,false,false]);
+
+function getMonday(){
+  const d = new Date();
+  const day = d.getDay();
+  const diff = d.getDate() - day + (day === 0 ? -6 : 1);
+  return new Date(d.setDate(diff));
+}
+
+function renderWeekLabel(){
+  const monday = getMonday();
+  const sunday = new Date(monday);
+  sunday.setDate(monday.getDate() + 6);
+  const fmt = (d) => d.toLocaleDateString(undefined, {month:'short', day:'numeric'});
+  document.getElementById('week-label').textContent = 'Week of ' + fmt(monday) + ' \u2013 ' + fmt(sunday);
+}
+
+function renderRows(){
+  const container = document.getElementById('habit-rows');
+  container.innerHTML = '';
+  habits.forEach(h => {
+    const row = document.createElement('div');
+    row.className = 'week-row';
+    row.setAttribute('data-habit', h.key);
+    let cells = `<div class="habit-label${h.bonus ? ' bonus' : ''}">${h.label}</div>`;
+    for (let d = 0; d < 7; d++) {
+      cells += `<div class="day-cell"><button class="day-btn" data-day="${d}" onclick="toggleDay('${h.key}',${d},this)"></button></div>`;
+    }
+    row.innerHTML = cells;
+    container.appendChild(row);
+  });
+}
+
+function toggleDay(habit, day, btn){
+  data[habit][day] = !data[habit][day];
+  btn.classList.toggle('checked');
+  btn.innerHTML = data[habit][day] ? '<i class="ti ti-check" style="font-size:14px"></i>' : '';
+  updateProgress();
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+    const statusEl = document.getElementById('status-msg');
+    statusEl.textContent = 'Saved';
+    setTimeout(() => { statusEl.textContent = ''; }, 1500);
+  } catch(e) {
+    document.getElementById('status-msg').textContent = 'Could not save right now';
+  }
+}
+
+function updateProgress(){
+  let total = 0;
+  habits.forEach(h => { total += data[h.key].filter(Boolean).length; });
+  const max = habits.length * 7;
+  document.getElementById('progress-num').textContent = total + ' / ' + max;
+  const labelEl = document.getElementById('progress-label');
+  if (total === 0) {
+    labelEl.textContent = 'Tap a day to begin tracking';
+  } else if (total >= max * 0.7) {
+    labelEl.textContent = 'Strong week. This is becoming your rhythm.';
+  } else if (total >= max * 0.35) {
+    labelEl.textContent = 'Good progress. Keep going.';
+  } else {
+    labelEl.textContent = 'Every small step counts. Be gentle with yourself.';
+  }
+}
+
+function loadData(){
+  try {
+    const stored = localStorage.getItem(STORAGE_KEY);
+    if (stored) {
+      const loaded = JSON.parse(stored);
+      habits.forEach(h => { if (loaded[h.key]) data[h.key] = loaded[h.key]; });
+      document.querySelectorAll('.week-row[data-habit]').forEach(row => {
+        const habit = row.getAttribute('data-habit');
+        row.querySelectorAll('.day-btn').forEach(btn => {
+          const day = parseInt(btn.getAttribute('data-day'));
+          if (data[habit] && data[habit][day]) {
+            btn.classList.add('checked');
+            btn.innerHTML = '<i class="ti ti-check" style="font-size:14px"></i>';
+          }
+        });
+      });
+      updateProgress();
+    }
+  } catch(e) {}
+}
+
+renderWeekLabel();
+renderRows();
+loadData();
+</script>
+
+</body>
+</html>
