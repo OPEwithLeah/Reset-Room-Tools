@@ -33,7 +33,6 @@
   .progress-summary{background:rgba(201,163,90,0.12);border:1px solid rgba(201,163,90,0.3);border-radius:12px;padding:1rem;margin-top:1rem;text-align:center}
   .progress-num{font-size:26px;font-weight:600;color:#f6e2b3}
   .progress-label{font-size:12px;color:#cdb8d8;margin-top:2px}
-  .week-label{font-size:13px;color:#cdb8d8;margin-bottom:1rem;text-align:center}
   .status-msg{font-size:12px;color:#a995bd;text-align:right;margin-top:8px;min-height:16px}
   .divider{width:60px;height:1px;background:#c9a35a;margin:0 auto 16px;opacity:0.5}
 </style>
@@ -47,8 +46,6 @@
     <div class="divider"></div>
     <p class="tracker-sub">Your morning routine, piece by piece. Tap each day you complete a habit &mdash; consistency over intensity.</p>
   </div>
-
-  <div class="week-label" id="week-label"></div>
 
   <div class="week-row head">
     <div class="habit-label"></div>
@@ -79,21 +76,6 @@ const habits = [
 
 let data = {};
 habits.forEach(h => data[h.key] = [false,false,false,false,false,false,false]);
-
-function getMonday(){
-  const d = new Date();
-  const day = d.getDay();
-  const diff = d.getDate() - day + (day === 0 ? -6 : 1);
-  return new Date(d.setDate(diff));
-}
-
-function renderWeekLabel(){
-  const monday = getMonday();
-  const sunday = new Date(monday);
-  sunday.setDate(monday.getDate() + 6);
-  const fmt = (d) => d.toLocaleDateString(undefined, {month:'short', day:'numeric'});
-  document.getElementById('week-label').textContent = 'Week of ' + fmt(monday) + ' \u2013 ' + fmt(sunday);
-}
 
 function renderRows(){
   const container = document.getElementById('habit-rows');
@@ -164,7 +146,6 @@ function loadData(){
   } catch(e) {}
 }
 
-renderWeekLabel();
 renderRows();
 loadData();
 </script>
