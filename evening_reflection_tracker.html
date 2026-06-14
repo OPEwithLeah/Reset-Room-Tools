@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Evening Reflection Tracker — The Reset Room</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/@tabler/icons-webfont/2.47.0/tabler-icons.min.css">
+<style>
+  * { box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    background: #3d2b52;
+    color: #f7f1e6;
+    margin: 0;
+    padding: 24px;
+    max-width: 600px;
+    margin: 0 auto;
+    min-height: 100vh;
+  }
+  .journal-wrap{padding:1rem 0}
+  .journal-header{margin-bottom:1.25rem;text-align:center}
+  .brand-label{font-size:11px;font-weight:600;letter-spacing:2px;color:#c9a35a;margin:0 0 8px;text-transform:uppercase}
+  .journal-title{font-size:22px;font-weight:600;margin:0 0 6px;color:#f6e2b3;font-family:Georgia,serif}
+  .divider{width:60px;height:1px;background:#c9a35a;margin:0 auto 16px;opacity:0.5}
+  .journal-sub{font-size:13px;color:#cdb8d8;line-height:1.5;max-width:480px;margin:0 auto}
+  .tabs{display:flex;gap:6px;margin-bottom:1.25rem;justify-content:center}
+  .tab{padding:6px 16px;border:1px solid #6f5a87;border-radius:20px;font-size:13px;cursor:pointer;background:rgba(255,255,255,0.04);color:#cdb8d8}
+  .tab.active{background:#c9a35a;color:#2a1b3d;border-color:#c9a35a;font-weight:500}
+  .panel{display:none}
+  .panel.active{display:block}
+  .date-row{font-size:13px;color:#cdb8d8;margin-bottom:1rem;text-align:center}
+  .category{border:1px solid #6f5a87;border-radius:12px;padding:0.85rem 1rem;margin-bottom:8px;background:rgba(255,255,255,0.03)}
+  .category.highlight{border:2px solid #c9a35a;background:rgba(201,163,90,0.1)}
+  .cat-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px}
+  .cat-name{font-size:14px;font-weight:500;color:#f0e6f5}
+  .cat-desc{font-size:12px;color:#a995bd;margin:2px 0 8px}
+  .scale-row{display:flex;gap:6px}
+  .scale-btn{flex:1;height:32px;border:1px solid #6f5a87;border-radius:8px;background:rgba(255,255,255,0.04);cursor:pointer;font-size:13px;color:#cdb8d8;transition:all .15s}
+  .scale-btn.selected{background:#c9a35a;color:#2a1b3d;border-color:#c9a35a;font-weight:500}
+  .score-summary{background:rgba(201,163,90,0.12);border:1px solid rgba(201,163,90,0.3);border-radius:12px;padding:1rem;margin:1rem 0;text-align:center}
+  .score-num{font-size:28px;font-weight:600;color:#f6e2b3}
+  .score-label{font-size:12px;color:#cdb8d8;margin-top:2px}
+  .legend{margin:0.5rem 0 1rem;padding:0.75rem 1rem;background:rgba(255,255,255,0.03);border:1px solid #6f5a87;border-radius:12px}
+  .legend-item{font-size:12px;color:#cdb8d8;line-height:1.6}
+  .legend-range{font-weight:600;color:#f6e2b3;display:inline-block;min-width:64px}
+  .reflection-box{margin-top:1rem}
+  .reflection-label{font-size:13px;font-weight:500;margin-bottom:4px;display:block;color:#f0e6f5}
+  textarea{width:100%;min-height:70px;padding:8px 10px;border:1px solid #6f5a87;border-radius:8px;font-family:inherit;font-size:13px;resize:vertical;background:rgba(255,255,255,0.04);color:#f7f1e6}
+  textarea::placeholder{color:#a995bd}
+  .save-row{display:flex;justify-content:flex-end;margin-top:1rem;gap:8px}
+  button.primary{background:#c9a35a;color:#2a1b3d;border:1px solid #c9a35a;border-radius:8px;padding:8px 18px;font-size:13px;font-weight:500;cursor:pointer}
+  .history-entry{border:1px solid #6f5a87;border-radius:12px;padding:0.85rem 1rem;margin-bottom:8px;background:rgba(255,255,255,0.03)}
+  .history-date{font-size:13px;font-weight:500;margin-bottom:4px;color:#f0e6f5}
+  .history-score{font-size:13px;color:#cdb8d8}
+  .history-bar{height:6px;border-radius:3px;background:rgba(255,255,255,0.08);margin-top:6px;overflow:hidden}
+  .history-fill{height:100%;background:#c9a35a}
+  .empty-state{text-align:center;padding:2rem 1rem;color:#a995bd;font-size:13px}
+  .status-msg{font-size:12px;color:#a995bd;text-align:right;margin-top:6px;min-height:16px}
+</style>
+</head>
+<body>
+
+<div class="journal-wrap">
+  <div class="journal-header">
+    <p class="brand-label">The Reset Room</p>
+    <p class="journal-title">Evening reflection tracker</p>
+    <div class="divider"></div>
+    <p class="journal-sub">Rate each area from 1 (needs attention) to 5 (excellent), then reflect on your day.</p>
+  </div>
+
+  <div class="tabs">
+    <button class="tab active" onclick="switchTab('today',this)">Today's reflection</button>
+    <button class="tab" onclick="switchTab('history',this)">Your progress</button>
+  </div>
+
+  <div id="panel-today" class="panel active">
+    <div id="categories"></div>
+
+    <div class="score-summary">
+      <div class="score-num" id="total-score">0 / 50</div>
+      <div class="score-label" id="score-tier">Rate each area to see your daily total</div>
+    </div>
+
+    <div class="legend">
+      <div class="legend-item"><span class="legend-range">42&ndash;50</span> Great day! Celebrate your success.</div>
+      <div class="legend-item"><span class="legend-range">33&ndash;41</span> Good day! Review areas for improvement.</div>
+      <div class="legend-item"><span class="legend-range">Below 33</span> Growth opportunity! Focus on areas of need.</div>
+    </div>
+
+    <div class="reflection-box">
+      <label class="reflection-label">The areas I scored lower today were:</label>
+      <textarea id="reflect-low" placeholder="What stands out from today?"></textarea>
+    </div>
+    <div class="reflection-box">
+      <label class="reflection-label">What could I have done differently today?</label>
+      <textarea id="reflect-different"></textarea>
+    </div>
+    <div class="reflection-box">
+      <label class="reflection-label">How can I approach tomorrow with more intention?</label>
+      <textarea id="reflect-tomorrow"></textarea>
+    </div>
+
+    <div class="save-row">
+      <button class="primary" onclick="saveEntry()">Save today's reflection</button>
+    </div>
+    <div class="status-msg" id="status-msg"></div>
+  </div>
+
+  <div id="panel-history" class="panel">
+    <div id="history-list"></div>
+  </div>
+</div>
+
+<script>
+const STORAGE_KEY = 'reset-room-evening-journal';
+
+const categories = [
+  {key:'focus', name:'Focus', desc:'How well were you able to concentrate and complete tasks today?'},
+  {key:'stress', name:'Stress management', desc:'How well your stress level was managed throughout the day.'},
+  {key:'movement', name:'Movement', desc:'Your physical activity today, intentional or light.'},
+  {key:'nutrition', name:'Nutrition', desc:'How balanced and nourishing were your meals and snacks?'},
+  {key:'hygiene', name:'Hygiene', desc:'How well did you care for your personal cleanliness and grooming?'},
+  {key:'boundaries', name:'Boundaries', desc:'How effectively did you maintain boundaries and honor your needs?'},
+  {key:'hydration', name:'Hydration', desc:'How well did you stay hydrated throughout the day?'},
+  {key:'selfcare', name:'Self-care', desc:'Did you take time to rest, recharge, or do something you enjoy?'},
+  {key:'sleep', name:'Sleep quality', desc:'Reflect on the quality of your rest last night.'},
+  {key:'confidence', name:'Self-confidence', desc:'How confident and self-assured did you feel today?'},
+];
+
+let scores = {};
+
+function todayKey(){
+  const d = new Date();
+  return d.toISOString().slice(0,10);
+}
+
+function renderCategories(){
+  const container = document.getElementById('categories');
+  container.innerHTML = '';
+  categories.forEach(cat => {
+    const div = document.createElement('div');
+    div.className = 'category';
+    div.innerHTML = `
+      <div class="cat-header">
+        <span class="cat-name">${cat.name}</span>
+      </div>
+      <div class="cat-desc">${cat.desc}</div>
+      <div class="scale-row" data-key="${cat.key}">
+        ${[1,2,3,4,5].map(n => `<button class="scale-btn" data-val="${n}" onclick="selectScore('${cat.key}',${n},this)">${n}</button>`).join('')}
+      </div>
+    `;
+    container.appendChild(div);
+  });
+}
+
+function selectScore(key, val, btn){
+  scores[key] = val;
+  const row = btn.parentElement;
+  row.querySelectorAll('.scale-btn').forEach(b => b.classList.remove('selected'));
+  btn.classList.add('selected');
+  updateTotal();
+}
+
+function updateTotal(){
+  const total = Object.values(scores).reduce((a,b) => a+b, 0);
+  document.getElementById('total-score').textContent = total + ' / 50';
+  const tierEl = document.getElementById('score-tier');
+  if (Object.keys(scores).length < categories.length) {
+    tierEl.textContent = (categories.length - Object.keys(scores).length) + ' categories left to rate';
+  } else if (total >= 42) {
+    tierEl.textContent = 'Great day! Celebrate your wins.';
+  } else if (total >= 33) {
+    tierEl.textContent = 'Good day! A few areas to revisit.';
+  } else {
+    tierEl.textContent = 'Growth opportunity! Be gentle with yourself.';
+  }
+}
+
+function saveEntry(){
+  const statusEl = document.getElementById('status-msg');
+  if (Object.keys(scores).length < categories.length) {
+    statusEl.textContent = 'Rate all categories before saving.';
+    return;
+  }
+  const entry = {
+    date: todayKey(),
+    scores: scores,
+    total: Object.values(scores).reduce((a,b)=>a+b,0),
+    reflections: {
+      low: document.getElementById('reflect-low').value,
+      different: document.getElementById('reflect-different').value,
+      tomorrow: document.getElementById('reflect-tomorrow').value,
+    }
+  };
+  try {
+    const allEntries = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
+    allEntries[entry.date] = entry;
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(allEntries));
+    statusEl.textContent = 'Saved. See you tomorrow.';
+    loadHistory();
+  } catch (e) {
+    statusEl.textContent = 'Could not save right now. Try again.';
+  }
+}
+
+function loadHistory(){
+  const listEl = document.getElementById('history-list');
+  try {
+    const allEntries = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}');
+    const dates = Object.keys(allEntries).sort().reverse().slice(0, 7);
+    if (dates.length === 0) {
+      listEl.innerHTML = '<div class="empty-state">No entries yet. Complete today’s reflection to start tracking your progress.</div>';
+      return;
+    }
+    listEl.innerHTML = dates.map(dateKey => {
+      const e = allEntries[dateKey];
+      const d = new Date(e.date + 'T00:00:00');
+      const dateStr = d.toLocaleDateString(undefined, {weekday:'short', month:'short', day:'numeric'});
+      const pct = Math.round((e.total/50)*100);
+      return `
+        <div class="history-entry">
+          <div class="history-date">${dateStr}</div>
+          <div class="history-score">${e.total} / 50</div>
+          <div class="history-bar"><div class="history-fill" style="width:${pct}%"></div></div>
+        </div>
+      `;
+    }).join('');
+  } catch (e) {
+    listEl.innerHTML = '<div class="empty-state">No entries yet. Complete today’s reflection to start tracking your progress.</div>';
+  }
+}
+
+function switchTab(id, btn){
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('panel-' + id).classList.add('active');
+  btn.classList.add('active');
+  if (id === 'history') loadHistory();
+}
+
+renderCategories();
+loadHistory();
+</script>
+
+</body>
+</html>
