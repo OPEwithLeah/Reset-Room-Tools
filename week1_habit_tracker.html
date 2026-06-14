@@ -9,38 +9,43 @@
   * { box-sizing: border-box; }
   body {
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-    background: #ffffff;
-    color: #332840;
+    background: #3d2b52;
+    color: #f7f1e6;
     margin: 0;
     padding: 24px;
     max-width: 600px;
     margin: 0 auto;
+    min-height: 100vh;
   }
   .tracker-wrap{padding:1rem 0}
-  .tracker-header{margin-bottom:1.25rem}
-  .tracker-title{font-size:18px;font-weight:600;margin:0 0 4px;color:#2a1b3d}
-  .tracker-sub{font-size:14px;color:#6f6280;margin:0}
+  .tracker-header{margin-bottom:1.25rem;text-align:center}
+  .brand-label{font-size:11px;font-weight:600;letter-spacing:2px;color:#c9a35a;margin:0 0 8px;text-transform:uppercase}
+  .tracker-title{font-size:22px;font-weight:600;margin:0 0 6px;color:#f6e2b3;font-family:Georgia,serif}
+  .tracker-sub{font-size:14px;color:#cdb8d8;margin:0;line-height:1.5}
   .week-row{display:grid;grid-template-columns:1fr repeat(7,36px);align-items:center;gap:4px;margin-bottom:6px}
-  .week-row.head{font-size:12px;color:#6f6280;font-weight:500;text-align:center}
+  .week-row.head{font-size:12px;color:#cdb8d8;font-weight:500;text-align:center}
   .week-row.head .habit-label{text-align:left}
-  .habit-label{font-size:13px;font-weight:500}
-  .habit-label.bonus{font-weight:400;color:#6f6280}
+  .habit-label{font-size:13px;font-weight:500;color:#f0e6f5}
+  .habit-label.bonus{font-weight:400;color:#a995bd}
   .day-cell{display:flex;justify-content:center}
-  .day-btn{width:28px;height:28px;border-radius:50%;border:1px solid #d8d3e0;background:#ffffff;cursor:pointer;transition:all .15s;display:flex;align-items:center;justify-content:center}
-  .day-btn.checked{background:#4a3468;border-color:#4a3468;color:#fff}
-  .progress-summary{background:#f7f3ec;border-radius:12px;padding:1rem;margin-top:1rem;text-align:center}
-  .progress-num{font-size:24px;font-weight:600;color:#2a1b3d}
-  .progress-label{font-size:12px;color:#6f6280;margin-top:2px}
-  .week-label{font-size:13px;color:#6f6280;margin-bottom:1rem}
-  .status-msg{font-size:12px;color:#6f6280;text-align:right;margin-top:8px;min-height:16px}
+  .day-btn{width:28px;height:28px;border-radius:50%;border:1.5px solid #cdb8d8;background:rgba(255,255,255,0.08);cursor:pointer;transition:all .15s;display:flex;align-items:center;justify-content:center;color:#f7f1e6}
+  .day-btn.checked{background:#c9a35a;border-color:#c9a35a;color:#2a1b3d}
+  .progress-summary{background:rgba(201,163,90,0.12);border:1px solid rgba(201,163,90,0.3);border-radius:12px;padding:1rem;margin-top:1rem;text-align:center}
+  .progress-num{font-size:26px;font-weight:600;color:#f6e2b3}
+  .progress-label{font-size:12px;color:#cdb8d8;margin-top:2px}
+  .week-label{font-size:13px;color:#cdb8d8;margin-bottom:1rem;text-align:center}
+  .status-msg{font-size:12px;color:#a995bd;text-align:right;margin-top:8px;min-height:16px}
+  .divider{width:60px;height:1px;background:#c9a35a;margin:0 auto 16px;opacity:0.5}
 </style>
 </head>
 <body>
 
 <div class="tracker-wrap">
   <div class="tracker-header">
+    <p class="brand-label">The Reset Room</p>
     <p class="tracker-title">Week 1 habit tracker</p>
-    <p class="tracker-sub">Your morning routine, piece by piece. Tap each day you complete a habit — consistency over intensity.</p>
+    <div class="divider"></div>
+    <p class="tracker-sub">Your morning routine, piece by piece. Tap each day you complete a habit &mdash; consistency over intensity.</p>
   </div>
 
   <div class="week-label" id="week-label"></div>
