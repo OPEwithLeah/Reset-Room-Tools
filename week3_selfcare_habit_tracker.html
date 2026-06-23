@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Week 3 Habit Tracker — The Reset Room</title>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/@tabler/icons-webfont/2.47.0/tabler-icons.min.css">
+<style>
+  * { box-sizing: border-box; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    background: #3d2b52;
+    color: #f7f1e6;
+    margin: 0;
+    padding: 24px;
+    max-width: 600px;
+    margin: 0 auto;
+    min-height: 100vh;
+  }
+  .tracker-wrap { padding: 1rem 0; }
+  .tracker-header { margin-bottom: 1.25rem; text-align: center; }
+  .brand-label { font-size: 11px; font-weight: 600; letter-spacing: 2px; color: #c9a35a; margin: 0 0 8px; text-transform: uppercase; }
+  .tracker-title { font-size: 22px; font-weight: 600; margin: 0 0 6px; color: #f6e2b3; font-family: Georgia, serif; }
+  .tracker-sub { font-size: 13px; color: #cdb8d8; margin: 0; line-height: 1.5; }
+  .divider { width: 60px; height: 1px; background: #c9a35a; margin: 0 auto 16px; opacity: 0.5; }
+
+  /* Section labels */
+  .section-label { font-size: 11px; font-weight: 600; color: #c9a35a; text-transform: uppercase; letter-spacing: .06em; margin: 1.2rem 0 6px; }
+  .section-sub { font-size: 12px; color: #a995bd; margin: 0 0 8px; }
+
+  /* Experiment selector */
+  .experiment-selector { margin-bottom: 1rem; }
+  .selector-label { font-size: 13px; font-weight: 500; color: #f0e6f5; margin-bottom: 6px; display: block; }
+  select {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1.5px solid #6f5a87;
+    border-radius: 8px;
+    background: rgba(255,255,255,0.06);
+    color: #f7f1e6;
+    font-size: 13px;
+    font-family: inherit;
+    cursor: pointer;
+    appearance: none;
+    -webkit-appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%23c9a35a' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 12px center;
+  }
+  select option { background: #3d2b52; color: #f7f1e6; }
+  select:focus { outline: none; border-color: #c9a35a; }
+
+  /* Grid */
+  .week-row { display: grid; grid-template-columns: 1fr repeat(7, 32px); align-items: center; gap: 4px; margin-bottom: 6px; }
+  .week-row.head { font-size: 12px; color: #cdb8d8; font-weight: 500; text-align: center; }
+  .week-row.head .habit-label { text-align: left; }
+  .habit-label { font-size: 13px; font-weight: 500; color: #f0e6f5; }
+  .habit-label.anchor { color: #f6e2b3; }
+  .habit-label.experiment { color: #cdb8d8; font-style: italic; }
+  .day-cell { display: flex; justify-content: center; }
+  .day-btn { width: 28px; height: 28px; border-radius: 50%; border: 1.5px solid #cdb8d8; background: rgba(255,255,255,0.06); cursor: pointer; transition: all .15s; display: flex; align-items: center; justify-content: center; color: #f7f1e6; }
+  .day-btn.checked { background: #c9a35a; border-color: #c9a35a; color: #2a1b3d; }
+  .day-btn.anchor-btn.checked { background: #4a3468; border-color: #c9a35a; color: #f6e2b3; }
+
+  /* Divider line between sections */
+  .row-divider { border: none; border-top: 1px solid rgba(201,163,90,0.2); margin: 10px 0; }
+
+  /* Progress */
+  .progress-summary { background: rgba(201,163,90,0.12); border: 1px solid rgba(201,163,90,0.3); border-radius: 12px; padding: 1rem; margin-top: 1rem; }
+  .progress-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
+  .progress-item { text-align: center; flex: 1; }
+  .progress-num { font-size: 22px; font-weight: 600; color: #f6e2b3; }
+  .progress-label { font-size: 11px; color: #cdb8d8; margin-top: 2px; }
+  .progress-divider { width: 1px; height: 40px; background: rgba(201,163,90,0.3); }
+  .progress-message { font-size: 12px; color: #cdb8d8; text-align: center; margin-top: 6px; }
+
+  .status-msg { font-size: 12px; color: #a995bd; text-align: right; margin-top: 8px; min-height: 16px; }
+</style>
+</head>
+<body>
+
+<div class="tracker-wrap">
+  <div class="tracker-header">
+    <p class="brand-label">The Reset Room</p>
+    <p class="tracker-title">Week 3 habit tracker</p>
+    <div class="divider"></div>
+    <p class="tracker-sub">Two anchors, every day. One experiment, your choice.</p>
+  </div>
+
+  <!-- Experiment selector -->
+  <div class="experiment-selector">
+    <label class="selector-label">Choose your experiment this week:</label>
+    <select id="experiment-select" onchange="setExperiment(this.value)">
+      <option value="">-- Select your experiment --</option>
+      <optgroup label="Mental & Emotional Wellness">
+        <option value="Brain dump">Brain dump</option>
+        <option value="Digital detox window">Digital detox window</option>
+        <option value="The 5-minute solitude rule">The 5-minute solitude rule</option>
+        <option value="Emotional check-ins">Emotional check-ins</option>
+        <option value="Saying no without justification">Saying no without justification</option>
+      </optgroup>
+      <optgroup label="Physical & Energetic Health">
+        <option value="Morning sunlight">Morning sunlight</option>
+        <option value="Glucose-steady breakfast">Glucose-steady breakfast</option>
+        <option value="Nervous system reset breath">Nervous system reset breath</option>
+        <option value="Posture & mobility breaks">Posture &amp; mobility breaks</option>
+        <option value="Hydration first">Hydration first</option>
+      </optgroup>
+      <optgroup label="Functional & Environmental">
+        <option value="Sunday prep session">Sunday prep session</option>
+        <option value="The 2-minute rule">The 2-minute rule</option>
+        <option value="Digital declutter">Digital declutter</option>
+        <option value="One low-demand evening">One low-demand evening</option>
+        <option value="Financial grounding">Financial grounding</option>
+      </optgroup>
+      <optgroup label="Spiritual Self-Care">
+        <option value="Values realignment">Values realignment</option>
+        <option value="Awe walk">Awe walk</option>
+        <option value="Specific gratitude ritual">Specific gratitude ritual</option>
+        <option value="Lineage connection">Lineage connection</option>
+        <option value="An altruism act">An altruism act</option>
+      </optgroup>
+    </select>
+  </div>
+
+  <!-- Grid header -->
+  <div class="week-row head">
+    <div class="habit-label"></div>
+    <div>M</div><div>T</div><div>W</div><div>T</div><div>F</div><div>S</div><div>S</div>
+  </div>
+
+  <!-- Anchor section -->
+  <p class="section-label">Non-negotiable anchors</p>
+
+  <div class="week-row" data-habit="skincare-am">
+    <div class="habit-label anchor">Skincare — morning</div>
+    <div class="day-cell"><button class="day-btn anchor-btn" data-day="0" onclick="toggleDay('skincare-am',0,this)"></button></div>
+    <div class="day-cell"><button class="day-btn anchor-btn" data-day="1" onclick="toggleDay('skincare-am',1,this)"></button></div>
+    <div class="day-cell"><button class="day-btn anchor-btn" data-day="2" onclick="toggleDay('skincare-am',2,this)"></button></div>
+    <div class="day-cell"><button class="day-btn anchor-btn" data-day="3" onclick="toggleDay('skincare-am',3,this)"></button></div>
+    <div class="day-cell"><button class="day-btn anchor-btn" data-day="4" onclick="toggleDay('skincare-am',4,this)"></button></div>
+    <div class="day-cell"><button class="day-btn anchor-btn" data-day="5" onclick="toggleDay('skincare-am',5,this)"></button></div>
+    <div class="day-cell"><button class="day-btn anchor-btn" data-day="6" onclick="toggleDay('skincare-am',6,this)"></button></div>
+  </div>
+
+  <div class="week-row" data-habit="skincare-pm">
+    <div class="habit-label anchor">Skincare — evening</div>
+    <div class="day-cell"><button class="day-btn anchor-btn" data-day="0" onclick="toggleDay('skincare-pm',0,this)"></button></div>
+    <div class="day-cell"><button class="day-btn anchor-btn" data-day="1" onclick="toggleDay('skincare-pm',1,this)"></button></div>
+    <div class="day-cell"><button class="day-btn anchor-btn" data-day="2" onclick="toggleDay('skincare-pm',2,this)"></button></div>
+    <div class="day-cell"><button class="day-btn anchor-btn" data-day="3" onclick="toggleDay('skincare-pm',3,this)"></button></div>
+    <div class="day-cell"><button class="day-btn anchor-btn" data-day="4" onclick="toggleDay('skincare-pm',4,this)"></button></div>
+    <div class="day-cell"><button class="day-btn anchor-btn" data-day="5" onclick="toggleDay('skincare-pm',5,this)"></button></div>
+    <div class="day-cell"><button class="day-btn anchor-btn" data-day="6" onclick="toggleDay('skincare-pm',6,this)"></button></div>
+  </div>
+
+  <hr class="row-divider">
+
+  <!-- Experiment section -->
+  <p class="section-label">This week's experiment</p>
+  <p class="section-sub" id="experiment-sub">Select your experiment above to begin tracking.</p>
+
+  <div class="week-row" data-habit="experiment" id="experiment-row">
+    <div class="habit-label experiment" id="experiment-label">Your experiment</div>
+    <div class="day-cell"><button class="day-btn" data-day="0" onclick="toggleDay('experiment',0,this)"></button></div>
+    <div class="day-cell"><button class="day-btn" data-day="1" onclick="toggleDay('experiment',1,this)"></button></div>
+    <div class="day-cell"><button class="day-btn" data-day="2" onclick="toggleDay('experiment',2,this)"></button></div>
+    <div class="day-cell"><button class="day-btn" data-day="3" onclick="toggleDay('experiment',3,this)"></button></div>
+    <div class="day-cell"><button class="day-btn" data-day="4" onclick="toggleDay('experiment',4,this)"></button></div>
+    <div class="day-cell"><button class="day-btn" data-day="5" onclick="toggleDay('experiment',5,this)"></button></div>
+    <div class="day-cell"><button class="day-btn" data-day="6" onclick="toggleDay('experiment',6,this)"></button></div>
+  </div>
+
+  <!-- Progress -->
+  <div class="progress-summary">
+    <div class="progress-row">
+      <div class="progress-item">
+        <div class="progress-num" id="anchor-score">0 / 14</div>
+        <div class="progress-label">Skincare</div>
+      </div>
+      <div class="progress-divider"></div>
+      <div class="progress-item">
+        <div class="progress-num" id="experiment-score">0 / 7</div>
+        <div class="progress-label">Experiment</div>
+      </div>
+    </div>
+    <div class="progress-message" id="progress-message">Tap a day to begin tracking.</div>
+  </div>
+
+  <div class="status-msg" id="status-msg"></div>
+</div>
+
+<script>
+const STORAGE_KEY = 'reset-room-week3-tracker';
+
+let data = {
+  'skincare-am': [false,false,false,false,false,false,false],
+  'skincare-pm': [false,false,false,false,false,false,false],
+  'experiment':  [false,false,false,false,false,false,false],
+  'experimentName': ''
+};
+
+function setExperiment(val) {
+  data.experimentName = val;
+  const label = document.getElementById('experiment-label');
+  const sub = document.getElementById('experiment-sub');
+  if (val) {
+    label.textContent = val;
+    sub.textContent = 'Give it at least 3-4 days. If it resonates, keep going all week.';
+  } else {
+    label.textContent = 'Your experiment';
+    sub.textContent = 'Select your experiment above to begin tracking.';
+  }
+  save();
+}
+
+function toggleDay(habit, day, btn) {
+  data[habit][day] = !data[habit][day];
+  btn.classList.toggle('checked');
+  btn.innerHTML = data[habit][day] ? '<i class="ti ti-check" style="font-size:14px"></i>' : '';
+  updateProgress();
+  save();
+}
+
+function updateProgress() {
+  const anchorTotal = data['skincare-am'].filter(Boolean).length + data['skincare-pm'].filter(Boolean).length;
+  const expTotal = data['experiment'].filter(Boolean).length;
+  document.getElementById('anchor-score').textContent = anchorTotal + ' / 14';
+  document.getElementById('experiment-score').textContent = expTotal + ' / 7';
+
+  const msgEl = document.getElementById('progress-message');
+  const total = anchorTotal + expTotal;
+  if (total === 0) {
+    msgEl.textContent = 'Tap a day to begin tracking.';
+  } else if (anchorTotal === 14 && expTotal >= 3) {
+    msgEl.textContent = 'Strong week. Both anchors held and your experiment is stacking.';
+  } else if (anchorTotal >= 10) {
+    msgEl.textContent = 'Your anchors are holding. Keep going.';
+  } else {
+    msgEl.textContent = 'Every day you show up counts. Be gentle with yourself.';
+  }
+}
+
+function save() {
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+    const s = document.getElementById('status-msg');
+    s.textContent = 'Saved';
+    setTimeout(() => { s.textContent = ''; }, 1500);
+  } catch(e) {
+    document.getElementById('status-msg').textContent = 'Could not save right now';
+  }
+}
+
+function loadData() {
+  try {
+    const stored = localStorage.getItem(STORAGE_KEY);
+    if (stored) {
+      const loaded = JSON.parse(stored);
+      ['skincare-am','skincare-pm','experiment'].forEach(h => {
+        if (loaded[h]) data[h] = loaded[h];
+      });
+      if (loaded.experimentName) {
+        data.experimentName = loaded.experimentName;
+        document.getElementById('experiment-select').value = loaded.experimentName;
+        setExperiment(loaded.experimentName);
+      }
+      document.querySelectorAll('.week-row[data-habit]').forEach(row => {
+        const habit = row.getAttribute('data-habit');
+        if (habit === 'experiment') return;
+        row.querySelectorAll('.day-btn').forEach(btn => {
+          const day = parseInt(btn.getAttribute('data-day'));
+          if (data[habit] && data[habit][day]) {
+            btn.classList.add('checked');
+            btn.innerHTML = '<i class="ti ti-check" style="font-size:14px"></i>';
+          }
+        });
+      });
+      // Load experiment row
+      const expRow = document.getElementById('experiment-row');
+      expRow.querySelectorAll('.day-btn').forEach(btn => {
+        const day = parseInt(btn.getAttribute('data-day'));
+        if (data['experiment'] && data['experiment'][day]) {
+          btn.classList.add('checked');
+          btn.innerHTML = '<i class="ti ti-check" style="font-size:14px"></i>';
+        }
+      });
+      updateProgress();
+    }
+  } catch(e) {}
+}
+
+loadData();
+</script>
+
+</body>
+</html>
