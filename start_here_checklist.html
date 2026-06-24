@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Your Reset Room Supply List — The Reset Room</title>
+<title>Full Course Checklist — The Reset Room</title>
 <style>
   * { box-sizing: border-box; }
   body {
@@ -140,10 +140,10 @@ const sections = [
   {
     title: "Your reading list",
     items: [
-      { id: "book1", name: "Atomic Habits — James Clear", note: "Weeks 1-3. Self-source your copy.", required: true, link: "https://www.youtube.com/watch?v=rG4YvkGUcY4", linkText: "Free audio version" },
+      { id: "book1", name: "Atomic Habits — James Clear", note: "Weeks 1-3. Self-source your copy.", required: true, link: "https://youtu.be/UYxb-v__EIw?si=yxcaqrTOEEBkVgry", linkText: "Free audio version" },
       { id: "book2", name: "The Gifts of Imperfection — Brené Brown", note: "Weeks 4-6. Self-source your copy.", required: true, link: "https://www.youtube.com/watch?v=fwgIRBEVgnI", linkText: "Free audio version" },
       { id: "book3", name: "The Mountain Is You — Brianna Wiest", note: "Weeks 7-9. Self-source your copy.", required: true, link: "https://www.youtube.com/watch?v=MJJ-s_gTxFY", linkText: "Free audio version" },
-      { id: "book4", name: "The Universe Has Your Back — Gabrielle Bernstein", note: "Weeks 10-12. Self-source your copy.", required: true, link: "https://www.youtube.com/watch?v=Wvn6tlAPCO8", linkText: "Free audio version" },
+      { id: "book4", name: "The Universe Has Your Back — Gabrielle Bernstein", note: "Weeks 10-12. Self-source your copy. Spotify Premium required.", required: true, link: "https://open.spotify.com/show/2B2MplvNXYjRfcBlsqIps0?si=tJFkImW4QoGOChcbOMsDIg", linkText: "Listen on Spotify" },
     ]
   },
 ];
@@ -154,10 +154,12 @@ function renderFooterNote() {
   if (existing) return;
   const note = document.createElement('div');
   note.id = 'footer-note';
-  note.style.cssText = 'margin-top:1.5rem;padding:12px 14px;background:rgba(255,255,255,0.04);border:1px solid rgba(201,163,90,0.2);border-radius:10px;font-size:11px;color:#a995bd;line-height:1.7;';
+  note.style.cssText = 'margin-top:1.5rem;padding:16px 18px;background:rgba(201,163,90,0.1);border:1.5px solid rgba(201,163,90,0.5);border-radius:10px;font-size:12px;color:#f0e6f5;line-height:1.8;';
   note.innerHTML = `
-    <strong style="color:#cdb8d8;font-size:11px;">A note on the free audio links:</strong> The audiobook links above are third-party YouTube uploads. We are not responsible if they are removed at any time during the course of your program — copyright takedowns happen. If a link stops working, search the book title + "full audiobook" on YouTube to find an alternative.<br><br>
-    <strong style="color:#cdb8d8;font-size:11px;">Free alternative — Libby:</strong> If you have a library card, download the <a href="https://libbyapp.com" target="_blank" style="color:#c9a35a;text-decoration:none;">Libby app</a> (free) and borrow all four books as audiobooks at no cost. No link can be taken down. This is the most reliable option.
+    <div style="font-size:13px;font-weight:600;color:#f6e2b3;margin-bottom:6px;">About the audio links</div>
+    The YouTube audiobook links above are third-party uploads. We are not responsible if they are removed at any time during the course — copyright takedowns happen. If a link stops working, search the book title + "full audiobook" on YouTube to find an alternative.<br><br>
+    <div style="font-size:13px;font-weight:600;color:#f6e2b3;margin-bottom:4px;">Free alternative — Libby (recommended)</div>
+    If you have a library card, download the <a href="https://libbyapp.com" target="_blank" style="color:#c9a35a;font-weight:600;text-decoration:underline;">Libby app</a> and borrow all four books as audiobooks at no cost. No Spotify needed, no YouTube links to break. Most US library cards can be obtained online in minutes — check your county's library website.
   `;
   document.getElementById('checklist').after(note);
 }
