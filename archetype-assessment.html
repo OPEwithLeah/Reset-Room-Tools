@@ -407,8 +407,11 @@
       <p>Your archetype is your map. Your 12 weeks is the journey. Welcome to The Reset Room.</p>
       <p class="byline">On Purpose Evolution &nbsp;|&nbsp; Leah Fairchild &nbsp;|&nbsp; The Pattern Interrupter</p>
       <div style="margin-top:32px;">
-        <p style="font-family:Inter,sans-serif;font-size:0.88rem;color:#C8B8DF;margin-bottom:16px;font-style:normal;">Want to keep this? Save it as a PDF or screenshot it so you can return to it throughout your 12 weeks.</p>
-        <button onclick="window.print()" style="background:transparent;border:1px solid rgba(201,168,118,0.5);color:#C9A876;font-family:Inter,sans-serif;font-size:0.85rem;letter-spacing:1px;text-transform:uppercase;padding:12px 32px;cursor:pointer;border-radius:2px;transition:all 0.2s;" onmouseover="this.style.borderColor='#C9A876';this.style.background='rgba(201,168,118,0.1)'" onmouseout="this.style.borderColor='rgba(201,168,118,0.5)';this.style.background='transparent'">Save or Print My Result</button>
+        <p style="font-family:Inter,sans-serif;font-size:0.88rem;color:#C8B8DF;margin-bottom:16px;font-style:normal;">Want to keep this? Email it to yourself or save it as a PDF — so you can return to it throughout your 12 weeks.</p>
+        <div style="display:flex;flex-wrap:wrap;gap:12px;justify-content:center;">
+          <button id="emailBtn" onclick="emailResult()" style="background:var(--gold);color:#1A0830;font-family:Inter,sans-serif;font-size:0.85rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;padding:12px 32px;cursor:pointer;border:none;border-radius:2px;">Email My Result</button>
+          <button onclick="window.print()" style="background:transparent;border:1px solid rgba(201,168,118,0.5);color:#C9A876;font-family:Inter,sans-serif;font-size:0.85rem;letter-spacing:1px;text-transform:uppercase;padding:12px 32px;cursor:pointer;border-radius:2px;">Save or Print</button>
+        </div>
       </div>
     </div>
   </div>
@@ -577,6 +580,40 @@ function showResult(type, primary, undertone, sun, moon, rising) {
     '<h4>When You Cannot Access Your Ideal Environment</h4><p>' + e.onthego + '</p>' +
     '<h4>Your Movement Medicine</h4><p>' + e.movement + '</p>' +
     (u ? '<h4>Your Undertone at Work</h4><p>When your ' + primary + ' element is flooded your ' + undertone + ' element can activate as a secondary response. Let it — lean into ' + u.name.toLowerCase().replace(' regulator','') + ' tools when your primary regulation is not accessible.</p>' : '');
+}
+
+function emailResult() {
+  var firstName = document.getElementById('firstName').value.trim();
+  var userEmail = document.getElementById('emailAddr').value.trim();
+  var archetypeName = document.getElementById('archetype-name').textContent;
+  var elementName = document.getElementById('element-name').textContent;
+
+  var subject = encodeURIComponent('Your Nervous System Archetype: ' + archetypeName);
+
+  var body = encodeURIComponent(
+    'Hi ' + firstName + ',\n\n' +
+    'Here is your Nervous System Archetype Assessment result. Save this email and return to it throughout your 12 weeks. This is your map.\n\n' +
+    '==========================================\n' +
+    'PART 1 — YOUR NERVOUS SYSTEM ARCHETYPE\n' +
+    '==========================================\n' +
+    archetypeName + '\n\n' +
+    document.getElementById('archetype-content').innerText + '\n\n' +
+    '==========================================\n' +
+    'PART 2 — YOUR ELEMENTAL REGULATION PROFILE\n' +
+    '==========================================\n' +
+    elementName + '\n\n' +
+    document.getElementById('element-content').innerText + '\n\n' +
+    '------------------------------------------\n' +
+    'Your archetype is your map. Your 12 weeks is the journey. Welcome to The Reset Room.\n\n' +
+    'With love,\n' +
+    'Leah Fairchild\n' +
+    'The Pattern Interrupter\n' +
+    'On Purpose Evolution\n' +
+    'www.onpurposeevolution.com'
+  );
+
+  var mailto = 'mailto:' + userEmail + '?cc=onpurposeevolution@gmail.com&subject=' + subject + '&body=' + body;
+  window.location.href = mailto;
 }
 </script>
 </body>
