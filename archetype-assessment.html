@@ -3222,8 +3222,16 @@ function finalCalculate() {
   
   var sortedEl = Object.keys(elementScores).sort(function(a,b){ return elementScores[b] - elementScores[a]; });
   var primaryElement = sortedEl[0];
+  // On a tie, Moon sign wins as primary
   if (elementScores[sortedEl[0]] === elementScores[sortedEl[1]]) primaryElement = elementMap[calculatedBig3.moon];
-  var undertoneElement = sortedEl[1] !== primaryElement ? sortedEl[1] : (sortedEl[2] || null);
+  // Undertone: highest scoring element that is NOT the primary
+  var undertoneElement = null;
+  for (var i = 0; i < sortedEl.length; i++) {
+    if (sortedEl[i] !== primaryElement && elementScores[sortedEl[i]] > 0) {
+      undertoneElement = sortedEl[i];
+      break;
+    }
+  }
   
   showResult(dominantType, primaryElement, undertoneElement, calculatedBig3.sun, calculatedBig3.moon, calculatedBig3.rising);
 }
