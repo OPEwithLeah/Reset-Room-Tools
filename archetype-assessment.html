@@ -3320,25 +3320,28 @@ function showResult(type, primary, undertone, sun, moon, rising) {
 function emailResult() {
   var firstName = document.getElementById('firstName').value.trim();
   var userEmail = document.getElementById('emailAddr').value.trim();
+
+  if (!userEmail) {
+    alert('Please make sure your email address is entered on the first page before emailing your result.');
+    return;
+  }
+
   var archetypeName = document.getElementById('archetype-name').textContent;
   var elementName = document.getElementById('element-name').textContent;
 
+  // Keep body short to avoid mailto URL length limits in browsers
   var subject = encodeURIComponent('Your Nervous System Archetype: ' + archetypeName);
 
   var body = encodeURIComponent(
     'Hi ' + firstName + ',\n\n' +
-    'Here is your Nervous System Archetype Assessment result. Save this email and return to it throughout your 12 weeks. This is your map.\n\n' +
-    '==========================================\n' +
-    'PART 1 — YOUR NERVOUS SYSTEM ARCHETYPE\n' +
-    '==========================================\n' +
+    'Here is your Nervous System Archetype Assessment result.\n' +
+    'Save this email and return to it throughout your 12 weeks. This is your map.\n\n' +
+    'YOUR NERVOUS SYSTEM ARCHETYPE:\n' +
     archetypeName + '\n\n' +
-    document.getElementById('archetype-content').innerText + '\n\n' +
-    '==========================================\n' +
-    'PART 2 — YOUR ELEMENTAL REGULATION PROFILE\n' +
-    '==========================================\n' +
+    'YOUR ELEMENTAL REGULATION PROFILE:\n' +
     elementName + '\n\n' +
-    document.getElementById('element-content').innerText + '\n\n' +
-    '------------------------------------------\n' +
+    'Return to the assessment anytime to review your full result:\n' +
+    'https://opewithleah.github.io/Reset-Room-Tools/archetype-assessment.html\n\n' +
     'Your archetype is your map. Your 12 weeks is the journey. Welcome to The Reset Room.\n\n' +
     'With love,\n' +
     'Leah Fairchild\n' +
@@ -3348,7 +3351,11 @@ function emailResult() {
   );
 
   var mailto = 'mailto:' + userEmail + '?cc=onpurposeevolution@gmail.com&subject=' + subject + '&body=' + body;
-  window.location.href = mailto;
+
+  // Use a temporary anchor to trigger — more reliable than window.location.href
+  var a = document.createElement('a');
+  a.href = mailto;
+  a.click();
 }
 
 var currentMode = 'calc';
