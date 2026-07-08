@@ -404,7 +404,7 @@
       <div id="element-content"></div>
     </div>
     <div class="result-closing">
-      <p>Your archetype is your map. Your 12 weeks is the journey. Welcome to The Reset Room.</p>
+      <p>Your archetype is your map. Your nervous system has always been trying to protect you. Now you know how to work with it.</p>
       <p class="byline">On Purpose Evolution &nbsp;|&nbsp; Leah Fairchild &nbsp;|&nbsp; The Pattern Interrupter</p>
       <p style="margin-top:28px;font-size:0.8rem;color:rgba(255,255,255,0.5);font-family:Inter,sans-serif;font-style:normal;">For best results open this assessment in <strong style="color:#C9A876;">Safari</strong> or <strong style="color:#C9A876;">Firefox</strong> — not Chrome. Chrome may block the email button.</p>
       <div style="margin-top:12px;display:flex;flex-wrap:wrap;gap:12px;justify-content:center;">
@@ -571,7 +571,7 @@ function showResult(type, primary, undertone, sun, moon, rising) {
   document.getElementById('archetype-content').innerHTML =
     '<p>' + a.who + '</p>' +
     '<h4>Your Patterns</h4><p>' + a.patterns + '</p>' +
-    '<h4>Want to Go Deeper?</h4><p>If you want clarity on how to practically apply these tools and make this blueprint work for your everyday life, book a Soul + Strategy Session. We will map out your personal regulation plan together. <a href="https://onpurposeevolution.myshopify.com/products/soul-strategy-session?utm_source=copyToPasteBoard&utm_medium=product-links&utm_content=web" style="color:var(--gold);font-weight:700;" target="_blank">Book your session &rarr;</a></p>' +
+    '<h4>Want to Go Deeper?</h4><p>Now that you know your archetype, the next step is understanding what it actually looks like to shift out of it. Book a Soul + Strategy Session and we will get into the specifics together. <a href="https://onpurposeevolution.myshopify.com/products/soul-strategy-session?utm_source=copyToPasteBoard&utm_medium=product-links&utm_content=web" style="color:var(--gold);font-weight:700;" target="_blank">Book your session &rarr;</a></p>' +
     '<h4>Want to Go Deeper?</h4><p>Ready to put these tools into practice and get personalized guidance on your regulation blueprint? Book a Soul + Strategy Session and we will map it out together. <a href="https://onpurposeevolution.myshopify.com/products/soul-strategy-session?utm_source=copyToPasteBoard&utm_medium=product-links&utm_content=web" style="color:var(--gold);font-weight:700;" target="_blank">Book your session here.</a></p>';
 
   var div = '<div style="height:1px;background:rgba(201,168,118,0.2);margin:22px 0;"></div>';
@@ -604,7 +604,11 @@ function showResult(type, primary, undertone, sun, moon, rising) {
     '<h4>YOUR MOVEMENT MEDICINE</h4>' +
     '<p><strong>Moon \u2014 ' + moonName + ':</strong> ' + moonEl.movement + '</p>' +
     '<p><strong>Sun \u2014 ' + sunName + ':</strong> ' + sunEl.movement + '</p>' +
-    '<p><strong>Rising \u2014 ' + risingName + ':</strong> ' + risEl.movement + '</p>';
+    '<p><strong>Rising \u2014 ' + risingName + ':</strong> ' + risEl.movement + '</p>' +
+    '<div style="margin-top:28px;padding:24px;background:rgba(201,168,118,0.08);border:1px solid rgba(201,168,118,0.25);border-radius:6px;">' +
+    '<h4 style="margin-bottom:10px;">Ready to Make This Work for You?</h4>' +
+    '<p>Your blueprint tells you what your nervous system needs. A Soul + Strategy Session gives you the personalized roadmap to actually get there. One session. Real clarity. <a href="''' + session_link + '''" style="color:var(--gold);font-weight:700;" target="_blank">Book your Soul + Strategy Session &rarr;</a></p>' +
+    '</div>';
 }
 
 function emailResult() {
@@ -624,7 +628,7 @@ function emailResult() {
     'SUN: ' + sunName + '  |  MOON: ' + moonName + '  |  RISING: ' + risingName + '\n\n' +
     'Return to your full result anytime — your complete elemental regulation blueprint is waiting for you there:\n' +
     'https://opewithleah.github.io/Reset-Room-Tools/archetype-assessment.html\n\n' +
-    'Your archetype is your map. Your 12 weeks is the journey. Welcome to The Reset Room.\n\n' +
+    'Your archetype is your map. Your nervous system has always been trying to protect you. Now you know how to work with it.\n\n' +
     'With love,\n' +
     'Leah Fairchild\n' +
     'The Pattern Interrupter | On Purpose Evolution'
