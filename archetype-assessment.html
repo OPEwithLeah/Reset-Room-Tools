@@ -622,7 +622,10 @@ function emailResult() {
   );
   var a = document.createElement('a');
   a.href = 'mailto:' + userEmail + '?cc=onpurposeevolution@gmail.com&subject=' + subject + '&body=' + body;
+  a.style.display = 'none';
+  document.body.appendChild(a);
   a.click();
+  document.body.removeChild(a);
 }
 </script>
 </body>
