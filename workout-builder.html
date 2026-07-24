@@ -3766,6 +3766,14 @@ function movementFamily(name) {
 }
 
 const LEVEL_RANK = { beginner:1, intermediate:2, advanced:3 };
+// Each tier draws from a distinct, overlapping band rather than "everything
+// at or below" — otherwise Advanced pools end up flooded with beginner
+// isolation moves (Leg Extension, Leg Curl, etc.) that don't belong there.
+const LEVEL_INCLUDES = {
+  beginner:     ['beginner'],
+  intermediate: ['beginner','intermediate'],
+  advanced:     ['intermediate','advanced'],
+};
 const PHASE_OPTIONS = { beginner:[2,3], intermediate:[3,4], advanced:[4,5] };
 const ROUNDS_BY_TIME = { 10:2, 20:4, 30:6, 45:8 };
 const AMRAP_WINDOW_BY_TIME = { 10:8, 20:12, 30:16, 45:20 };
@@ -3982,7 +3990,7 @@ function filterPool() {
     if (!groups.includes(e.muscleGroup)) return false;
     if (!e.settings.includes(answers.setting)) return false;
     if (!e.equipment.some(eq => answers.equipment.includes(eq))) return false;
-    if (LEVEL_RANK[e.level] > LEVEL_RANK[answers.level]) return false;
+    if (!LEVEL_INCLUDES[answers.level].includes(e.level)) return false;
     if (answers.injuries.length && !answers.injuries.includes('none')) {
       if (answers.injuries.some(inj => (e.contraindications||[]).includes(inj))) return false;
     }
