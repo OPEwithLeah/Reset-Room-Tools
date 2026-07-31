@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Macro Calculator — The Reset Room</title>
+<style>
+  :root {
+    --gold: #C9A876;
+    --navy: #2D1F52;
+    --navy2: #3D2A6A;
+    --bg: #FAF8FC;
+    --light: #F0EBF8;
+    --body: #2A2A3A;
+    --muted: #6A6080;
+    --divider: #D8D0E8;
+    --white: #FFFFFF;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: Georgia, serif; background: var(--bg); color: var(--body); min-height: 100vh; }
+  .header { background: var(--navy); padding: 28px 24px 20px; text-align: center; }
+  .header .label { font-family: Arial, sans-serif; font-size: 11px; font-weight: 700; letter-spacing: 3px; text-transform: uppercase; color: var(--gold); margin-bottom: 8px; }
+  .header h1 { font-size: 28px; color: var(--gold); font-weight: 700; margin-bottom: 6px; }
+  .header p { font-size: 13px; color: #C8B8DF; font-style: italic; }
+  .container { max-width: 680px; margin: 0 auto; padding: 28px 20px 60px; }
+  .intro { font-size: 14px; color: var(--muted); font-style: italic; text-align: center; margin-bottom: 24px; line-height: 1.6; }
+  .section { margin-bottom: 20px; }
+  .section-title { font-family: Arial, sans-serif; font-size: 11px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: var(--navy); margin-bottom: 12px; padding-bottom: 6px; border-bottom: 1.5px solid var(--gold); }
+  .field { margin-bottom: 14px; }
+  .field label { display: block; font-family: Arial, sans-serif; font-size: 12px; font-weight: 700; color: var(--navy); margin-bottom: 5px; }
+  .field input, .field select { width: 100%; padding: 11px 14px; border: 1.5px solid var(--divider); border-radius: 6px; font-size: 15px; font-family: Georgia, serif; background: var(--white); color: var(--body); outline: none; transition: border-color 0.2s; }
+  .field input:focus, .field select:focus { border-color: var(--gold); }
+  .field .hint { font-size: 11px; color: var(--muted); margin-top: 5px; font-style: italic; line-height: 1.5; }
+  .unit-toggle { display: flex; margin-bottom: 18px; border: 1.5px solid var(--divider); border-radius: 6px; overflow: hidden; }
+  .unit-toggle button { flex: 1; padding: 10px; background: transparent; border: none; cursor: pointer; font-family: Arial, sans-serif; font-size: 12px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: var(--muted); transition: all 0.2s; }
+  .unit-toggle button.active { background: var(--navy); color: var(--gold); }
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .three-col { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; }
+  .checkbox-row { display: flex; align-items: center; gap: 10px; padding: 12px 14px; border: 1.5px solid var(--divider); border-radius: 6px; cursor: pointer; margin-bottom: 10px; }
+  .checkbox-row input[type=checkbox] { width: 18px; height: 18px; accent-color: var(--navy); cursor: pointer; flex-shrink: 0; }
+  .checkbox-row label { font-family: Arial, sans-serif; font-size: 13px; color: var(--body); cursor: pointer; line-height: 1.4; }
+  .info-box { background: var(--light); border-left: 3px solid var(--gold); padding: 12px 14px; border-radius: 0 6px 6px 0; margin-bottom: 14px; font-size: 12px; color: var(--muted); line-height: 1.6; }
+  .info-box strong { color: var(--navy); }
+  .btn-calculate { width: 100%; padding: 16px; background: var(--gold); color: var(--navy); border: none; border-radius: 6px; font-family: Arial, sans-serif; font-size: 13px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; cursor: pointer; margin-top: 8px; transition: opacity 0.2s; }
+  .btn-calculate:hover { opacity: 0.9; }
+  .results { display: none; margin-top: 28px; }
+  .results.show { display: block; }
+  .result-card { background: var(--navy); border-radius: 10px; padding: 24px; margin-bottom: 16px; }
+  .result-card .card-title { font-family: Arial, sans-serif; font-size: 10px; font-weight: 700; letter-spacing: 3px; text-transform: uppercase; color: var(--gold); margin-bottom: 14px; }
+  .big-number { font-size: 42px; font-weight: 700; color: var(--gold); line-height: 1; }
+  .big-label { font-family: Arial, sans-serif; font-size: 12px; color: #C8B8DF; margin-top: 4px; }
+  .big-sub { font-family: Arial, sans-serif; font-size: 11px; color: rgba(200,184,223,0.7); margin-top: 8px; line-height: 1.5; }
+  .result-row { display: flex; justify-content: space-between; align-items: flex-start; padding: 10px 0; border-bottom: 1px solid rgba(255,255,255,0.08); }
+  .result-row:last-child { border-bottom: none; }
+  .result-row .rr-label { font-family: Arial, sans-serif; font-size: 12px; color: #C8B8DF; }
+  .result-row .rr-value { font-size: 16px; font-weight: 700; color: var(--white); text-align: right; }
+  .result-row .rr-note { font-family: Arial, sans-serif; font-size: 10px; color: rgba(200,184,223,0.6); margin-top: 2px; }
+  .protein-range { background: rgba(201,168,118,0.12); border: 1px solid rgba(201,168,118,0.3); border-radius: 8px; padding: 14px; margin-bottom: 16px; }
+  .protein-range .pr-title { font-family: Arial, sans-serif; font-size: 10px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: var(--gold); margin-bottom: 8px; }
+  .protein-range .pr-range { font-size: 22px; font-weight: 700; color: var(--white); }
+  .protein-range .pr-rec { font-family: Arial, sans-serif; font-size: 11px; color: #C8B8DF; margin-top: 4px; line-height: 1.5; }
+  .macro-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; margin-top: 4px; }
+  .macro-box { background: rgba(255,255,255,0.06); border-radius: 8px; padding: 14px; text-align: center; }
+  .macro-box .macro-name { font-family: Arial, sans-serif; font-size: 10px; letter-spacing: 2px; text-transform: uppercase; color: var(--gold); margin-bottom: 8px; }
+  .macro-box .macro-pct { font-family: Arial, sans-serif; font-size: 10px; color: rgba(200,184,223,0.6); margin-bottom: 4px; }
+  .macro-box .macro-g { font-size: 28px; font-weight: 700; color: var(--white); }
+  .macro-box .macro-unit { font-family: Arial, sans-serif; font-size: 11px; color: #C8B8DF; }
+  .macro-box .macro-cals { font-family: Arial, sans-serif; font-size: 11px; color: rgba(200,184,223,0.6); margin-top: 4px; }
+  .note-box { background: var(--light); border-radius: 8px; padding: 16px; margin-top: 16px; }
+  .note-box p { font-size: 13px; color: var(--body); line-height: 1.6; }
+  .note-box strong { color: var(--navy); }
+  .reset-btn { width: 100%; padding: 12px; background: transparent; border: 1.5px solid var(--divider); border-radius: 6px; font-family: Arial, sans-serif; font-size: 12px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: var(--muted); cursor: pointer; margin-top: 12px; }
+  .footer { text-align: center; margin-top: 32px; padding-top: 20px; border-top: 1px solid var(--divider); font-family: Arial, sans-serif; font-size: 11px; color: var(--muted); }
+  .split-toggle { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 14px; }
+  .split-toggle button { padding: 10px; background: transparent; border: 1.5px solid var(--divider); border-radius: 6px; cursor: pointer; font-family: Arial, sans-serif; font-size: 11px; font-weight: 700; color: var(--muted); transition: all 0.2s; text-align: center; }
+  .split-toggle button.active { background: var(--navy); color: var(--gold); border-color: var(--navy); }
+</style>
+</head>
+<body>
+<div class="header">
+  <div class="label">The Reset Room · Week 5</div>
+  <h1>Your Macro Calculator</h1>
+  <p>REE · TDEE · Personalized Daily Macros</p>
+</div>
+<div class="container">
+  <p class="intro">Built on the Mifflin-St Jeor equation. Your numbers are personalized to your age, hormonal stage, activity level, and goals — not a generic average.</p>
+
+  <div class="unit-toggle">
+    <button class="active" onclick="setUnit('imperial')">Imperial (lbs / ft)</button>
+    <button onclick="setUnit('metric')">Metric (kg / cm)</button>
+  </div>
+
+  <!-- PERSONAL INFO -->
+  <div class="section">
+    <div class="section-title">Your Info</div>
+    <div class="field">
+      <label>Age</label>
+      <input type="number" id="age" placeholder="e.g. 42" min="18" max="80">
+    </div>
+    <div class="two-col">
+      <div class="field">
+        <label id="weight-label">Weight (lbs)</label>
+        <input type="number" id="weight" placeholder="e.g. 155">
+      </div>
+      <div class="field" id="height-imperial">
+        <label>Height</label>
+        <div style="display:flex;gap:8px;">
+          <input type="number" id="height-ft" placeholder="ft" min="4" max="7" style="width:50%">
+          <input type="number" id="height-in" placeholder="in" min="0" max="11" style="width:50%">
+        </div>
+      </div>
+      <div class="field" id="height-metric" style="display:none;">
+        <label>Height (cm)</label>
+        <input type="number" id="height-cm" placeholder="e.g. 165">
+      </div>
+    </div>
+  </div>
+
+  <!-- HORMONAL STAGE -->
+  <div class="section">
+    <div class="section-title">Hormonal Stage</div>
+    <div class="field">
+      <label>Where are you in your hormonal journey?</label>
+      <select id="hormone-stage" onchange="autoSetSplit()">
+        <option value="">Select your stage</option>
+        <option value="regular">Regular cycle (under 40)</option>
+        <option value="regular40">Regular cycle (40+)</option>
+        <option value="peri">Perimenopause</option>
+        <option value="meno">Menopause or post-menopause</option>
+        <option value="unsure">Not sure</option>
+      </select>
+      <div class="hint">Protein needs increase significantly in perimenopause and menopause to preserve muscle mass, support bone density, and stabilize hormones.</div>
+    </div>
+  </div>
+
+  <!-- ACTIVITY -->
+  <div class="section">
+    <div class="section-title">Activity Level</div>
+    <div class="field">
+      <label>What is your average daily step count?</label>
+      <select id="activity">
+        <option value="">Select your activity level</option>
+        <option value="1.2">Sedentary — fewer than 5,000 steps per day</option>
+        <option value="1.375">Lightly Active — 5,000 to 7,499 steps per day</option>
+        <option value="1.55">Moderately Active — 7,500 to 9,999 steps per day</option>
+        <option value="1.725">Very Active — 10,000 or more steps per day</option>
+      </select>
+      <div class="hint">Use your Apple Watch, Fitbit, Garmin, or phone health app. Base this on steps only — gym workouts are added separately below.</div>
+    </div>
+    <div class="field">
+      <label>Do you strength train or do structured workouts?</label>
+      <div class="checkbox-row">
+        <input type="checkbox" id="strength-train">
+        <label for="strength-train">Yes — I lift weights or do structured gym workouts regularly</label>
+      </div>
+    </div>
+    <div class="field" id="gym-cals-field" style="display:none;">
+      <label>Average calories burned per gym session</label>
+      <select id="gym-cals">
+        <option value="200">Light session — around 200 calories</option>
+        <option value="300" selected>Moderate session — around 300 calories</option>
+        <option value="400">Intense session — around 400 calories</option>
+        <option value="500">Very intense — 500 or more calories</option>
+      </select>
+      <div class="hint">This will be added to your TDEE to reflect your true daily energy expenditure. Your step count alone does not capture gym calories burned.</div>
+    </div>
+    <div class="field" id="gym-days-field" style="display:none;">
+      <label>How many days per week do you train?</label>
+      <select id="gym-days">
+        <option value="2">2 days per week</option>
+        <option value="3" selected>3 days per week</option>
+        <option value="4">4 days per week</option>
+        <option value="5">5 days per week</option>
+        <option value="6">6 days per week</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- GOAL -->
+  <div class="section">
+    <div class="section-title">Your Goal</div>
+    <div class="field">
+      <label>Primary goal</label>
+      <select id="goal">
+        <option value="">Select your goal</option>
+        <option value="loss">Weight Loss — moderate deficit</option>
+        <option value="maintain">Maintenance — support hormones and energy</option>
+        <option value="performance">Performance and Muscle — slight surplus</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- MACRO SPLIT -->
+  <div class="section">
+    <div class="section-title">Your Macro Split</div>
+    <p style="font-size:13px;color:var(--muted);margin-bottom:12px;font-style:italic;">Choose a suggested split or enter your own. Percentages must add up to 100.</p>
+    <div class="info-box" style="margin-bottom:16px;">
+      <strong>What are macros?</strong> Macronutrients are the three main nutrients your body uses for fuel. <strong>Protein</strong> builds and repairs muscle, supports hormones, and keeps you full. <strong>Carbohydrates</strong> are your body and brain's preferred energy source. <strong>Fat</strong> supports hormone production, brain function, and nutrient absorption. The percentages below tell you how much of your daily calories should come from each one.
+    </div>
+    <div id="split-options" style="display:flex;flex-direction:column;gap:10px;margin-bottom:14px;">
+
+      <div class="split-card" id="split-card-1" onclick="setSplitCard(1,35,40,25)" style="border:1.5px solid var(--divider);border-radius:8px;padding:14px;cursor:pointer;transition:all 0.2s;">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
+          <span style="font-family:Arial,sans-serif;font-size:12px;font-weight:700;color:var(--navy);">Hormone Support Split</span>
+          <span style="font-family:Arial,sans-serif;font-size:11px;color:var(--muted);">35% Protein &nbsp;·&nbsp; 40% Carbs &nbsp;·&nbsp; 25% Fat</span>
+        </div>
+        <p style="font-size:12px;color:var(--muted);line-height:1.5;">Designed for women in perimenopause and menopause. Higher protein preserves muscle as estrogen declines. Moderate carbs support energy and mood. Healthy fats support hormone production. <em>This is Leah's recommended default for 40+ women.</em></p>
+      </div>
+
+      <div class="split-card" id="split-card-2" onclick="setSplitCard(2,40,35,25)" style="border:1.5px solid var(--divider);border-radius:8px;padding:14px;cursor:pointer;transition:all 0.2s;">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
+          <span style="font-family:Arial,sans-serif;font-size:12px;font-weight:700;color:var(--navy);">Higher Protein Split</span>
+          <span style="font-family:Arial,sans-serif;font-size:11px;color:var(--muted);">40% Protein &nbsp;·&nbsp; 35% Carbs &nbsp;·&nbsp; 25% Fat</span>
+        </div>
+        <p style="font-size:12px;color:var(--muted);line-height:1.5;">For women who strength train heavily or want to prioritize muscle building and fat loss simultaneously. Higher protein keeps you fuller longer and supports muscle repair after intense training sessions.</p>
+      </div>
+
+      <div class="split-card" id="split-card-3" onclick="setSplitCard(3,30,45,25)" style="border:1.5px solid var(--divider);border-radius:8px;padding:14px;cursor:pointer;transition:all 0.2s;">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
+          <span style="font-family:Arial,sans-serif;font-size:12px;font-weight:700;color:var(--navy);">Carb-Forward Split</span>
+          <span style="font-family:Arial,sans-serif;font-size:11px;color:var(--muted);">30% Protein &nbsp;·&nbsp; 45% Carbs &nbsp;·&nbsp; 25% Fat</span>
+        </div>
+        <p style="font-size:12px;color:var(--muted);line-height:1.5;">For women who feel and perform better with more carbohydrates — endurance athletes, women who experience low energy on lower-carb approaches, or those who find carb restriction triggers bingeing or restriction cycles. If your body runs better on carbs, trust that.</p>
+      </div>
+
+      <div class="split-card" id="split-card-custom" onclick="setSplitCard('custom',0,0,0)" style="border:1.5px solid var(--divider);border-radius:8px;padding:14px;cursor:pointer;transition:all 0.2s;">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
+          <span style="font-family:Arial,sans-serif;font-size:12px;font-weight:700;color:var(--navy);">Custom Split</span>
+          <span style="font-family:Arial,sans-serif;font-size:11px;color:var(--muted);">Enter your own percentages</span>
+        </div>
+        <p style="font-size:12px;color:var(--muted);line-height:1.5;">Already working with a nutritionist or know what split works best for your body? Enter your own. Protein, Carbs, and Fat percentages must add up to 100.</p>
+      </div>
+
+    </div>
+    <div id="custom-split" style="display:none;">
+      <div class="three-col">
+        <div class="field">
+          <label>Protein %</label>
+          <input type="number" id="prot-pct" placeholder="35" min="15" max="60" oninput="checkSplit()">
+        </div>
+        <div class="field">
+          <label>Carbs %</label>
+          <input type="number" id="carb-pct" placeholder="40" min="10" max="65" oninput="checkSplit()">
+        </div>
+        <div class="field">
+          <label>Fat %</label>
+          <input type="number" id="fat-pct" placeholder="25" min="10" max="40" oninput="checkSplit()">
+        </div>
+      </div>
+      <div id="split-error" style="font-family:Arial,sans-serif;font-size:11px;color:#c0392b;display:none;margin-top:-8px;margin-bottom:10px;">Percentages must add up to 100.</div>
+    </div>
+    <input type="hidden" id="prot-pct-val" value="35">
+    <input type="hidden" id="carb-pct-val" value="40">
+    <input type="hidden" id="fat-pct-val" value="25">
+  </div>
+
+  <button class="btn-calculate" onclick="calculate()">Calculate My Macros</button>
+
+  <!-- RESULTS -->
+  <div class="results" id="results">
+
+    <div class="result-card">
+      <div class="card-title">Resting Energy Expenditure (REE)</div>
+      <div class="big-number" id="ree-number">—</div>
+      <div class="big-label">calories per day at complete rest</div>
+      <div class="big-sub">This is the minimum your body needs to survive — breathing, circulation, cell repair, and hormone production. <strong style="color:var(--gold);">Never eat below this number.</strong> Eating under your REE signals starvation to your body, suppresses your metabolism, and disrupts hormone production.</div>
+    </div>
+
+    <div class="result-card">
+      <div class="card-title">Total Daily Energy Expenditure (TDEE)</div>
+      <div class="big-number" id="tdee-number">—</div>
+      <div class="big-label">estimated total calories burned per day</div>
+      <div class="big-sub" id="tdee-breakdown"></div>
+      <div style="margin-top:16px;">
+        <div class="result-row">
+          <div>
+            <div class="rr-label">Your Target Daily Calories</div>
+            <div class="rr-note" id="goal-note"></div>
+          </div>
+          <div class="rr-value" id="target-cals">—</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="result-card">
+      <div class="card-title">Your Protein Target</div>
+      <div class="card-title">Your Daily Macro Targets</div>
+      <div class="macro-grid">
+        <div class="macro-box">
+          <div class="macro-name">Protein</div>
+          <div class="macro-pct" id="prot-pct-display"></div>
+          <div class="macro-g" id="protein-g">—</div>
+          <div class="macro-unit">grams</div>
+          <div class="macro-cals" id="protein-cals"></div>
+        </div>
+        <div class="macro-box">
+          <div class="macro-name">Carbs</div>
+          <div class="macro-pct" id="carb-pct-display"></div>
+          <div class="macro-g" id="carbs-g">—</div>
+          <div class="macro-unit">grams</div>
+          <div class="macro-cals" id="carbs-cals"></div>
+        </div>
+        <div class="macro-box">
+          <div class="macro-name">Fat</div>
+          <div class="macro-pct" id="fat-pct-display"></div>
+          <div class="macro-g" id="fat-g">—</div>
+          <div class="macro-unit">grams</div>
+          <div class="macro-cals" id="fat-cals"></div>
+        </div>
+      </div>
+      <div style="margin-top:14px;font-family:Arial,sans-serif;font-size:11px;color:rgba(200,184,223,0.7);line-height:1.5;">
+        1g Protein = 4 cal &nbsp;·&nbsp; 1g Carbs = 4 cal &nbsp;·&nbsp; 1g Fat = 9 cal
+      </div>
+      <div class="protein-range" style="margin-top:16px;">
+        <div class="pr-title">Your Protein Reference Range</div>
+        <div class="pr-range" id="protein-range-display">—</div>
+        <div class="pr-rec" id="protein-rec-text"></div>
+        <div style="margin-top:8px;font-family:Arial,sans-serif;font-size:11px;color:rgba(200,184,223,0.6);">Use this as a gut check on your protein target above. If your macro split lands you significantly below this range, consider adjusting your protein percentage up.</div>
+      </div>
+    </div>
+
+    <div class="note-box">
+      <p><strong>A note from Leah:</strong> These numbers are a starting point — not a rulebook. Your body is not a math equation. Hormones, sleep, stress, and your cycle all affect how your body uses fuel. Use these as a guide, not a cage. If you are hungry — eat. If something feels off — trust that. We adjust as we go.</p>
+    </div>
+
+    <button class="reset-btn" onclick="resetCalc()">Start Over</button>
+  </div>
+
+  <div class="footer">On Purpose Evolution &nbsp;|&nbsp; Leah Fairchild &nbsp;|&nbsp; The Pattern Interrupter</div>
+</div>
+
+<script>
+var currentUnit = 'imperial';
+var splitP = 35, splitC = 40, splitF = 25;
+
+function setUnit(unit) {
+  currentUnit = unit;
+  document.querySelectorAll('.unit-toggle button')[0].classList.toggle('active', unit === 'imperial');
+  document.querySelectorAll('.unit-toggle button')[1].classList.toggle('active', unit === 'metric');
+  document.getElementById('weight-label').textContent = unit === 'imperial' ? 'Weight (lbs)' : 'Weight (kg)';
+  document.getElementById('height-imperial').style.display = unit === 'imperial' ? 'block' : 'none';
+  document.getElementById('height-metric').style.display = unit === 'metric' ? 'block' : 'none';
+}
+
+document.getElementById('strength-train').addEventListener('change', function() {
+  var show = this.checked;
+  document.getElementById('gym-cals-field').style.display = show ? 'block' : 'none';
+  document.getElementById('gym-days-field').style.display = show ? 'block' : 'none';
+});
+
+function setSplitCard(id, p, c, f) {
+  document.querySelectorAll('.split-card').forEach(function(el) {
+    el.style.border = '1.5px solid var(--divider)';
+    el.style.background = 'transparent';
+  });
+  var card = document.getElementById('split-card-' + id);
+  card.style.border = '1.5px solid var(--gold)';
+  card.style.background = 'rgba(201,168,118,0.06)';
+  if (id === 'custom') {
+    document.getElementById('custom-split').style.display = 'block';
+  } else {
+    document.getElementById('custom-split').style.display = 'none';
+    splitP = p; splitC = c; splitF = f;
+  }
+}
+
+function setSplit(p, c, f) { splitP = p; splitC = c; splitF = f; }
+function showCustomSplit() { document.getElementById('custom-split').style.display = 'block'; }
+
+function checkSplit() {
+  var p = parseInt(document.getElementById('prot-pct').value) || 0;
+  var c = parseInt(document.getElementById('carb-pct').value) || 0;
+  var f = parseInt(document.getElementById('fat-pct').value) || 0;
+  var err = document.getElementById('split-error');
+  if (p + c + f !== 100) { err.style.display = 'block'; }
+  else { err.style.display = 'none'; splitP = p; splitC = c; splitF = f; }
+}
+
+function getProteinRange(weightLbs, hormoneStage, strengthTrain) {
+  var low, high, rec;
+  if (hormoneStage === 'meno') {
+    low = 0.85; high = 1.0;
+    rec = 'Women in menopause and post-menopause need more protein to preserve muscle mass, support bone density, and stabilize metabolism as estrogen declines. Aim toward the higher end if you strength train.';
+  } else if (hormoneStage === 'peri') {
+    low = 0.8; high = 0.95;
+    rec = 'In perimenopause, increasing protein helps counteract muscle loss as estrogen begins to fluctuate. Start toward the middle of your range and adjust based on how your body responds.';
+  } else if (hormoneStage === 'regular40') {
+    low = 0.75; high = 0.9;
+    rec = 'Women 40+ should aim toward the higher end of this range to stay ahead of age-related muscle loss.';
+  } else {
+    low = 0.7; high = 0.85;
+    rec = 'General protein recommendation for active women under 40.';
+  }
+  if (strengthTrain) {
+    low = Math.max(low, 0.85);
+    high = Math.max(high, 1.0);
+    rec += ' As a strength trainer, aim toward the higher end of your range to support muscle repair and growth.';
+  }
+  return { low: Math.round(weightLbs * low), high: Math.round(weightLbs * high), rec: rec };
+}
+
+function autoSetSplit() {
+  var stage = document.getElementById('hormone-stage').value;
+  if (stage === 'meno' || stage === 'peri') {
+    setSplitCard(1, 35, 40, 25);
+  } else if (stage === 'regular40') {
+    setSplitCard(1, 35, 40, 25);
+  } else {
+    setSplitCard(3, 30, 45, 25);
+  }
+}
+
+function calculate() {
+  var age = parseFloat(document.getElementById('age').value);
+  var weight = parseFloat(document.getElementById('weight').value);
+  var activity = parseFloat(document.getElementById('activity').value);
+  var goal = document.getElementById('goal').value;
+  var hormoneStage = document.getElementById('hormone-stage').value;
+  var strengthTrain = document.getElementById('strength-train').checked;
+
+  if (!age || !weight || !activity || !goal || !hormoneStage) {
+    alert('Please fill in all fields to calculate your macros.');
+    return;
+  }
+
+  // Check custom split
+  if (document.getElementById('custom-split').style.display !== 'none') {
+    var p = parseInt(document.getElementById('prot-pct').value) || 0;
+    var c = parseInt(document.getElementById('carb-pct').value) || 0;
+    var f = parseInt(document.getElementById('fat-pct').value) || 0;
+    if (p + c + f !== 100) { alert('Your macro percentages must add up to 100.'); return; }
+    splitP = p; splitC = c; splitF = f;
+  }
+
+  var weightKg, weightLbs, heightCm;
+  if (currentUnit === 'imperial') {
+    var ft = parseFloat(document.getElementById('height-ft').value) || 0;
+    var inches = parseFloat(document.getElementById('height-in').value) || 0;
+    heightCm = (ft * 12 + inches) * 2.54;
+    weightKg = weight * 0.453592;
+    weightLbs = weight;
+  } else {
+    weightKg = weight;
+    weightLbs = weight * 2.20462;
+    heightCm = parseFloat(document.getElementById('height-cm').value);
+  }
+
+  // REE: Mifflin-St Jeor for women
+  var ree = Math.round(10 * weightKg + 6.25 * heightCm - 5 * age - 161);
+  var tdeeBase = Math.round(ree * activity);
+
+  // Add gym calories if strength training
+  var gymBonus = 0;
+  var gymBreakdown = '';
+  if (strengthTrain) {
+    var gymCalsPerSession = parseInt(document.getElementById('gym-cals').value);
+    var gymDays = parseInt(document.getElementById('gym-days').value);
+    gymBonus = Math.round((gymCalsPerSession * gymDays) / 7);
+    gymBreakdown = 'Includes approx. ' + gymBonus + ' cal/day from ' + gymDays + 'x/week gym sessions (' + gymCalsPerSession + ' cal each).';
+  }
+  var tdee = tdeeBase + gymBonus;
+
+  // Target calories
+  var targetCals, goalNote;
+  if (goal === 'loss') {
+    targetCals = Math.round(tdee * 0.85);
+    goalNote = '15% deficit from TDEE — steady, sustainable fat loss';
+  } else if (goal === 'maintain') {
+    targetCals = tdee;
+    goalNote = 'Maintenance — supports hormone balance and stable energy';
+  } else {
+    targetCals = Math.round(tdee * 1.1);
+    goalNote = '10% surplus — supports muscle building and performance';
+  }
+
+  // Protein range
+  var protRange = getProteinRange(weightLbs, hormoneStage, strengthTrain);
+
+  // Macro split
+  var protCals = Math.round(targetCals * splitP / 100);
+  var carbCals = Math.round(targetCals * splitC / 100);
+  var fatCals = targetCals - protCals - carbCals;
+  var protG = Math.round(protCals / 4);
+  var carbG = Math.round(carbCals / 4);
+  var fatG = Math.round(fatCals / 9);
+
+  // Display
+  document.getElementById('ree-number').textContent = ree.toLocaleString();
+  document.getElementById('tdee-number').textContent = tdee.toLocaleString();
+  document.getElementById('tdee-breakdown').textContent = gymBreakdown || 'Based on your step-based activity level.';
+  document.getElementById('target-cals').textContent = targetCals.toLocaleString() + ' cal';
+  document.getElementById('goal-note').textContent = goalNote;
+  document.getElementById('protein-range-display').textContent = protRange.low + 'g — ' + protRange.high + 'g per day';
+  document.getElementById('protein-rec-text').textContent = protRange.rec;
+  document.getElementById('prot-pct-display').textContent = splitP + '%';
+  document.getElementById('carb-pct-display').textContent = splitC + '%';
+  document.getElementById('fat-pct-display').textContent = splitF + '%';
+  document.getElementById('protein-g').textContent = protG;
+  document.getElementById('protein-cals').textContent = protCals + ' cal';
+  document.getElementById('carbs-g').textContent = carbG;
+  document.getElementById('carbs-cals').textContent = carbCals + ' cal';
+  document.getElementById('fat-g').textContent = fatG;
+  document.getElementById('fat-cals').textContent = fatCals + ' cal';
+
+  document.getElementById('results').classList.add('show');
+  document.getElementById('results').scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function resetCalc() {
+  document.getElementById('results').classList.remove('show');
+  ['age','weight','height-ft','height-in','height-cm'].forEach(function(id){ var el=document.getElementById(id); if(el) el.value=''; });
+  document.getElementById('activity').value = '';
+  document.getElementById('goal').value = '';
+  document.getElementById('hormone-stage').value = '';
+  document.getElementById('strength-train').checked = false;
+  document.getElementById('gym-cals-field').style.display = 'none';
+  document.getElementById('gym-days-field').style.display = 'none';
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+</script>
+</body>
+</html>
