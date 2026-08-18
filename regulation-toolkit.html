@@ -100,6 +100,12 @@
   }
   .choice-btn:hover { background: rgba(201,168,118,0.14); border-color: var(--gold); color: #FFFFFF; }
   .choice-btn.selected { background: rgba(201,168,118,0.2); border-color: var(--gold); color: #FFFFFF; }
+  .choice-btn:disabled { opacity: 0.3; cursor: not-allowed; }
+  .choice-btn:disabled:hover { background: rgba(255,255,255,0.07); border-color: rgba(255,255,255,0.18); color: #EDE5F8; }
+
+  .plan-part { margin-bottom: 28px; padding-bottom: 24px; border-bottom: 1px solid rgba(201,168,118,0.15); }
+  .plan-part:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+  .plan-part-label { font-size: 10px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: var(--gold); margin-bottom: 6px; }
 
   /* INPUTS */
   .input-wrap { margin-bottom: 20px; }
@@ -310,15 +316,16 @@
     <div class="question-card" id="card-4">
       <p class="question-eyebrow">Question 3 of 3</p>
       <h2 class="question-text">What modality feels most accessible right now?</h2>
-      <p class="question-desc">Choose the one you have the most access to or the most pull toward.</p>
+      <p class="question-desc" id="modality-hint">Choose the one you have the most access to or the most pull toward.</p>
       <div class="choices" id="choices-modality">
-        <button class="choice-btn" onclick="pickModality(this,'breath')">Breath</button>
-        <button class="choice-btn" onclick="pickModality(this,'movement')">Movement or body</button>
-        <button class="choice-btn" onclick="pickModality(this,'scent')">Scent or environment</button>
-        <button class="choice-btn" onclick="pickModality(this,'sound')">Sound or stillness</button>
-        <button class="choice-btn" onclick="pickModality(this,'guided')">Guided practice or words</button>
+        <button class="choice-btn" data-modality="breath" onclick="toggleModality(this,'breath')">Breath</button>
+        <button class="choice-btn" data-modality="movement" onclick="toggleModality(this,'movement')">Movement or body</button>
+        <button class="choice-btn" data-modality="scent" onclick="toggleModality(this,'scent')">Scent or environment</button>
+        <button class="choice-btn" data-modality="sound" onclick="toggleModality(this,'sound')">Sound or stillness</button>
+        <button class="choice-btn" data-modality="guided" onclick="toggleModality(this,'guided')">Guided practice or words</button>
       </div>
       <div class="nav-btns">
+        <button class="btn-next" id="modality-continue" onclick="calculateResult()" disabled>Build My Toolkit</button>
         <button class="btn-back" onclick="goToCard('3')">Back</button>
       </div>
     </div>
@@ -373,8 +380,16 @@
 /* ============ STATE ============ */
 var selectedState = null;
 var selectedTime = null;
-var selectedModality = null;
+var selectedModalities = [];
+var currentParts = [];
 var currentMainCard = 0;
+
+var MODALITY_CAP = { "5": 1, "10": 2, "30": 4 };
+var MODALITY_HINT = {
+  "5": "Time is short — choose the one you have the most access to or the most pull toward.",
+  "10": "Choose up to 2. The tool will sequence them into one short session.",
+  "30": "Choose up to 4. The tool will build a full multi-part toolkit from your picks."
+};
 
 /* ============ NAVIGATION ============ */
 function startAssessment() {
@@ -424,19 +439,38 @@ function pickTime(btn, value) {
   document.querySelectorAll('#choices-time .choice-btn').forEach(function(b){ b.classList.remove('selected'); });
   btn.classList.add('selected');
   selectedTime = value;
+  selectedModalities = [];
+  document.querySelectorAll('#choices-modality .choice-btn').forEach(function(b){ b.classList.remove('selected'); b.disabled = false; });
+  document.getElementById('modality-hint').textContent = MODALITY_HINT[value];
+  document.getElementById('modality-continue').disabled = true;
   goToCard('4');
 }
 
-function pickModality(btn, value) {
-  document.querySelectorAll('#choices-modality .choice-btn').forEach(function(b){ b.classList.remove('selected'); });
-  btn.classList.add('selected');
-  selectedModality = value;
-  calculateResult();
+function toggleModality(btn, value) {
+  var cap = MODALITY_CAP[selectedTime] || 1;
+  var idx = selectedModalities.indexOf(value);
+
+  if (idx > -1) {
+    selectedModalities.splice(idx, 1);
+    btn.classList.remove('selected');
+  } else {
+    if (selectedModalities.length >= cap) { return; }
+    selectedModalities.push(value);
+    btn.classList.add('selected');
+  }
+
+  document.querySelectorAll('#choices-modality .choice-btn').forEach(function(b){
+    if (!b.classList.contains('selected')) {
+      b.disabled = selectedModalities.length >= cap;
+    }
+  });
+
+  document.getElementById('modality-continue').disabled = selectedModalities.length === 0;
 }
 
 function resetTool() {
-  selectedState = null; selectedTime = null; selectedModality = null;
-  document.querySelectorAll('.choice-btn').forEach(function(b){ b.classList.remove('selected'); });
+  selectedState = null; selectedTime = null; selectedModalities = []; currentParts = [];
+  document.querySelectorAll('.choice-btn').forEach(function(b){ b.classList.remove('selected'); b.disabled = false; });
   document.getElementById('result').style.display = 'none';
   document.getElementById('cover').style.display = 'flex';
   window.scrollTo(0,0);
@@ -537,8 +571,8 @@ var PRACTICE_BANK = {
         steps: "Cross your arms over your chest and alternate tapping each shoulder slowly, or tap alternating knees, for 2-3 minutes while breathing slowly." },
       scent: { title: "Anxiety Relief Blend + Cold Water", why: "Scent reaches the nervous system faster than thought does, and cold water gives the mind something physical to land on.",
         steps: "Apply Anxiety Relief blend to your pulse points and breathe it in slowly. Run cold water over your wrists for 30-60 seconds.", aroma: "flight" },
-      sound: { title: "Coherence Breathing", why: "Even, steady breathing brings the nervous system out of overdrive without needing to stop the thoughts first.",
-        steps: "Inhale for 5 counts, exhale for 5 counts. Continue for 5 minutes, letting the count itself be the anchor." },
+      sound: { title: "Grounded Pause", why: "A quick sensory anchor interrupts a racing mind without needing to manage the breath at all.",
+        steps: "Feel your feet flat on the floor. Notice 3 things you can see, 2 things you can hear, 1 thing you can touch. Let your shoulders drop on your next exhale." },
       guided: { title: "Safe Place Imagination (Short)", why: "A racing mind needs somewhere to land, and imagination gives it a concrete place to go instead of spinning.",
         steps: "Take a slow breath in and let it go. Imagine a place that feels completely safe. Notice what is under your feet. Notice the temperature of the air. Let your body feel the safety of this place in your chest and shoulders for a minute." }
     },
@@ -611,8 +645,8 @@ var PRACTICE_BANK = {
     "5": {
       breath: { title: "Boundary Breath", why: "One slow breath before responding creates a pause where an actual choice becomes possible.",
         steps: "Before responding to any request, take one slow, full breath in through the nose. Exhale long, through the mouth. Then respond." },
-      movement: { title: "Bilateral Tapping", why: "A quick, low-effort practice that calms the nervous system without requiring performance or output.",
-        steps: "Cross your arms over your chest and alternate tapping each shoulder slowly, or tap alternating knees, for 2-3 minutes while breathing slowly." },
+      movement: { title: "Self-Touch Activation", why: "Gentle, intentional touch offers a quiet way to reconnect with yourself instead of attending to anyone else.",
+        steps: "Place your hands on your face in a slow, skincare-ritual style. Move slowly and with intention for 5 minutes. There is nowhere to get to." },
       scent: { title: "Heart Opening Blend", why: "This blend supports self-connection, which is what a fawn response tends to override.",
         steps: "Apply Heart Opening blend to your chest and pulse points. Breathe it in slowly for a minute.", aroma: "fawn" },
       sound: { title: "Bilateral Tapping", why: "Bilateral stimulation offers quiet regulation without needing to explain or justify anything to anyone.",
@@ -647,7 +681,256 @@ var PRACTICE_BANK = {
   }
 };
 
-/* ============ RESULT RENDERING ============ */
+/* ============ DATA: BREATH ROTATION (alternates so breath modality doesn't repeat) ============ */
+var BREATH_ALTS = {
+  fight: {
+    "5": [
+      { title: "Physiological Sigh", why: "Your body is flooded and needs a fast, physical down-shift before anything else can land.",
+        steps: "Double inhale through the nose (a short sip of air, then a second smaller sip on top), followed by one long, slow exhale through the mouth. Repeat 3-5 times." },
+      { title: "Box Breathing (Short)", why: "Even, structured counts regulate fight energy without needing extra time.",
+        steps: "Inhale 4 counts, hold 4, exhale 4, hold 4. Repeat 4 rounds." },
+      { title: "Coherence Breathing (Short)", why: "A steady, even count offers a calmer down-shift when the double-inhale sigh feels like too much right now.",
+        steps: "Inhale for 5 counts, exhale for 5 counts. Continue for 3 minutes, letting the count itself be the anchor." }
+    ],
+    "10": [
+      { title: "Box Breathing", why: "Box breathing regulates fight and hypervigilance energy through structured, even counts.",
+        steps: "Inhale 4 counts, hold 4, exhale 4, hold 4. Repeat 4-6 rounds." },
+      { title: "Physiological Sigh (Extended)", why: "A longer round of the double-inhale sigh gives sustained down-regulation when the activation is deeper.",
+        steps: "Double inhale through the nose, then one long, slow exhale through the mouth. Repeat 8-10 times, letting each exhale get a little longer than the last." },
+      { title: "Coherence Breathing", why: "A steady, even count offers sustained regulation without the structure of holds.",
+        steps: "Inhale for 5 counts, exhale for 5 counts. Continue for 8 minutes, letting the count itself be the anchor." }
+    ],
+    "30": [
+      { title: "Box Breathing + Somatic Yoga Flow", why: "Extended practice lets the nervous system fully discharge and reset.",
+        steps: "Box breathing for 4-6 rounds, then move through the full Somatic Yoga Flow: Cat Cow, Child's Pose, Thread the Needle, The Greatest Stretch, Extended Leg reaching for toe, Pigeon, Down Dog, Forward Fold swaying, Rise to prayer, Closing." },
+      { title: "Physiological Sigh + Somatic Yoga Flow", why: "A fast-acting breath opener followed by extended movement gives the body two ways to discharge activation.",
+        steps: "Physiological sigh for 10 rounds, then move through the full Somatic Yoga Flow: Cat Cow, Child's Pose, Thread the Needle, The Greatest Stretch, Extended Leg reaching for toe, Pigeon, Down Dog, Forward Fold swaying, Rise to prayer, Closing." },
+      { title: "Coherence Breathing + Somatic Yoga Flow", why: "A steady, sustained count followed by extended movement offers a calmer entry point into the same reset.",
+        steps: "Coherence breathing (inhale 5, exhale 5) for 10 minutes, then move through the full Somatic Yoga Flow: Cat Cow, Child's Pose, Thread the Needle, The Greatest Stretch, Extended Leg reaching for toe, Pigeon, Down Dog, Forward Fold swaying, Rise to prayer, Closing." }
+    ]
+  },
+  flight: {
+    "5": [
+      { title: "4-7-8 Breathing", why: "A longer exhale count signals safety fast, which interrupts a racing mind before it spirals further.",
+        steps: "Inhale through the nose for 4 counts, hold for 7, exhale through the mouth for 8. Repeat 4 rounds." },
+      { title: "Coherence Breathing", why: "Even, steady breathing brings the nervous system out of overdrive without needing to stop the thoughts first.",
+        steps: "Inhale for 5 counts, exhale for 5 counts. Continue for 5 minutes, letting the count itself be the anchor." },
+      { title: "Bilateral Breathing (Short)", why: "Alternating nostrils gives a racing mind a specific physical task to follow instead of the spiral.",
+        steps: "Inhale through the left nostril with the right closed, exhale through the right nostril with the left closed. Alternate for 4-6 rounds." }
+    ],
+    "10": [
+      { title: "4-7-8 Breathing + Bilateral Breathing", why: "Combines a fast down-shift with a longer regulation practice that specifically targets racing thoughts.",
+        steps: "4-7-8 breathing for 4 rounds, then bilateral breathing: inhale through the left nostril with the right closed, exhale through the right nostril with the left closed, alternating for 6-10 rounds." },
+      { title: "Coherence Breathing (Extended)", why: "A longer, steady count gives a racing mind more time to settle into a single rhythm.",
+        steps: "Inhale for 5 counts, exhale for 5 counts. Continue for 8-10 minutes, letting the count itself be the anchor." },
+      { title: "Bilateral Breathing (Extended)", why: "A longer, uninterrupted round of alternate-nostril breathing gives sustained focus for a racing mind.",
+        steps: "Inhale through the left nostril with the right closed, exhale through the right nostril with the left closed. Continue alternating for 10-12 rounds." }
+    ],
+    "30": [
+      { title: "Bilateral Breathing + Somatic Yoga Flow", why: "Extended breathwork paired with movement lets a spiraling mind fully settle into the body.",
+        steps: "Bilateral breathing for 6-10 rounds, then move through the full Somatic Yoga Flow: Cat Cow, Child's Pose, Thread the Needle, The Greatest Stretch, Extended Leg reaching for toe, Pigeon, Down Dog, Forward Fold swaying, Rise to prayer, Closing." },
+      { title: "4-7-8 Breathing + Somatic Yoga Flow", why: "A structured breath count followed by extended movement gives a racing mind two different anchors to settle into.",
+        steps: "4-7-8 breathing for 10 rounds, then move through the full Somatic Yoga Flow: Cat Cow, Child's Pose, Thread the Needle, The Greatest Stretch, Extended Leg reaching for toe, Pigeon, Down Dog, Forward Fold swaying, Rise to prayer, Closing." },
+      { title: "Coherence Breathing + Somatic Yoga Flow", why: "A steady, sustained count followed by extended movement offers a calmer, more even entry into the same reset.",
+        steps: "Coherence breathing (inhale 5, exhale 5) for 10 minutes, then move through the full Somatic Yoga Flow: Cat Cow, Child's Pose, Thread the Needle, The Greatest Stretch, Extended Leg reaching for toe, Pigeon, Down Dog, Forward Fold swaying, Rise to prayer, Closing." }
+    ]
+  },
+  freeze: {
+    "5": [
+      { title: "Balloon Breathing", why: "A slow, gentle breath practice meets a shut-down nervous system without demanding more activation than it can offer right now.",
+        steps: "Inhale slowly, imagining you are filling a balloon in your belly. Exhale slowly, letting it deflate. Repeat 5-8 rounds." },
+      { title: "Extended Exhale (Short)", why: "A longer exhale gently signals safety to a nervous system that has gone offline, without asking too much of it.",
+        steps: "Inhale for 4 counts, exhale for 8 counts. Repeat 4-6 rounds." },
+      { title: "Coherence Breathing (Gentle)", why: "An even, unhurried count offers a low-demand way to reconnect with breath when balloon breathing feels like too much.",
+        steps: "Inhale for 5 counts, exhale for 5 counts. Continue for 3 minutes, letting the count itself be the anchor." }
+    ],
+    "10": [
+      { title: "Balloon Breathing + Extended Exhale", why: "Layering two gentle breath practices slowly increases activation without overwhelming a frozen system.",
+        steps: "Balloon breathing for 5-8 rounds, then extended exhale: inhale for 4 counts, exhale for 8 counts, for 6-8 rounds." },
+      { title: "Extended Exhale (Full)", why: "A longer, uninterrupted round of extended exhale gives a shut-down system more time to gradually come back online.",
+        steps: "Inhale for 4 counts, exhale for 8 counts. Continue for 10-12 rounds, letting the exhale lengthen slightly each time." },
+      { title: "Coherence Breathing (Extended, Gentle)", why: "A longer, even count offers sustained reconnection without needing extended holds or counts.",
+        steps: "Inhale for 5 counts, exhale for 5 counts. Continue for 8-10 minutes, letting the count itself be the anchor." }
+    ],
+    "30": [
+      { title: "Somatic Yoga Flow (Balloon Breath Opener)", why: "A longer, slow-paced flow offers enough time for a frozen system to gradually re-engage.",
+        steps: "Begin with balloon breathing for 5-8 rounds, then move through the full Somatic Yoga Flow, moving slowly and pausing wherever needed: Cat Cow, Child's Pose, Thread the Needle, The Greatest Stretch, Extended Leg reaching for toe, Pigeon, Down Dog, Forward Fold swaying, Rise to prayer, Closing." },
+      { title: "Somatic Yoga Flow (Extended Exhale Opener)", why: "Opening with a longer exhale settles the nervous system before asking the body to move.",
+        steps: "Begin with extended exhale breathing for 8-10 rounds, then move through the full Somatic Yoga Flow, moving slowly and pausing wherever needed: Cat Cow, Child's Pose, Thread the Needle, The Greatest Stretch, Extended Leg reaching for toe, Pigeon, Down Dog, Forward Fold swaying, Rise to prayer, Closing." },
+      { title: "Somatic Yoga Flow (Coherence Breath Opener)", why: "Opening with a gentle, even count offers the lowest-demand entry point into the same longer reset.",
+        steps: "Begin with Coherence Breathing (inhale 5, exhale 5) for 8-10 minutes, then move through the full Somatic Yoga Flow, moving slowly and pausing wherever needed: Cat Cow, Child's Pose, Thread the Needle, The Greatest Stretch, Extended Leg reaching for toe, Pigeon, Down Dog, Forward Fold swaying, Rise to prayer, Closing." }
+    ]
+  },
+  fawn: {
+    "5": [
+      { title: "Boundary Breath", why: "One slow breath before responding creates a pause where an actual choice becomes possible.",
+        steps: "Before responding to any request, take one slow, full breath in through the nose. Exhale long, through the mouth. Then respond." },
+      { title: "Extended Exhale (Short)", why: "A longer exhale gives the nervous system a moment to settle before defaulting into a performed response.",
+        steps: "Inhale for 4 counts, exhale for 8 counts. Repeat 4-6 rounds." },
+      { title: "Coherence Breathing (Short)", why: "A steady, even count offers a quiet way to reconnect with yourself without needing to respond to anyone yet.",
+        steps: "Inhale for 5 counts, exhale for 5 counts. Continue for 3 minutes, letting the count itself be the anchor." }
+    ],
+    "10": [
+      { title: "Boundary Breath + Extended Exhale", why: "Combines an in-the-moment pause practice with a longer regulation practice suited to fawn deactivation.",
+        steps: "Boundary breath before your next response, then extended exhale: inhale 4 counts, exhale 8 counts, for 6-8 rounds." },
+      { title: "Extended Exhale (Full) + Boundary Breath", why: "A longer regulation round, closed out with the in-the-moment pause practice you can carry back into your day.",
+        steps: "Extended exhale: inhale 4 counts, exhale 8 counts, for 8-10 rounds. Close by taking one boundary breath, deciding what you will carry with you before you respond to anything else today." },
+      { title: "Coherence Breathing (Extended)", why: "A longer, even count offers sustained self-connection without needing to prepare for anyone else's response.",
+        steps: "Inhale for 5 counts, exhale for 5 counts. Continue for 8-10 minutes, letting the count itself be the anchor." }
+    ],
+    "30": [
+      { title: "Somatic Yoga Flow", why: "An extended flow gives space to notice the body without performing for anyone in it.",
+        steps: "Full Somatic Yoga Flow: Cat Cow, Child's Pose, Thread the Needle, The Greatest Stretch, Extended Leg reaching for toe, Pigeon, Down Dog, Forward Fold swaying, Rise to prayer, Closing." },
+      { title: "Somatic Yoga Flow (Boundary Breath Integrated)", why: "Weaving the boundary breath into each transition builds the pause directly into the body, not just the mind.",
+        steps: "Move through the full Somatic Yoga Flow, taking one boundary breath (slow inhale through the nose, long exhale through the mouth) at each transition between poses: Cat Cow, Child's Pose, Thread the Needle, The Greatest Stretch, Extended Leg reaching for toe, Pigeon, Down Dog, Forward Fold swaying, Rise to prayer, Closing." },
+      { title: "Somatic Yoga Flow (Coherence Breath Opener)", why: "Opening with a steady, even count offers a quieter entry point into the same extended flow.",
+        steps: "Begin with Coherence Breathing (inhale 5, exhale 5) for 8-10 minutes, then move through the full Somatic Yoga Flow: Cat Cow, Child's Pose, Thread the Needle, The Greatest Stretch, Extended Leg reaching for toe, Pigeon, Down Dog, Forward Fold swaying, Rise to prayer, Closing." }
+    ]
+  }
+};
+
+
+/* ============ DATA: ALTERNATES FOR MOVEMENT, SCENT, SOUND, GUIDED ============ */
+var MODALITY_ALTS = {
+  movement: {
+    fight: {
+      "5": { title: "Grounding Walk (Short)", why: "A brisk short walk gives fight energy somewhere to go while still fitting a short window.",
+        steps: "Walk briskly for 3-5 minutes, letting your arms swing and your steps land with a little more weight than usual. Notice your feet hitting the ground." },
+      "10": { title: "Qigong Flow (Partial)", why: "A structured sequence channels fight energy into deliberate, contained movement.",
+        steps: "Body wave x3, arm swings x10 each direction, chest opener x3, punches x20, closing body wave x1." },
+      "30": { title: "Extended Shaking + Grounding Walk", why: "A longer discharge followed by sustained walking lets fight energy fully move through and out.",
+        steps: "Shake from the feet up for 5 minutes, letting the whole body move. Then walk for 15-20 minutes, letting your pace settle as you go." }
+    },
+    flight: {
+      "5": { title: "Grounding Walk (Short)", why: "A short walk paired with sensory noticing interrupts a spiral quickly.",
+        steps: "Walk slowly for 3-5 minutes. Notice 3 things you see, 2 things you hear, 1 thing you feel underfoot." },
+      "10": { title: "Bilateral Tapping (Extended)", why: "A longer bilateral practice gives a racing mind more time to settle into rhythm.",
+        steps: "Cross your arms and alternate tapping each shoulder slowly, or tap alternating knees, for 5-6 minutes while breathing slowly." },
+      "30": { title: "Qigong Flow (Partial) + Grounding Walk", why: "Structured movement followed by a longer walk gives a spiraling mind two different ways to settle.",
+        steps: "Body wave x3, arm swings x10 each direction, trunk twist x6 each side, closing body wave x1. Then walk for 10-15 minutes, noticing your surroundings." }
+    },
+    freeze: {
+      "5": { title: "Grounding Walk (Very Short)", why: "Even a minute of intentional movement offers a low-demand way back into the body.",
+        steps: "Stand and take 10 slow steps, feeling each foot connect with the ground. Notice the weight shifting from one foot to the other." },
+      "10": { title: "Self-Touch Activation (Extended)", why: "A longer round of gentle touch offers more time for a shut-down body to reconnect.",
+        steps: "Place your hands on your face in a slow, skincare-ritual style. Move slowly and with intention for 8-10 minutes. There is nowhere to get to." },
+      "30": { title: "Self-Touch Activation + Qigong Flow (Partial)", why: "Gentle touch followed by structured movement offers a gradual bridge back into a fuller range of motion.",
+        steps: "Self-Touch Activation for 5 minutes, then: body wave x3, arm swings x10 each direction, chest opener x3, march with high knees x10 each side, closing body wave x1." }
+    },
+    fawn: {
+      "5": { title: "Grounding Walk (Short)", why: "A short walk offers a private moment away from anyone's needs but your own.",
+        steps: "Walk slowly for 3-5 minutes with no destination, noticing what you notice." },
+      "10": { title: "Qigong Flow (Partial)", why: "Structured movement gives you permission to take up physical space without needing to explain why.",
+        steps: "Body wave x3, arm swings x10 each direction, chest opener x3, march with high knees x10 each side, closing body wave x1." },
+      "30": { title: "Grounding Walk + Self-Touch Activation", why: "Time alone moving, followed by intentional touch, offers two ways to come back to yourself.",
+        steps: "Walk slowly for 10-15 minutes with no agenda beyond noticing your surroundings. Then Self-Touch Activation, hands on face in slow, intentional touch, for 5 minutes." }
+    }
+  },
+  scent: {
+    fight: {
+      "5": { title: "Warmth (Quick)", why: "A temperature-based cue works when scent or water access isn't there, giving a different kind of down-shift than the blend.",
+        steps: "Hold a warm drink or a warm object with both hands for one minute, feeling the weight and temperature." },
+      "10": { title: "Cold Water (Extended)", why: "Alternating temperature gives the nervous system a stronger physical signal than scent alone.",
+        steps: "Run cool water over your wrists and neck for 60-90 seconds, then hold your wrists under warm water for 30 seconds, noticing the shift." },
+      "30": { title: "Warmth + Walk", why: "A slower, temperature-based ritual paired with movement offers a different pathway than scent for a longer reset.",
+        steps: "Hold a warm drink with both hands for a few minutes, then walk slowly outside for 15-20 minutes." }
+    },
+    flight: {
+      "5": { title: "Cold Water (Only)", why: "A purely physical cue can interrupt a racing mind even faster than scent, without needing anything applied.",
+        steps: "Run cold water over your wrists and the back of your neck for 30-60 seconds." },
+      "10": { title: "Cold Water + Grounded Pause", why: "Combining a fast physical reset with a brief sensory check-in gives a racing mind two different anchors.",
+        steps: "Cold water on your wrists for 30-60 seconds, then notice 3 things you can see, 2 you can hear, 1 you can feel." },
+      "30": { title: "Warmth Ritual (Extended)", why: "A slower, weighted warmth practice offers sustained regulation without relying on scent.",
+        steps: "Hold a warm drink with both hands. Sip slowly for 15-20 minutes, letting the warmth and weight be the only thing you focus on." }
+    },
+    freeze: {
+      "5": { title: "Warmth (Quick)", why: "Warmth alone signals safety to a nervous system that has gone offline.",
+        steps: "Hold a warm drink or a warm object with both hands. Feel the weight and temperature for one minute." },
+      "10": { title: "Warmth (Extended)", why: "A longer, purely temperature-based practice gives a shut-down system time to register safety without needing scent.",
+        steps: "Hold a warm drink with both hands for 8-10 minutes, sipping slowly, letting the warmth spread through your hands and chest." },
+      "30": { title: "Warmth Ritual + Self-Touch", why: "Pairing sustained warmth with gentle touch offers two different safety cues for a longer reset.",
+        steps: "Hold a warm drink with both hands for several minutes. Follow with Self-Touch Activation, hands on face in slow, intentional touch, for 5 minutes." }
+    },
+    fawn: {
+      "5": { title: "Warmth (Quick)", why: "A temperature-based cue offers self-connection without relying on the same blend.",
+        steps: "Hold a warm drink with both hands for one minute, feeling the weight and warmth without needing to do anything else." },
+      "10": { title: "Warmth (Extended)", why: "A longer warmth practice offers sustained self-connection through a different sense than scent.",
+        steps: "Hold a warm drink with both hands, sipping slowly for 8-10 minutes, letting the warmth ground you without needing to perform anything." },
+      "30": { title: "Warmth Ritual + Walk", why: "Sustained warmth paired with time alone outside offers two different ways to reconnect with what you want.",
+        steps: "Hold a warm drink with both hands for several minutes, then walk slowly for 10-15 minutes, noticing what you want rather than what's expected." }
+    }
+  },
+  sound: {
+    fight: {
+      "5": { title: "Grounded Pause", why: "A quick sensory anchor meets activation without needing physical touch.",
+        steps: "Feel your feet on the floor. Notice 3 things you can see, 2 you can hear, 1 you can touch. Let your jaw unclench on the exhale." },
+      "10": { title: "Body Scan (Naming Tension)", why: "Naming where activation lives in the body creates distance from it without needing to fix it.",
+        steps: "Sit with feet flat. Scan slowly from feet to head, naming quietly where you feel tension. No need to release it yet, just name it." },
+      "30": { title: "Bilateral Tapping (Extended) + Body Scan", why: "A longer bilateral practice followed by a full scan tracks where the activation has moved.",
+        steps: "Bilateral tapping for 5 minutes, then a full body scan from feet to crown, noticing where the activation has settled now." }
+    },
+    flight: {
+      "5": { title: "Bilateral Tapping", why: "Bilateral stimulation calms a racing mind quickly without needing stillness it can't hold yet.",
+        steps: "Cross your arms over your chest and alternate tapping each shoulder slowly, or tap alternating knees, for 2-3 minutes." },
+      "10": { title: "Body Scan (Adapted)", why: "A slow scan gives a racing mind somewhere specific to focus instead of spinning freely.",
+        steps: "Sit with feet flat on the floor. Slowly scan from feet to crown, 5-7 minutes, naming what you notice without needing to change it." },
+      "30": { title: "Bilateral Tapping (Extended) + Body Scan", why: "A longer bilateral practice followed by a full scan gives a racing mind two different ways to settle.",
+        steps: "Bilateral tapping for 5-6 minutes, then a full body scan from feet to crown, noticing what has shifted." }
+    },
+    freeze: {
+      "5": { title: "Grounded Pause", why: "A brief sensory check-in meets numbness without asking too much of it.",
+        steps: "Notice one thing you can see, one thing you can hear, one thing you can feel under your hands. That's enough for now." },
+      "10": { title: "Statement Scan (Adapted)", why: "Reading slowly and noticing without fixing gives a shut-down body permission to feel what's there.",
+        steps: "Read slowly, pausing after each: I have been waiting for permission to fully show up as myself. I know what needs to change. I have known for a long time. Notice where in your body each statement lands." },
+      "30": { title: "Body Scan (Extended) + Grounded Pause", why: "A longer scan followed by a brief sensory check-in reinforces reconnection at the end.",
+        steps: "Full Body Scan, 7-10 minutes, scanning slowly from feet to crown. Close by noticing one thing you can see, one you can hear, one you can feel." }
+    },
+    fawn: {
+      "5": { title: "Grounded Pause", why: "A brief sensory check-in offers quiet regulation without needing to explain anything to anyone.",
+        steps: "Notice 3 things you can see, 2 things you can hear, 1 thing you can feel under your hands. Let your shoulders drop." },
+      "10": { title: "Body Scan (Adapted)", why: "A slow scan gives you a private way to notice your own needs without performing for anyone else.",
+        steps: "Sit with feet flat on the floor. Slowly scan from feet to crown, 5-7 minutes, noticing without needing to fix or explain anything you find." },
+      "30": { title: "Bilateral Tapping (Extended) + Body Scan", why: "A longer bilateral practice followed by a full scan offers sustained, quiet regulation.",
+        steps: "Bilateral tapping for 5-6 minutes, then a full body scan from feet to crown, noticing what has shifted." }
+    }
+  },
+  guided: {
+    fight: {
+      "5": { title: "EFT Tapping (Ultra-Short)", why: "Two tapping points can interrupt the activation cycle even with almost no time.",
+        steps: "Tap the karate chop point 3 times while saying: I am allowed to feel this. Tap the top of the head: I can handle what is mine to handle." },
+      "10": { title: "Sovereignty Imagination (Short)", why: "A brief imagination practice gives fight energy a grounded, embodied place to land.",
+        steps: "Take three slow breaths. Imagine yourself standing tall in a room, shoulders back, feeling the ground under your feet. Let that feeling anchor for a minute." },
+      "30": { title: "Statement Scan + Sovereignty Imagination", why: "Naming what's underneath the activation, then embodying a grounded version of yourself, moves through both layers.",
+        steps: "Full Statement Scan, reading each statement slowly and pausing after each. Then the Sovereignty Imagination: three slow breaths, imagining yourself walking into a room feeling at home in your own body, feeling the ground under each step, letting that feeling anchor in your chest, your feet, your spine." }
+    },
+    flight: {
+      "5": { title: "EFT Tapping (Ultra-Short)", why: "Two tapping points offer quick relief when there is almost no time.",
+        steps: "Tap the karate chop point 3 times while saying: My mind keeps spinning and that's okay. Tap the top of the head: I am safe to slow down." },
+      "10": { title: "Future Self Imagination (Short)", why: "A brief imagination practice gives a racing mind a stable, trusted version of you to return to.",
+        steps: "Close your eyes or soften your gaze. Take three slow breaths. Imagine the version of you who has already worked through this moment standing nearby. Notice how she holds herself. Let that feeling stay with you for a minute." },
+      "30": { title: "EFT Tapping + Safe Place Imagination (Extended)", why: "Releasing the anxious belief first, then settling into an imagined safe place, moves through both layers.",
+        steps: "Full EFT Flight tapping sequence (setup phrase, eight points, closing statement). Then the full Safe Place Imagination, staying as long as you need." }
+    },
+    freeze: {
+      "5": { title: "Self-Touch Activation (Guided)", why: "Gentle touch paired with a few words offers a low-demand entry point for a shut-down body.",
+        steps: "Place a hand on your chest and one on your belly. Say quietly: I am allowed to start small. Breathe under your hands for one minute." },
+      "10": { title: "Safe Place Imagination (Short)", why: "A brief imagination practice gives a numb or frozen body somewhere safe to land.",
+        steps: "Take a slow breath in and let it go. Imagine a place that feels completely safe. Notice what is under your feet and the temperature of the air. Let your body feel the safety of this place for a minute." },
+      "30": { title: "EFT Tapping + Safe Place Imagination", why: "Releasing the belief underneath the shutdown, then resting somewhere safe, moves through both layers.",
+        steps: "Full EFT Freeze tapping sequence (setup phrase, eight points, closing statement). Then the full Safe Place Imagination, staying as long as you need." }
+    },
+    fawn: {
+      "5": { title: "Reflection (Quick)", why: "A direct question, without needing to tap through a script, counters the reflex to defer even in a short window.",
+        steps: "Ask yourself quietly: what would I choose right now if no one's reaction mattered? Notice the first answer that comes, without editing it." },
+      "10": { title: "Reflection (Without Tapping)", why: "A direct question, without needing to explain your answer to anyone, counters the reflex to defer.",
+        steps: "Sit quietly and ask yourself: if no one's reaction mattered right now, what would I actually choose? Let the answer come without editing it. Write it down if that helps it stay real." },
+      "30": { title: "EFT Tapping + Future Self Imagination", why: "Releasing the fawn pattern, then imagining a version of you who already trusts her own needs, moves through both layers.",
+        steps: "Full EFT Fawn tapping sequence (setup phrase, eight points, closing statement). Then: close your eyes or soften your gaze, take three slow breaths, imagine the version of you who has done the work standing nearby, notice how she holds herself, notice what she says or how she makes you feel, stay as long as you need." }
+    }
+  }
+};
+
+
 function calculateResult() {
   document.getElementById('assessment').style.display = 'none';
   document.getElementById('result').style.display = 'block';
@@ -655,20 +938,78 @@ function calculateResult() {
 
   var firstName = document.getElementById('firstName').value.trim() || 'there';
   var archetypeCode = document.getElementById('archetypeSelect').value;
-  var practice = PRACTICE_BANK[selectedState][selectedTime][selectedModality];
   var patternInfo = PATTERNS[selectedState];
-  var aroma = STATE_AROMA[selectedState];
 
   document.getElementById('result-greeting').innerHTML = firstName + ', <em>here is your regulation protocol.</em>';
 
-  document.getElementById('practice-title').textContent = practice.title;
-  var practiceHtml = '<p><strong>Why this matches:</strong> ' + practice.why + '</p>';
-  practiceHtml += '<h4>Steps</h4><p>' + practice.steps + '</p>';
-  if (practice.aroma) {
-    var a = STATE_AROMA[practice.aroma];
-    practiceHtml += '<h4>Aromatherapy</h4><p>' + a.name + ' blend</p><span class="aroma-tag">' + a.formula + '</span>';
+  /* Build a uniform parts list: one part per selected modality.
+     Single modality at any time length uses the full dedicated tier entry.
+     Multiple modalities use a shorter component tier so they stack into one session. */
+  var multi = selectedModalities.length > 1;
+  var componentTier = multi ? (selectedTime === '30' ? '10' : '5') : selectedTime;
+
+  currentParts = selectedModalities.map(function(mod){
+    var alts = getAlts(selectedState, componentTier, mod);
+    return { modality: mod, tier: componentTier, alts: alts, altIndex: 0 };
+  });
+
+  if (multi) {
+    document.getElementById('practice-title').textContent = 'Your Full Regulation Toolkit';
   }
+
+  renderParts();
+}
+
+function getAlts(state, tier, modality) {
+  if (modality === 'breath') { return BREATH_ALTS[state][tier]; }
+  var primary = PRACTICE_BANK[state][tier][modality];
+  var alt = MODALITY_ALTS[modality] && MODALITY_ALTS[modality][state] && MODALITY_ALTS[modality][state][tier];
+  return alt ? [primary, alt] : [primary];
+}
+
+function swapPart(i) {
+  var part = currentParts[i];
+  part.altIndex = (part.altIndex + 1) % part.alts.length;
+  renderParts();
+}
+
+function renderParts() {
+  var multi = currentParts.length > 1;
+  var practiceHtml = '';
+
+  if (multi) {
+    practiceHtml += '<p><strong>Why this matches:</strong> Layering practices across ' + currentParts.length + ' modalities gives your nervous system more than one entry point back to regulated. Move through each part in order.</p>';
+  }
+
+  currentParts.forEach(function(part, i){
+    var entry = part.alts[part.altIndex];
+    var hasAlt = part.alts.length > 1;
+
+    if (multi) {
+      practiceHtml += '<div class="plan-part">';
+      practiceHtml += '<p class="plan-part-label">Part ' + (i + 1) + ' of ' + currentParts.length + '</p>';
+      practiceHtml += '<h4 style="font-size:1rem;text-transform:none;letter-spacing:0;color:#FFFFFF;margin-bottom:8px;">' + entry.title + '</h4>';
+      practiceHtml += '<p>' + entry.steps + '</p>';
+    } else {
+      document.getElementById('practice-title').textContent = entry.title;
+      practiceHtml += '<p><strong>Why this matches:</strong> ' + entry.why + '</p>';
+      practiceHtml += '<h4>Steps</h4><p>' + entry.steps + '</p>';
+    }
+
+    if (entry.aroma) {
+      var a = STATE_AROMA[entry.aroma];
+      practiceHtml += '<span class="aroma-tag">' + a.name + ': ' + a.formula + '</span>';
+    }
+    if (hasAlt) {
+      practiceHtml += '<div><button class="btn-skip" onclick="swapPart(' + i + ')" style="padding-left:0;margin-top:8px;">Try a different one \u21bb</button></div>';
+    }
+    if (multi) { practiceHtml += '</div>'; }
+  });
+
   document.getElementById('practice-content').innerHTML = practiceHtml;
+
+  var patternInfo = PATTERNS[selectedState];
+  var archetypeCode = document.getElementById('archetypeSelect').value;
 
   document.getElementById('pattern-title').textContent = patternInfo.label + ' Patterns';
   var patternHtml = '<p>This state most often connects to ' + patternInfo.label + ' patterns: ' + patternInfo.patterns.join(', ') + '. This connects to your pattern assessment results.</p>';
