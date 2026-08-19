@@ -1,1 +1,1205 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Nervous System Regulation Toolkit — On Purpose Evolution</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
+  :root {
+    --purple-dark:  #2D1147;
+    --purple:       #5B2D8E;
+    --purple-mid:   #7B4DB8;
+    --purple-light: #F0EAF7;
+    --gold:         #C9A876;
+    --white:        #FFFFFF;
+    --off-white:    #F5F0FA;
+    --gray:         #CCBBDD;
+  }
+
+  html { scroll-behavior: smooth; }
+  body { font-family: 'Inter', sans-serif; background: #1A0830; color: var(--white); min-height: 100vh; line-height: 1.7; }
+
+  /* COVER */
+  #cover {
+    min-height: 100vh; display: flex; flex-direction: column;
+    align-items: center; justify-content: center; text-align: center;
+    padding: 60px 24px;
+    background: linear-gradient(160deg, #1A0830 0%, #2D1147 50%, #3D1B5E 100%);
+  }
+  .cover-eyebrow { font-size: 11px; font-weight: 600; letter-spacing: 4px; text-transform: uppercase; color: var(--gold); margin-bottom: 24px; }
+  .cover-title { font-family: 'Playfair Display', serif; font-size: clamp(2.2rem, 6vw, 4rem); font-weight: 700; line-height: 1.15; max-width: 700px; margin-bottom: 8px; color: #FFFFFF; }
+  .cover-title em { font-style: italic; color: var(--gold); }
+  .cover-divider { width: 80px; height: 1px; background: var(--gold); margin: 28px auto; }
+  .cover-sub { font-size: clamp(1rem, 2vw, 1.15rem); color: #E8DFF5; max-width: 520px; margin-bottom: 48px; }
+  .cover-byline { margin-top: 40px; font-size: 0.8rem; color: #A090BB; letter-spacing: 1px; }
+
+  /* BUTTONS */
+  .btn-primary {
+    display: inline-block; background: var(--gold); color: #1A0830;
+    font-weight: 700; font-size: 0.95rem; letter-spacing: 1px; text-transform: uppercase;
+    padding: 16px 48px; border: none; cursor: pointer; border-radius: 2px;
+    font-family: 'Inter', sans-serif; transition: opacity 0.2s;
+  }
+  .btn-primary:hover { opacity: 0.88; }
+
+  .btn-next {
+    background: var(--gold); color: #1A0830; font-weight: 700; font-size: 0.9rem;
+    letter-spacing: 1px; text-transform: uppercase; padding: 14px 36px;
+    border: none; cursor: pointer; border-radius: 2px; font-family: 'Inter', sans-serif;
+    transition: opacity 0.2s;
+  }
+  .btn-next:hover { opacity: 0.88; }
+  .btn-next:disabled { opacity: 0.35; cursor: not-allowed; }
+
+  .btn-back {
+    background: transparent; border: 1px solid rgba(255,255,255,0.3);
+    color: #D0C0E8; font-size: 0.85rem; padding: 14px 24px;
+    cursor: pointer; border-radius: 2px; font-family: 'Inter', sans-serif; transition: all 0.2s;
+  }
+  .btn-back:hover { border-color: var(--gold); color: var(--white); }
+
+  .btn-skip {
+    background: transparent; border: none; text-decoration: underline;
+    color: #B0A0CC; font-size: 0.85rem; padding: 14px 6px;
+    cursor: pointer; font-family: 'Inter', sans-serif; transition: color 0.2s;
+  }
+  .btn-skip:hover { color: var(--gold); }
+
+  /* ASSESSMENT */
+  #assessment { display: none; min-height: 100vh; background: linear-gradient(180deg, #1A0830 0%, #2D1147 100%); padding: 0 0 80px; }
+
+  .assessment-header { background: rgba(255,255,255,0.06); border-bottom: 1px solid rgba(201,168,118,0.25); padding: 20px 24px; text-align: center; }
+  .assessment-header h2 { font-family: 'Playfair Display', serif; font-size: 1.1rem; color: var(--gold); font-weight: 400; letter-spacing: 1px; }
+  .progress-bar-wrap { height: 3px; background: rgba(255,255,255,0.15); margin-top: 12px; border-radius: 2px; overflow: hidden; }
+  .progress-bar-fill { height: 100%; background: var(--gold); border-radius: 2px; transition: width 0.4s ease; width: 0%; }
+
+  .question-wrap { max-width: 680px; margin: 0 auto; padding: 60px 24px 40px; }
+  .question-card { display: none; }
+  .question-card.active { display: block; animation: fadeUp 0.35s ease; }
+
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: translateY(0); } }
+
+  .question-eyebrow { font-size: 10px; font-weight: 700; letter-spacing: 3px; text-transform: uppercase; color: var(--gold); margin-bottom: 16px; }
+  .question-text { font-family: 'Playfair Display', serif; font-size: clamp(1.3rem, 3vw, 1.8rem); font-weight: 700; line-height: 1.35; margin-bottom: 12px; color: #FFFFFF; }
+  .question-desc { font-size: 0.92rem; color: #C8B8DF; margin-bottom: 32px; font-style: italic; }
+
+  .section-header-card { text-align: center; padding: 20px 0 10px; }
+  .section-header-card h3 { font-family: 'Playfair Display', serif; font-size: 1.6rem; color: var(--gold); margin-bottom: 14px; }
+  .section-header-card p { color: #D5C8E8; font-size: 0.95rem; max-width: 520px; margin: 0 auto; }
+
+  /* CHOICES */
+  .choices { display: flex; flex-direction: column; gap: 10px; }
+  .choice-btn {
+    background: rgba(255,255,255,0.07); border: 1px solid rgba(255,255,255,0.18);
+    border-radius: 4px; padding: 18px 22px; text-align: left; cursor: pointer;
+    color: #EDE5F8; font-size: 0.95rem; font-family: 'Inter', sans-serif; line-height: 1.5;
+    transition: all 0.18s;
+  }
+  .choice-btn:hover { background: rgba(201,168,118,0.14); border-color: var(--gold); color: #FFFFFF; }
+  .choice-btn.selected { background: rgba(201,168,118,0.2); border-color: var(--gold); color: #FFFFFF; }
+  .choice-btn:disabled { opacity: 0.3; cursor: not-allowed; }
+  .choice-btn:disabled:hover { background: rgba(255,255,255,0.07); border-color: rgba(255,255,255,0.18); color: #EDE5F8; }
+
+  .plan-part { margin-bottom: 28px; padding-bottom: 24px; border-bottom: 1px solid rgba(201,168,118,0.15); }
+  .plan-part:last-child { border-bottom: none; margin-bottom: 0; padding-bottom: 0; }
+  .plan-part-label { font-size: 10px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: var(--gold); margin-bottom: 6px; }
+
+  /* INPUTS */
+  .input-wrap { margin-bottom: 20px; }
+  .input-wrap label { display: block; font-size: 10px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: var(--gold); margin-bottom: 8px; }
+  .input-wrap input {
+    width: 100%; background: rgba(255,255,255,0.09); border: 1px solid rgba(255,255,255,0.2);
+    border-radius: 4px; padding: 14px 16px; color: #FFFFFF; font-family: 'Inter', sans-serif; font-size: 0.95rem;
+  }
+  .input-wrap input:focus { outline: none; border-color: var(--gold); }
+  .input-wrap input::placeholder { color: rgba(255,255,255,0.35); }
+
+  /* DROPDOWNS */
+  .dropdown-wrap { margin-bottom: 24px; }
+  .dropdown-wrap label { display: block; font-size: 10px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: var(--gold); margin-bottom: 8px; }
+  .dropdown-wrap select {
+    width: 100%; background: rgba(255,255,255,0.09); border: 1px solid rgba(255,255,255,0.2);
+    border-radius: 4px; padding: 14px 16px; color: #FFFFFF; font-family: 'Inter', sans-serif;
+    font-size: 0.95rem; cursor: pointer; appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath fill='%23C9A876' d='M6 8L0 0h12z'/%3E%3C/svg%3E");
+    background-repeat: no-repeat; background-position: right 16px center;
+  }
+  .dropdown-wrap select option { background: #2D1147; color: #FFFFFF; }
+  .dropdown-wrap select:focus { outline: none; border-color: var(--gold); }
+
+  .optional-tag { font-size: 10px; font-weight: 400; letter-spacing: 1px; text-transform: none; color: #8878AA; font-style: italic; margin-left: 6px; }
+
+  .divider-line { width: 60px; height: 1px; background: rgba(201,168,118,0.4); margin: 32px 0 28px; }
+
+  .link-line { font-size: 0.85rem; color: #C8B8DF; margin-top: 8px; }
+  .link-line a { color: var(--gold); text-decoration: underline; }
+  .link-line a:hover { color: #FFFFFF; }
+
+  .nav-btns { display: flex; gap: 12px; margin-top: 32px; align-items: center; flex-wrap: wrap; }
+
+  /* RESULT */
+  #result { display: none; min-height: 100vh; background: linear-gradient(160deg, #1A0830 0%, #2D1147 50%, #1A0830 100%); padding: 60px 24px 80px; }
+  .result-wrap { max-width: 720px; margin: 0 auto; }
+  .result-reveal { text-align: center; margin-bottom: 56px; animation: fadeUp 0.5s ease; }
+  .result-eyebrow { font-size: 10px; font-weight: 700; letter-spacing: 4px; text-transform: uppercase; color: var(--gold); margin-bottom: 16px; }
+  .result-greeting { font-family: 'Playfair Display', serif; font-size: clamp(1.6rem, 4vw, 2.4rem); font-weight: 700; color: #FFFFFF; margin-bottom: 8px; }
+  .result-greeting em { font-style: italic; color: var(--gold); }
+  .result-oracle-line { font-size: 0.85rem; color: #B0A0CC; letter-spacing: 2px; text-transform: uppercase; }
+
+  .result-block { background: rgba(255,255,255,0.06); border: 1px solid rgba(201,168,118,0.3); border-radius: 6px; padding: 40px 36px; margin-bottom: 24px; animation: fadeUp 0.5s ease 0.15s both; }
+  .result-block-label { font-size: 10px; font-weight: 700; letter-spacing: 3px; text-transform: uppercase; color: var(--gold); margin-bottom: 8px; }
+  .result-block h2 { font-family: 'Playfair Display', serif; font-size: clamp(1.6rem, 4vw, 2.1rem); font-weight: 700; color: #FFFFFF; margin-bottom: 20px; }
+  .result-divider { width: 60px; height: 1px; background: var(--gold); margin: 20px 0; }
+  .result-block p { font-size: 0.96rem; color: #E0D4F0; line-height: 1.75; margin-bottom: 14px; }
+  .result-block p strong { color: var(--gold); font-weight: 600; }
+  .result-block h4 { font-size: 10px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: var(--gold); margin: 22px 0 8px; }
+  .aroma-tag { display: inline-block; background: rgba(201,168,118,0.14); border: 1px solid rgba(201,168,118,0.4); border-radius: 20px; padding: 8px 18px; font-size: 0.82rem; color: #F0E5D0; margin-top: 6px; }
+  .grounding-note { background: rgba(201,168,118,0.1); border-left: 3px solid var(--gold); border-radius: 4px; padding: 18px 20px; margin-top: 18px; }
+  .grounding-note p { font-size: 0.9rem; color: #F0E5D0; margin-bottom: 10px; }
+
+  .result-closing { text-align: center; margin-top: 48px; padding: 32px; border-top: 1px solid rgba(201,168,118,0.2); animation: fadeUp 0.5s ease 0.3s both; }
+  .result-closing p { font-family: 'Playfair Display', serif; font-size: 1.1rem; font-style: italic; color: #D5C8E8; line-height: 1.6; }
+  .result-closing .byline { margin-top: 14px; font-size: 0.78rem; color: #8878AA; font-family: 'Inter', sans-serif; font-style: normal; letter-spacing: 1px; }
+
+  @media (max-width: 480px) { .result-block { padding: 24px 18px; } .question-wrap { padding: 36px 16px; } }
+</style>
+</head>
+<body>
+
+<section id="cover">
+  <p class="cover-eyebrow">On Purpose Evolution</p>
+  <h1 class="cover-title">Nervous System<br><em>Regulation Toolkit</em></h1>
+  <div class="cover-divider"></div>
+  <p class="cover-sub">A quick tool to help you regulate right now. Answer a few short questions and get a practice matched to your state, your time, and what feels accessible to you.</p>
+  <button class="btn-primary" onclick="startAssessment()">Begin</button>
+  <p class="cover-byline">Leah Fairchild &nbsp;|&nbsp; The Pattern Interrupter &nbsp;|&nbsp; On Purpose Evolution</p>
+</section>
+
+<section id="assessment">
+  <div class="assessment-header">
+    <h2>Nervous System Regulation Toolkit</h2>
+    <div class="progress-bar-wrap"><div class="progress-bar-fill" id="progressBar"></div></div>
+  </div>
+  <div class="question-wrap">
+
+    <!-- CARD 0: Welcome -->
+    <div class="question-card active" id="card-0">
+      <div class="section-header-card">
+        <h3>Welcome</h3>
+        <p>This tool will match you with a short regulation practice based on how you are feeling right now, how much time you have, and what feels most accessible. There are no wrong answers.</p>
+      </div>
+      <div style="margin-top:36px;">
+        <div class="input-wrap"><label>First Name <span class="optional-tag">optional</span></label><input type="text" id="firstName" placeholder="Your first name" /></div>
+      </div>
+      <div class="nav-btns"><button class="btn-next" onclick="goToCard('1')">Continue</button></div>
+    </div>
+
+    <!-- CARD 1: Archetype + Elemental (optional) -->
+    <div class="question-card" id="card-1">
+      <p class="question-eyebrow">Optional Context</p>
+      <h2 class="question-text">Do you know your Nervous System Archetype?</h2>
+      <p class="question-desc">This is entirely optional. If you know it, it helps connect today's practice back to your broader patterns. If you don't, you can skip it or take the free assessment.</p>
+
+      <div class="dropdown-wrap">
+        <label>Select your archetype</label>
+        <select id="archetypeSelect">
+          <option value="">I don't know it yet — skip this</option>
+          <option value="FF">The Frozen Fighter</option>
+          <option value="EG">The Exhausted Giver</option>
+          <option value="SA">The Scattered Achiever</option>
+          <option value="BW">The Burning Warrior</option>
+          <option value="NN">The Numb Navigator</option>
+        </select>
+      </div>
+      <p class="link-line">Not sure? <a href="archetype-assessment.html" target="_blank" rel="noopener">Take the free Nervous System Archetype Assessment →</a></p>
+
+      <div class="divider-line"></div>
+
+      <p class="question-eyebrow" style="margin-bottom:8px;">Elemental Grounding <span class="optional-tag">optional</span></p>
+      <p class="question-desc" style="margin-bottom:20px;">If you know your Sun, Moon, and Rising signs, enter them below for a personalized grounding note. If not, leave these blank — everything else in this tool still works.</p>
+
+      <div class="dropdown-wrap">
+        <label>Sun Sign</label>
+        <select id="toolkitSun">
+          <option value="">Choose your Sun Sign</option>
+          <option value="fire">Aries</option><option value="earth">Taurus</option>
+          <option value="air">Gemini</option><option value="water">Cancer</option>
+          <option value="fire">Leo</option><option value="earth">Virgo</option>
+          <option value="air">Libra</option><option value="water">Scorpio</option>
+          <option value="fire">Sagittarius</option><option value="earth">Capricorn</option>
+          <option value="air">Aquarius</option><option value="water">Pisces</option>
+        </select>
+      </div>
+      <div class="dropdown-wrap">
+        <label>Moon Sign</label>
+        <select id="toolkitMoon">
+          <option value="">Choose your Moon Sign</option>
+          <option value="fire">Aries</option><option value="earth">Taurus</option>
+          <option value="air">Gemini</option><option value="water">Cancer</option>
+          <option value="fire">Leo</option><option value="earth">Virgo</option>
+          <option value="air">Libra</option><option value="water">Scorpio</option>
+          <option value="fire">Sagittarius</option><option value="earth">Capricorn</option>
+          <option value="air">Aquarius</option><option value="water">Pisces</option>
+        </select>
+      </div>
+      <div class="dropdown-wrap">
+        <label>Rising Sign</label>
+        <select id="toolkitRising">
+          <option value="">Choose your Rising Sign</option>
+          <option value="fire">Aries</option><option value="earth">Taurus</option>
+          <option value="air">Gemini</option><option value="water">Cancer</option>
+          <option value="fire">Leo</option><option value="earth">Virgo</option>
+          <option value="air">Libra</option><option value="water">Scorpio</option>
+          <option value="fire">Sagittarius</option><option value="earth">Capricorn</option>
+          <option value="air">Aquarius</option><option value="water">Pisces</option>
+        </select>
+      </div>
+
+      <div class="nav-btns">
+        <button class="btn-next" onclick="goToCard('2')">Continue</button>
+        <button class="btn-back" onclick="goToCard('0')">Back</button>
+      </div>
+    </div>
+
+    <!-- CARD 2: State -->
+    <div class="question-card" id="card-2">
+      <p class="question-eyebrow">Question 1 of 3</p>
+      <h2 class="question-text">What state are you in right now?</h2>
+      <p class="question-desc">Choose the one that feels most true right now.</p>
+      <div class="choices" id="choices-state">
+        <button class="choice-btn" onclick="pickState(this,'fight')">I am activated, overwhelmed, or angry — everything feels like too much.</button>
+        <button class="choice-btn" onclick="pickState(this,'flight')">I am anxious, racing, or spiraling — I cannot slow my thoughts down.</button>
+        <button class="choice-btn" onclick="pickState(this,'freeze')">I am shut down, numb, or frozen — I cannot seem to get started.</button>
+        <button class="choice-btn" onclick="pickState(this,'fawn')">I am people pleasing, performing, or losing myself — I do not know what I actually want right now.</button>
+        <button class="choice-btn" onclick="pickState(this,'notsure')">I am not sure — help me figure it out.</button>
+      </div>
+      <div class="nav-btns">
+        <button class="btn-back" onclick="goToCard('1')">Back</button>
+      </div>
+    </div>
+
+    <!-- CARD 2b: Not Sure Helper -->
+    <div class="question-card" id="card-2b">
+      <p class="question-eyebrow">Let's Figure It Out Together</p>
+      <h2 class="question-text">Which of these feels most true right now?</h2>
+      <p class="question-desc">Answer honestly, not how you think you should feel.</p>
+      <div class="choices" id="choices-helper">
+        <button class="choice-btn" onclick="pickHelper(this,'fight')">My chest feels tight, my jaw is clenched, I feel ready to snap.</button>
+        <button class="choice-btn" onclick="pickHelper(this,'flight')">My mind feels loud, I cannot stop thinking, I feel keyed up.</button>
+        <button class="choice-btn" onclick="pickHelper(this,'freeze')">My body feels heavy, distant, hard to move, hard to care.</button>
+        <button class="choice-btn" onclick="pickHelper(this,'fawn')">I am scanning the room, thinking about what everyone else needs before myself.</button>
+      </div>
+      <div class="nav-btns">
+        <button class="btn-back" onclick="goToCard('2')">Back</button>
+      </div>
+    </div>
+
+    <!-- CARD 3: Time -->
+    <div class="question-card" id="card-3">
+      <p class="question-eyebrow">Question 2 of 3</p>
+      <h2 class="question-text">How much time do you have?</h2>
+      <p class="question-desc">Choose what's realistic right now.</p>
+      <div class="choices" id="choices-time">
+        <button class="choice-btn" onclick="pickTime(this,'5')">5 minutes or less</button>
+        <button class="choice-btn" onclick="pickTime(this,'10')">10 to 15 minutes</button>
+        <button class="choice-btn" onclick="pickTime(this,'30')">30 minutes or more</button>
+      </div>
+      <div class="nav-btns">
+        <button class="btn-back" onclick="goBackFromTime()">Back</button>
+      </div>
+    </div>
+
+    <!-- CARD 4: Modality -->
+    <div class="question-card" id="card-4">
+      <p class="question-eyebrow">Question 3 of 3</p>
+      <h2 class="question-text">What modality feels most accessible right now?</h2>
+      <p class="question-desc" id="modality-hint">Choose the one you have the most access to or the most pull toward.</p>
+      <div class="choices" id="choices-modality">
+        <button class="choice-btn" data-modality="breath" onclick="toggleModality(this,'breath')">Breath</button>
+        <button class="choice-btn" data-modality="movement" onclick="toggleModality(this,'movement')">Movement or body</button>
+        <button class="choice-btn" data-modality="scent" onclick="toggleModality(this,'scent')">Scent or environment</button>
+        <button class="choice-btn" data-modality="sound" onclick="toggleModality(this,'sound')">Sound or stillness</button>
+        <button class="choice-btn" data-modality="guided" onclick="toggleModality(this,'guided')">Guided practice or words</button>
+      </div>
+      <div class="nav-btns">
+        <button class="btn-next" id="modality-continue" onclick="calculateResult()" disabled>Build My Toolkit</button>
+        <button class="btn-back" onclick="goToCard('3')">Back</button>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<section id="result">
+  <div class="result-wrap">
+    <div class="result-reveal">
+      <p class="result-eyebrow">Your Regulation Protocol</p>
+      <h1 class="result-greeting" id="result-greeting"></h1>
+      <p class="result-oracle-line">A practice matched to where you are right now</p>
+    </div>
+
+    <div class="result-block" id="practice-block">
+      <p class="result-block-label">Your Practice</p>
+      <h2 id="practice-title"></h2>
+      <div class="result-divider"></div>
+      <div id="practice-content"></div>
+    </div>
+
+    <div class="result-block" id="pattern-block">
+      <p class="result-block-label">Pattern Connection</p>
+      <h2 id="pattern-title"></h2>
+      <div class="result-divider"></div>
+      <div id="pattern-content"></div>
+    </div>
+
+    <div class="result-block" id="element-block" style="display:none;">
+      <p class="result-block-label">Your Elemental Regulation</p>
+      <h2>Sun, Moon &amp; Rising</h2>
+      <div class="result-divider"></div>
+      <div id="element-content"></div>
+    </div>
+
+    <div class="result-closing">
+      <p>This is one practice. Come back anytime your state, time, or needs change.</p>
+      <p class="byline">On Purpose Evolution &nbsp;|&nbsp; Leah Fairchild &nbsp;|&nbsp; The Pattern Interrupter</p>
+      <p style="margin-top:28px;font-size:0.8rem;color:rgba(255,255,255,0.5);font-family:Inter,sans-serif;font-style:normal;">For best results open this tool in <strong style="color:#C9A876;">Safari</strong> or <strong style="color:#C9A876;">Firefox</strong> — not Chrome. Chrome may block the email button.</p>
+      <div style="margin-top:12px;display:flex;flex-wrap:wrap;gap:12px;justify-content:center;">
+        <button onclick="emailResult()" style="background:var(--gold);color:#1A0830;font-family:Inter,sans-serif;font-size:0.85rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;padding:12px 32px;cursor:pointer;border:none;border-radius:2px;">Email My Result</button>
+        <button onclick="window.print()" style="background:transparent;border:1px solid rgba(201,168,118,0.5);color:#C9A876;font-family:Inter,sans-serif;font-size:0.85rem;letter-spacing:1px;text-transform:uppercase;padding:12px 32px;cursor:pointer;border-radius:2px;">Save or Print</button>
+        <button onclick="resetTool()" style="background:transparent;border:1px solid rgba(255,255,255,0.3);color:#D0C0E8;font-family:Inter,sans-serif;font-size:0.85rem;letter-spacing:1px;text-transform:uppercase;padding:12px 32px;cursor:pointer;border-radius:2px;">Start Over</button>
+      </div>
+      <p style="margin-top:12px;font-size:0.78rem;color:rgba(255,255,255,0.4);font-family:Inter,sans-serif;font-style:normal;">Email it to yourself or save as a PDF to return to it later.</p>
+    </div>
+  </div>
+</section>
+
+<script>
+/* ============ STATE ============ */
+var selectedState = null;
+var selectedTime = null;
+var selectedModalities = [];
+var currentParts = [];
+var currentMainCard = 0;
+
+var MODALITY_CAP = { "5": 1, "10": 2, "30": 4 };
+var MODALITY_HINT = {
+  "5": "Time is short — choose the one you have the most access to or the most pull toward.",
+  "10": "Choose up to 2. The tool will sequence them into one short session.",
+  "30": "Choose up to 4. The tool will build a full multi-part toolkit from your picks."
+};
+
+/* ============ NAVIGATION ============ */
+function startAssessment() {
+  document.getElementById('cover').style.display = 'none';
+  document.getElementById('assessment').style.display = 'block';
+  goToCard('0');
+}
+
+function goToCard(id) {
+  document.querySelectorAll('.question-card').forEach(function(c){ c.classList.remove('active'); });
+  var card = document.getElementById('card-' + id);
+  if (card) { card.classList.add('active'); window.scrollTo(0,0); updateProgress(id); }
+}
+
+function updateProgress(id) {
+  var map = { '0':0, '1':1, '2':2, '2b':2, '3':3, '4':4 };
+  var step = map[id] !== undefined ? map[id] : 0;
+  var pct = Math.round((step / 5) * 100);
+  document.getElementById('progressBar').style.width = pct + '%';
+}
+
+function goBackFromTime() {
+  if (selectedState === null) { goToCard('2'); return; }
+  goToCard('3');
+}
+
+/* ============ SELECTIONS ============ */
+function pickState(btn, value) {
+  document.querySelectorAll('#choices-state .choice-btn').forEach(function(b){ b.classList.remove('selected'); });
+  btn.classList.add('selected');
+  if (value === 'notsure') {
+    goToCard('2b');
+  } else {
+    selectedState = value;
+    goToCard('3');
+  }
+}
+
+function pickHelper(btn, value) {
+  document.querySelectorAll('#choices-helper .choice-btn').forEach(function(b){ b.classList.remove('selected'); });
+  btn.classList.add('selected');
+  selectedState = value;
+  goToCard('3');
+}
+
+function pickTime(btn, value) {
+  document.querySelectorAll('#choices-time .choice-btn').forEach(function(b){ b.classList.remove('selected'); });
+  btn.classList.add('selected');
+  selectedTime = value;
+  selectedModalities = [];
+  document.querySelectorAll('#choices-modality .choice-btn').forEach(function(b){ b.classList.remove('selected'); b.disabled = false; });
+  document.getElementById('modality-hint').textContent = MODALITY_HINT[value];
+  document.getElementById('modality-continue').disabled = true;
+  goToCard('4');
+}
+
+function toggleModality(btn, value) {
+  var cap = MODALITY_CAP[selectedTime] || 1;
+  var idx = selectedModalities.indexOf(value);
+
+  if (idx > -1) {
+    selectedModalities.splice(idx, 1);
+    btn.classList.remove('selected');
+  } else {
+    if (selectedModalities.length >= cap) { return; }
+    selectedModalities.push(value);
+    btn.classList.add('selected');
+  }
+
+  document.querySelectorAll('#choices-modality .choice-btn').forEach(function(b){
+    if (!b.classList.contains('selected')) {
+      b.disabled = selectedModalities.length >= cap;
+    }
+  });
+
+  document.getElementById('modality-continue').disabled = selectedModalities.length === 0;
+}
+
+function resetTool() {
+  selectedState = null; selectedTime = null; selectedModalities = []; currentParts = [];
+  document.querySelectorAll('.choice-btn').forEach(function(b){ b.classList.remove('selected'); b.disabled = false; });
+  document.getElementById('result').style.display = 'none';
+  document.getElementById('cover').style.display = 'flex';
+  window.scrollTo(0,0);
+}
+
+/* ============ DATA: PATTERN FAMILIES ============ */
+var PATTERNS = {
+  fight:  { label: "Fight",  patterns: ["Perfectionism", "All or Nothing Thinking", "Negative Self-Talk", "Hypervigilance", "Being Indispensable"] },
+  flight: { label: "Flight", patterns: ["Second-Guessing Intuition", "Imposter Syndrome", "Chronological Trap", "Believing the Fantasy", "Comparison to Ghost Selves"] },
+  freeze: { label: "Freeze", patterns: ["Avoidance", "Numbing", "Procrastination via Productivity", "Preemptive Self-Sabotage", "Married to Your Story", "Playing Victim"] },
+  fawn:   { label: "Fawn",   patterns: ["Self-Erasure", "People Pleasing", "Being Indispensable", "Never Asking for Help", "Good Girl Compliance", "Shapeshifting", "External Validation", "Guarded Vulnerability"] }
+};
+
+var STATE_LABELS = {
+  fight: "activated, overwhelmed, or angry",
+  flight: "anxious, racing, or spiraling",
+  freeze: "shut down, numb, or frozen",
+  fawn: "people pleasing, performing, or losing yourself"
+};
+
+var STATE_AROMA = {
+  fight:  { name: "Focus", formula: "Peppermint 4 / Sweet Orange 3 / Sandalwood 3" },
+  flight: { name: "Anxiety Relief", formula: "Lavender 3 / Clary Sage 2 / Vetiver 2 / Frankincense 1" },
+  freeze: { name: "Grounding", formula: "Frankincense 3 / Cedarwood 4 / Sandalwood 3" },
+  fawn:   { name: "Heart Opening", formula: "Cedarwood 4 / Sandalwood 3 / Ylang Ylang 2" }
+};
+
+var ARCHETYPES = {
+  FF: "The Frozen Fighter",
+  EG: "The Exhausted Giver",
+  SA: "The Scattered Achiever",
+  BW: "The Burning Warrior",
+  NN: "The Numb Navigator"
+};
+
+/* ============ DATA: ELEMENTS ============ */
+var ELEMENTS = {
+  earth: { name: "Earth Regulator", opposite: "air",
+    prescription: "Your nervous system comes back to baseline through physical contact with the earth and stillness. Bare feet on grass, sitting under or leaning against a tree, gardening, weighted blankets, slow intentional outdoor walks, holding stones or crystals, structured routine as an anchor.",
+    onthego: "Nature sounds or forest soundscapes, grounding meditation, pressing feet flat on the floor and feeling the ground hold you, holding something solid in your hands — a stone, a mug, your own clasped hands." },
+  water: { name: "Water Regulator", opposite: "fire",
+    prescription: "Your nervous system releases through water. Showers, baths, the ocean, rain. Watching a fountain or hearing natural water in its organic state — ocean sounds, rain, or flowing water playlists. Fluid movement. Journaling as honoring feelings through emotional release.",
+    onthego: "Ocean or rain sound playlist, drinking water slowly and intentionally, splashing cold water on wrists or face, a small tabletop fountain at your desk, stepping outside in the rain even briefly." },
+  air: { name: "Air Regulator", opposite: "earth",
+    prescription: "Your nervous system resets through breath and sensory environment. Box breathing, extended exhale, fresh air, open windows. Aromatherapy and smoke — incense, palo santo, sage. Talking it out with a trusted person. Sound healing and music.",
+    onthego: "Sit with your face in a fan or near an open window, step outside for two minutes of fresh air, use a personal aromatherapy roller on your pulse points, hum or tone — your own voice is an air regulation tool." },
+  fire: { name: "Fire Regulator", opposite: "water",
+    prescription: "Your nervous system discharges through movement and heat. Running, dancing, strength training, sitting in sunlight. Candle meditation — watching a real flame or a flame on screen when one is not available. Fire must move the energy out before it can settle.",
+    onthego: "A candle meditation — even a candle video on your phone. Step outside into direct sunlight for five minutes. Ten jumping jacks or a fast walk around the block. Watch a fireplace video." }
+};
+
+/* ============ DATA: PRACTICE BANK ============ */
+var PRACTICE_BANK = {
+  fight: {
+    "5": {
+      breath: { title: "Physiological Sigh", why: "Your body is flooded and needs a fast, physical down-shift before anything else can land.",
+        steps: "Double inhale through the nose (a short sip of air, then a second smaller sip on top), followed by one long, slow exhale through the mouth. Repeat 3-5 times." },
+      movement: { title: "Shaking and Discharge", why: "Fight energy is mobilized survival energy — it needs to move through the body, not just be talked down.",
+        steps: "Stand with feet hip-width apart, knees soft. Let your body shake starting from the feet, moving up through the legs, hips, torso, arms. Let your jaw, hands, and shoulders go loose. Continue for 2-3 minutes." },
+      scent: { title: "Cold Water", why: "Cold water triggers the dive reflex, which slows the heart rate almost immediately — useful when there's no time to spare.",
+        steps: "Run cold water over your wrists and the back of your neck for 30-60 seconds." },
+      sound: { title: "Bilateral Tapping", why: "Bilateral stimulation calms an activated nervous system quickly without requiring stillness the body isn't ready for yet.",
+        steps: "Cross your arms over your chest and alternate tapping each shoulder slowly, or tap alternating knees, for 2-3 minutes while breathing slowly." },
+      guided: { title: "Statement Scan (Excerpt)", why: "A short body-based check-in interrupts the activation cycle before reacting.",
+        steps: "Read slowly, pausing after each: \u201cI am never quite enough no matter how much I accomplish.\u201d Notice where in your body that lands. \u201cI know what needs to change. I have known for a long time.\u201d Notice again. No need to fix anything yet — just notice." }
+    },
+    "10": {
+      breath: { title: "Box Breathing", why: "Box breathing regulates fight and hypervigilance energy through structured, even counts.",
+        steps: "Inhale 4 counts, hold 4, exhale 4, hold 4. Repeat 4-6 rounds." },
+      movement: { title: "Shaking and Discharge + Grounding Walk", why: "Discharge first, then ground the nervous system back into the present.",
+        steps: "Shake for 2-3 minutes (feet to shoulders, jaw and hands loose), then walk slowly for 5-10 minutes, noticing 5 things you see, 4 you hear, 3 you feel, 2 you smell, 1 you taste." },
+      scent: { title: "Cold Water + Focus Blend", why: "Combines a fast physical down-shift with mental clarity support.",
+        steps: "Cold water on wrists and neck for 30-60 seconds, then apply Focus blend to pulse points and breathe it in slowly for a minute.", aroma: "fight" },
+      sound: { title: "EFT Tapping — Fight State", why: "A full tapping round addresses both the physical activation and the belief underneath it.",
+        steps: "Setup phrase (karate chop point, repeat 3x): \u201cEven though I feel completely overwhelmed and like everything is too much right now, I deeply and completely accept myself.\u201d Tap through: Eyebrow — This overwhelm. Side of eye — Everything feels like too much. Under eye — I cannot keep up with all of it. Under nose — I am so tired of trying to be enough. Chin — I do not have to have it all together. Collarbone — I am allowed to feel this. Under arm — My nervous system is just trying to protect me. Top of head — I choose to release what I do not need to carry right now. Closing: take one deep breath. I am safe. I am enough. I can handle what is mine to handle." },
+      guided: { title: "Full Statement Scan", why: "Slower pacing lets the activation settle enough to actually hear what's underneath it.",
+        steps: "Read each statement slowly, pausing between each to notice where in the body activation happens: \u201cI always make sure everyone else is okay before I check on myself.\u201d \u201cI say yes when I mean no and feel it immediately.\u201d \u201cI am never quite enough no matter how much I accomplish.\u201d \u201cI have been waiting for permission to fully show up as myself.\u201d \u201cI know what needs to change. I have known for a long time.\u201d" }
+    },
+    "30": {
+      breath: { title: "Box Breathing + Somatic Yoga Flow", why: "Extended practice lets the nervous system fully discharge and reset.",
+        steps: "Box breathing for 4-6 rounds, then move through the full Somatic Yoga Flow: Cat Cow (inhale peace, exhale worry), Child's Pose (inhale forgiveness, exhale resentment), Thread the Needle (inhale grace, exhale perfectionism), The Greatest Stretch (inhale freedom, exhale control), Extended Leg reaching for toe (inhale trust, exhale resistance), Pigeon (inhale surrender, exhale pain, hold in silence), Down Dog (inhale power, exhale heaviness), Forward Fold swaying (inhale love, exhale resentment), Rise to prayer (inhale possibility, exhale the past), Closing (inhale gratitude, and so it is)." },
+      movement: { title: "Full Qigong Flow", why: "A longer, structured movement sequence discharges sustained fight-energy fully.",
+        steps: "Body wave x3, hops x10, arm swings x10 each direction, trunk twist x6 each side, golf swing x3 each side, chest opener x3, deep pli\u00e9 x3, kick step x10 each leg, punches x20, march with high knees x10 each side, closing body wave x1." },
+      scent: { title: "Full Aromatherapy Ritual + Journaling", why: "Extended time allows for full nervous system down-regulation plus reflection.",
+        steps: "Apply Focus blend to pulse points. Sit somewhere quiet. Journal on: \u201cWhat did my body need today that I didn't give it?\u201d", aroma: "fight" },
+      sound: { title: "EFT Tapping + Coherence Breathing", why: "Combines belief-level release with sustained nervous system balancing.",
+        steps: "Full EFT Fight tapping sequence (setup phrase, eight points, closing statement), followed by Coherence Breathing: inhale 5 counts, exhale 5 counts, for 5 minutes." },
+      guided: { title: "EFT Tapping + Sovereignty Imagination", why: "Moves from releasing the activation to embodying a regulated, grounded state.",
+        steps: "Full EFT Fight tapping sequence, then the Sovereignty Imagination: take three slow breaths, imagine yourself walking into a room and feeling completely at home in your own body, notice how you walk, feel the ground under each step, notice that people can feel you have arrived — not because you performed it, but because you actually believe it. Let that feeling anchor in your chest, your feet, your spine." }
+    }
+  },
+
+  flight: {
+    "5": {
+      breath: { title: "4-7-8 Breathing", why: "A longer exhale count signals safety fast, which interrupts a racing mind before it spirals further.",
+        steps: "Inhale through the nose for 4 counts, hold for 7, exhale through the mouth for 8. Repeat 4 rounds." },
+      movement: { title: "Bilateral Tapping", why: "Alternating left-right stimulation calms a racing nervous system without requiring stillness a spiraling mind can't hold yet.",
+        steps: "Cross your arms over your chest and alternate tapping each shoulder slowly, or tap alternating knees, for 2-3 minutes while breathing slowly." },
+      scent: { title: "Anxiety Relief Blend + Cold Water", why: "Scent reaches the nervous system faster than thought does, and cold water gives the mind something physical to land on.",
+        steps: "Apply Anxiety Relief blend to your pulse points and breathe it in slowly. Run cold water over your wrists for 30-60 seconds.", aroma: "flight" },
+      sound: { title: "Grounded Pause", why: "A quick sensory anchor interrupts a racing mind without needing to manage the breath at all.",
+        steps: "Feel your feet flat on the floor. Notice 3 things you can see, 2 things you can hear, 1 thing you can touch. Let your shoulders drop on your next exhale." },
+      guided: { title: "Safe Place Imagination (Short)", why: "A racing mind needs somewhere to land, and imagination gives it a concrete place to go instead of spinning.",
+        steps: "Take a slow breath in and let it go. Imagine a place that feels completely safe. Notice what is under your feet. Notice the temperature of the air. Let your body feel the safety of this place in your chest and shoulders for a minute." }
+    },
+    "10": {
+      breath: { title: "4-7-8 Breathing + Bilateral Breathing", why: "Combines a fast down-shift with a longer regulation practice that specifically targets racing thoughts.",
+        steps: "4-7-8 breathing for 4 rounds, then bilateral breathing: inhale through the left nostril with the right closed, exhale through the right nostril with the left closed, alternating for 6-10 rounds." },
+      movement: { title: "Grounding Walk", why: "Movement paired with sensory noticing pulls attention out of the spiral and into the body and surroundings.",
+        steps: "Walk slowly, outside or in place. Feel each foot connecting with the ground. Notice 5 things you can see, 4 you can hear, 3 you can feel, 2 you can smell, 1 you can taste. Continue for 5-10 minutes." },
+      scent: { title: "Anxiety Relief Blend + Midday Pause", why: "Combines scent regulation with a structured pause that interrupts the mental loop.",
+        steps: "Apply Anxiety Relief blend to pulse points. Close everything except what you need. Feel your feet on the floor. Do a 5-4-3-2-1 sensory scan. Take 3 slow breaths. Ask yourself: what does my body need right now?", aroma: "flight" },
+      sound: { title: "EFT Tapping — Flight State", why: "A full tapping round addresses both the racing thoughts and the self-doubt underneath them.",
+        steps: "Setup phrase (karate chop point, repeat 3x): \u201cEven though my mind will not stop racing and I cannot seem to trust myself right now, I deeply and completely accept myself.\u201d Tap through: Eyebrow — This anxious feeling. Side of eye — My mind keeps spinning. Under eye — I do not trust my own thoughts. Under nose — What if I get it wrong. Chin — I have gotten things wrong before and survived. Collarbone — My intuition has always been there. Under arm — I am learning to trust it again. Top of head — I am safe to slow down and listen. Closing: take one deep breath. I trust what I know. I am allowed to take my time." },
+      guided: { title: "Full Safe Place Imagination", why: "A longer, fully sensory imagination script gives an anxious mind somewhere real to settle.",
+        steps: "Take a slow breath in and let it go. Imagine a place that feels completely safe, real or made up. Notice what is around you, to your left, to your right, above you. Notice what is under your feet. Feel the temperature of the air. Is there a sound? What does the air smell like here? Let your body feel the safety of this place in your chest, your shoulders, your belly. Stay as long as you need. This place is always available to you." }
+    },
+    "30": {
+      breath: { title: "Bilateral Breathing + Somatic Yoga Flow", why: "Extended breathwork paired with movement lets a spiraling mind fully settle into the body.",
+        steps: "Bilateral breathing for 6-10 rounds, then move through the full Somatic Yoga Flow: Cat Cow, Child's Pose, Thread the Needle, The Greatest Stretch, Extended Leg reaching for toe, Pigeon, Down Dog, Forward Fold swaying, Rise to prayer, Closing." },
+      movement: { title: "Grounding Walk + Shaking", why: "A longer walk plus discharge work releases the physical charge that racing thoughts often carry.",
+        steps: "Grounding walk for 5-10 minutes, then shake from the feet up for 2-3 minutes, letting jaw, hands, and shoulders go loose." },
+      scent: { title: "Full Anxiety Relief Ritual", why: "Extended sensory regulation gives the nervous system enough time to fully come out of flight mode.",
+        steps: "Apply Anxiety Relief blend to pulse points. Sit somewhere quiet with a warm drink, holding it with both hands, feeling the weight and temperature, sipping slowly.", aroma: "flight" },
+      sound: { title: "EFT Tapping + Safe Place Imagination", why: "Releases the belief underneath the anxiety, then gives the nervous system somewhere safe to rest.",
+        steps: "Full EFT Flight tapping sequence (setup phrase, eight points, closing statement), followed by the full Safe Place Imagination script." },
+      guided: { title: "EFT Tapping + Future Self Imagination", why: "Moves from releasing anxious thought patterns to embodying a version of you who already trusts herself.",
+        steps: "Full EFT Flight tapping sequence, then: close your eyes or soften your gaze, take three slow breaths, imagine stepping into a space that feels entirely yours, notice what is under your feet and the temperature of the air, imagine the version of you who has done the work standing nearby, notice how she holds herself, step closer, notice what she says or how she makes you feel, stay as long as you need." }
+    }
+  },
+
+  freeze: {
+    "5": {
+      breath: { title: "Balloon Breathing", why: "A slow, gentle breath practice meets a shut-down nervous system without demanding more activation than it can offer right now.",
+        steps: "Inhale slowly, imagining you are filling a balloon in your belly. Exhale slowly, letting it deflate. Repeat 5-8 rounds." },
+      movement: { title: "Self-Touch Activation", why: "Gentle, intentional touch releases oxytocin and offers a low-demand way back into the body.",
+        steps: "Place your hands on your face in a slow, skincare-ritual style. Move slowly and with intention for 5 minutes. There is nowhere to get to. Just feel your own hands." },
+      scent: { title: "Grounding Blend + Warmth", why: "Scent and warmth both signal safety to a nervous system that has gone offline.",
+        steps: "Apply Grounding blend to pulse points. Hold a warm drink with both hands. Feel the weight and temperature. Sip slowly.", aroma: "freeze" },
+      sound: { title: "Body Scan (Short)", why: "A slow scan without any fixing gives a shut-down body permission to just be noticed.",
+        steps: "Sit with feet flat on the floor. Slowly scan from your feet to the crown of your head. Notice without trying to fix or change anything you find. Continue for 5 minutes." },
+      guided: { title: "EFT Tapping — Freeze State (Short)", why: "A brief tapping round meets numbness gently, without asking for more energy than is available.",
+        steps: "Setup phrase (karate chop point, repeat 3x): \u201cEven though I feel completely shut down and cannot seem to get moving, I deeply and completely accept myself.\u201d Tap: Eyebrow — This frozen feeling. Chin — And I have moved through it before. Top of head — I just have to do one small thing right now." }
+    },
+    "10": {
+      breath: { title: "Balloon Breathing + Extended Exhale", why: "Layering two gentle breath practices slowly increases activation without overwhelming a frozen system.",
+        steps: "Balloon breathing for 5-8 rounds, then extended exhale: inhale for 4 counts, exhale for 8 counts, for 6-8 rounds." },
+      movement: { title: "Qigong Flow (Partial)", why: "Gentle, structured movement offers a bridge back into the body without requiring intensity.",
+        steps: "Body wave x3, arm swings x10 each direction, trunk twist x6 each side, chest opener x3, march with high knees x10 each side, closing body wave x1." },
+      scent: { title: "Grounding Blend + Body Scan", why: "Combines sensory safety cues with a slower, fuller check-in with the body.",
+        steps: "Apply Grounding blend to pulse points. Sit with feet flat and do the full Body Scan, 5-7 minutes, scanning slowly from feet to crown.", aroma: "freeze" },
+      sound: { title: "Full Body Scan", why: "A longer scan offers more time for a numb or shut-down body to reconnect at its own pace.",
+        steps: "Sit with feet flat on the floor. Slowly scan from feet to crown of your head, 5-7 minutes. Notice without fixing." },
+      guided: { title: "EFT Tapping + Safe Place Imagination", why: "Releases the belief underneath the shutdown, then offers somewhere safe to land.",
+        steps: "Setup phrase (karate chop point, repeat 3x): \u201cEven though I feel completely shut down and cannot seem to get moving, I deeply and completely accept myself.\u201d Tap through: Eyebrow — This frozen feeling. Side of eye — I cannot seem to start. Under eye — Everything feels too heavy. Under nose — I have been here before. Chin — And I have moved through it before. Collarbone — My body is just trying to keep me safe. Under arm — I do not have to do everything. Top of head — I just have to do one small thing right now. Closing: take one deep breath. I am allowed to start small. Movement is available to me right now. Then the Safe Place Imagination: imagine a place that feels completely safe, notice what is around you, feel the temperature of the air, let your body feel the safety of this place." }
+    },
+    "30": {
+      breath: { title: "Somatic Yoga Flow", why: "A longer, slow-paced flow offers enough time for a frozen system to gradually re-engage.",
+        steps: "Full Somatic Yoga Flow, moving slowly and pausing wherever needed: Cat Cow, Child's Pose, Thread the Needle, The Greatest Stretch, Extended Leg reaching for toe, Pigeon, Down Dog, Forward Fold swaying, Rise to prayer, Closing." },
+      movement: { title: "Full Qigong Flow", why: "The complete sequence offers a full, structured pathway back into the body at a gentle pace.",
+        steps: "Body wave x3, hops x10, arm swings x10 each direction, trunk twist x6 each side, golf swing x3 each side, chest opener x3, deep pli\u00e9 x3, kick step x10 each leg, punches x20, march with high knees x10 each side, closing body wave x1." },
+      scent: { title: "Full Grounding Ritual", why: "Extended time with sensory and warmth cues gives the nervous system room to slowly come back online.",
+        steps: "Apply Grounding blend to pulse points. Sit somewhere quiet with a warm drink. Follow with the full Body Scan.", aroma: "freeze" },
+      sound: { title: "EFT Tapping + Body Scan", why: "Combines belief-level release with a full-body reconnection practice.",
+        steps: "Full EFT Freeze tapping sequence (setup phrase, eight points, closing statement), followed by the full Body Scan, 5-7 minutes." },
+      guided: { title: "EFT Tapping + Future Self Imagination", why: "Moves from releasing the shutdown to imagining a version of you who is already present and engaged.",
+        steps: "Full EFT Freeze tapping sequence, then: close your eyes or soften your gaze, take three slow breaths, imagine stepping into a space that feels entirely yours, notice what is under your feet and the temperature of the air, imagine the version of you who has done the work standing nearby, notice how she holds herself, step closer, notice what she says or how she makes you feel, stay as long as you need." }
+    }
+  },
+
+  fawn: {
+    "5": {
+      breath: { title: "Boundary Breath", why: "One slow breath before responding creates a pause where an actual choice becomes possible.",
+        steps: "Before responding to any request, take one slow, full breath in through the nose. Exhale long, through the mouth. Then respond." },
+      movement: { title: "Self-Touch Activation", why: "Gentle, intentional touch offers a quiet way to reconnect with yourself instead of attending to anyone else.",
+        steps: "Place your hands on your face in a slow, skincare-ritual style. Move slowly and with intention for 5 minutes. There is nowhere to get to." },
+      scent: { title: "Heart Opening Blend", why: "This blend supports self-connection, which is what a fawn response tends to override.",
+        steps: "Apply Heart Opening blend to your chest and pulse points. Breathe it in slowly for a minute.", aroma: "fawn" },
+      sound: { title: "Bilateral Tapping", why: "Bilateral stimulation offers quiet regulation without needing to explain or justify anything to anyone.",
+        steps: "Cross your arms over your chest and alternate tapping each shoulder slowly, or tap alternating knees, for 2-3 minutes." },
+      guided: { title: "EFT Tapping — Fawn State (Short)", why: "A brief tapping round starts to interrupt the reflex to put everyone else first.",
+        steps: "Setup phrase (karate chop point, repeat 3x): \u201cEven though I have lost track of what I actually want and I keep putting everyone else first, I deeply and completely accept myself.\u201d Tap: Eyebrow — I keep saying yes when I mean no. Collarbone — My needs are not an inconvenience. Top of head — I am enough even when I am not performing for anyone." }
+    },
+    "10": {
+      breath: { title: "Boundary Breath + Extended Exhale", why: "Combines an in-the-moment pause practice with a longer regulation practice suited to fawn deactivation.",
+        steps: "Boundary breath before your next response, then extended exhale: inhale 4 counts, exhale 8 counts, for 6-8 rounds." },
+      movement: { title: "Grounding Walk", why: "Time alone, moving, without anyone to attend to, offers space to notice what you actually want.",
+        steps: "Walk slowly, outside or in place, for 5-10 minutes. Notice 5 things you see, 4 you hear, 3 you feel, 2 you smell, 1 you taste. No agenda beyond noticing." },
+      scent: { title: "Heart Opening Blend + Self-Touch", why: "Combines scent-based self-connection with intentional touch, both of which counter self-erasure.",
+        steps: "Apply Heart Opening blend to pulse points. Follow with Self-Touch Activation: hands on face in slow, intentional touch, for 5 minutes.", aroma: "fawn" },
+      sound: { title: "EFT Tapping — Fawn State", why: "A full tapping round addresses both the pattern of self-erasure and the belief underneath it.",
+        steps: "Setup phrase (karate chop point, repeat 3x): \u201cEven though I have lost track of what I actually want and I keep putting everyone else first, I deeply and completely accept myself.\u201d Tap through: Eyebrow — I keep saying yes when I mean no. Side of eye — I do not even know what I want anymore. Under eye — I am so used to making everyone else comfortable. Under nose — It is exhausting to be needed this much. Chin — I am allowed to have needs of my own. Collarbone — My needs are not an inconvenience. Under arm — I choose to come back to myself right now. Top of head — I am enough even when I am not performing for anyone. Closing: take one deep breath. I choose myself. My needs matter." },
+      guided: { title: "EFT Tapping (Short) + Reflection", why: "Pairs belief-level release with a direct question that a fawn response tends to avoid.",
+        steps: "EFT Fawn tapping (short): Eyebrow — I keep saying yes when I mean no. Collarbone — My needs are not an inconvenience. Top of head — I am enough even when I am not performing for anyone. Then sit quietly and ask yourself: if no one's reaction mattered right now, what would I actually choose? Let the answer come without editing it." }
+    },
+    "30": {
+      breath: { title: "Somatic Yoga Flow", why: "An extended flow gives space to notice the body without performing for anyone in it.",
+        steps: "Full Somatic Yoga Flow: Cat Cow, Child's Pose, Thread the Needle, The Greatest Stretch, Extended Leg reaching for toe, Pigeon, Down Dog, Forward Fold swaying, Rise to prayer, Closing." },
+      movement: { title: "Full Qigong Flow", why: "A complete movement sequence lets the body take up its full space and expression.",
+        steps: "Body wave x3, hops x10, arm swings x10 each direction, trunk twist x6 each side, golf swing x3 each side, chest opener x3, deep pli\u00e9 x3, kick step x10 each leg, punches x20, march with high knees x10 each side, closing body wave x1." },
+      scent: { title: "Full Heart Opening Ritual", why: "Extended time with self-connecting scent and touch practices counters a long-standing pattern of self-erasure.",
+        steps: "Apply Heart Opening blend to pulse points. Follow with Self-Touch Activation. Sit quietly afterward and journal on: what have I been performing, and for whom?", aroma: "fawn" },
+      sound: { title: "EFT Tapping + Coherence Breathing", why: "Combines belief-level release with sustained nervous system balancing.",
+        steps: "Full EFT Fawn tapping sequence (setup phrase, eight points, closing statement), followed by Coherence Breathing: inhale 5 counts, exhale 5 counts, for 5 minutes." },
+      guided: { title: "EFT Tapping + Sovereignty Imagination", why: "Moves from releasing the fawn pattern to embodying a version of you who takes up space without performing.",
+        steps: "Full EFT Fawn tapping sequence, then: take three slow breaths, imagine yourself walking into a room and feeling completely at home in your own body, notice how you walk, feel the ground under each step, notice that people can feel you have arrived — not because you performed it but because you actually believe it. Let that feeling anchor in your chest, your feet, your spine." }
+    }
+  }
+};
+
+/* ============ DATA: FULL TECHNIQUE LIBRARIES (shared pools so swap actually browses everything) ============ */
+
+var BREATH_LIBRARY = {
+  "5": [
+    { title: "Physiological Sigh", why: "A fast, physical down-shift for the body.",
+      steps: "Double inhale through the nose (a short sip of air, then a second smaller sip on top), followed by one long, slow exhale through the mouth. Repeat 3-5 times." },
+    { title: "Box Breathing", why: "Even, structured counts for steady regulation.",
+      steps: "Inhale 4 counts, hold 4, exhale 4, hold 4. Repeat 4 rounds." },
+    { title: "4-7-8 Breathing", why: "A longer exhale count signals safety fast.",
+      steps: "Inhale through the nose for 4 counts, hold for 7, exhale through the mouth for 8. Repeat 4 rounds." },
+    { title: "Extended Exhale", why: "A longer exhale gently signals safety without asking much of you.",
+      steps: "Inhale for 4 counts, exhale for 8 counts. Repeat 4-6 rounds." },
+    { title: "Balloon Breathing", why: "A slow, gentle practice that doesn't demand much activation.",
+      steps: "Inhale slowly, imagining you are filling a balloon in your belly. Exhale slowly, letting it deflate. Repeat 5-8 rounds." },
+    { title: "Boundary Breath", why: "One slow breath before responding creates a pause where a real choice becomes possible.",
+      steps: "Before responding to any request, take one slow, full breath in through the nose. Exhale long, through the mouth. Then respond." },
+    { title: "Coherence Breathing", why: "Even, steady breathing brings the nervous system out of overdrive.",
+      steps: "Inhale for 5 counts, exhale for 5 counts. Continue for 3-5 minutes, letting the count itself be the anchor." },
+    { title: "Alternate Nostril Breathing", why: "A specific physical task to follow instead of the spiral.",
+      steps: "Inhale through the left nostril with the right closed, exhale through the right nostril with the left closed. Alternate for 4-6 rounds." }
+  ],
+  "10": [
+    { title: "Physiological Sigh (Extended)", why: "A longer round of the double-inhale sigh for deeper down-regulation.",
+      steps: "Double inhale through the nose, then one long, slow exhale through the mouth. Repeat 8-10 times, letting each exhale get a little longer than the last." },
+    { title: "Box Breathing", why: "Structured, even counts sustained a bit longer.",
+      steps: "Inhale 4 counts, hold 4, exhale 4, hold 4. Repeat 6-8 rounds." },
+    { title: "4-7-8 Breathing + Alternate Nostril", why: "A fast down-shift followed by a longer regulation practice.",
+      steps: "4-7-8 breathing for 4 rounds, then alternate nostril breathing: inhale through the left nostril with the right closed, exhale through the right nostril with the left closed, for 6-10 rounds." },
+    { title: "Extended Exhale (Full)", why: "A longer, uninterrupted round to gradually come back online.",
+      steps: "Inhale for 4 counts, exhale for 8 counts. Continue for 10-12 rounds, letting the exhale lengthen slightly each time." },
+    { title: "Balloon Breathing + Extended Exhale", why: "Layering two gentle practices slowly increases activation without overwhelm.",
+      steps: "Balloon breathing for 5-8 rounds, then extended exhale: inhale 4 counts, exhale 8 counts, for 6-8 rounds." },
+    { title: "Boundary Breath (Practiced)", why: "Carrying the pause practice through several moments in a row.",
+      steps: "Take one boundary breath before each response for the next several minutes, noticing how it changes what you say." },
+    { title: "Coherence Breathing (Extended)", why: "A longer, steady count for sustained regulation.",
+      steps: "Inhale for 5 counts, exhale for 5 counts. Continue for 8-10 minutes, letting the count itself be the anchor." },
+    { title: "Alternate Nostril Breathing (Extended)", why: "A longer, uninterrupted round for sustained focus.",
+      steps: "Inhale through the left nostril with the right closed, exhale through the right nostril with the left closed. Continue alternating for 10-12 rounds." }
+  ],
+  "30": [
+    { title: "Physiological Sigh (Sustained) + Somatic Yoga Flow", why: "A fast-acting opener followed by extended movement gives the body two ways to discharge.",
+      steps: "Physiological sigh for 10 rounds, then move through the full Somatic Yoga Flow: Cat Cow, Child's Pose, Thread the Needle, The Greatest Stretch, Extended Leg reaching for toe, Pigeon, Down Dog, Forward Fold swaying, Rise to prayer, Closing." },
+    { title: "Box Breathing + Somatic Yoga Flow", why: "Extended practice lets the nervous system fully discharge and reset.",
+      steps: "Box breathing for 4-6 rounds, then move through the full Somatic Yoga Flow: Cat Cow, Child's Pose, Thread the Needle, The Greatest Stretch, Extended Leg reaching for toe, Pigeon, Down Dog, Forward Fold swaying, Rise to prayer, Closing." },
+    { title: "4-7-8 Breathing + Somatic Yoga Flow", why: "A structured breath count followed by extended movement gives two different anchors.",
+      steps: "4-7-8 breathing for 10 rounds, then move through the full Somatic Yoga Flow: Cat Cow, Child's Pose, Thread the Needle, The Greatest Stretch, Extended Leg reaching for toe, Pigeon, Down Dog, Forward Fold swaying, Rise to prayer, Closing." },
+    { title: "Extended Exhale (Sustained)", why: "A longer, uninterrupted exhale practice for a full reset.",
+      steps: "Inhale for 4 counts, exhale for 8 counts. Continue for 15-20 minutes, letting the exhale lengthen as you go." },
+    { title: "Balloon Breathing + Somatic Yoga Flow", why: "A gentle opener followed by extended movement offers a full, unhurried reset.",
+      steps: "Begin with balloon breathing for 5-8 rounds, then move through the full Somatic Yoga Flow, moving slowly and pausing wherever needed: Cat Cow, Child's Pose, Thread the Needle, The Greatest Stretch, Extended Leg reaching for toe, Pigeon, Down Dog, Forward Fold swaying, Rise to prayer, Closing." },
+    { title: "Boundary Breath (Integrated)", why: "Returning to the pause practice throughout a longer window builds it into the body.",
+      steps: "Return to one boundary breath before every response for the rest of your day. Notice what shifts when you build in the pause consistently." },
+    { title: "Coherence Breathing + Somatic Yoga Flow", why: "A steady, sustained count followed by extended movement offers a calm, even reset.",
+      steps: "Coherence breathing (inhale 5, exhale 5) for 10-15 minutes, then move through the full Somatic Yoga Flow: Cat Cow, Child's Pose, Thread the Needle, The Greatest Stretch, Extended Leg reaching for toe, Pigeon, Down Dog, Forward Fold swaying, Rise to prayer, Closing." },
+    { title: "Alternate Nostril Breathing (Sustained)", why: "A longer, uninterrupted practice for a full nervous system reset.",
+      steps: "Inhale through the left nostril with the right closed, exhale through the right nostril with the left closed. Continue alternating for 15-20 minutes." }
+  ]
+};
+
+var MOVEMENT_LIBRARY = {
+  "5": [
+    { title: "Shaking and Discharge", why: "Lets mobilized survival energy move through the body instead of just being talked down.",
+      steps: "Stand with feet hip-width apart, knees soft. Let your body shake starting from the feet, moving up through the legs, hips, torso, arms. Let your jaw, hands, and shoulders go loose. Continue for 2-3 minutes." },
+    { title: "Grounding Walk", why: "Movement paired with sensory noticing pulls attention into the body and surroundings.",
+      steps: "Walk slowly for 3-5 minutes. Notice 3 things you see, 2 things you hear, 1 thing you feel underfoot." },
+    { title: "Self-Touch Activation", why: "Gentle, intentional touch releases oxytocin and offers a low-demand way back into the body.",
+      steps: "Place your hands on your face in a slow, skincare-ritual style. Move slowly and with intention for 5 minutes. There is nowhere to get to." },
+    { title: "Qigong Flow (Brief)", why: "A structured sequence channels energy into deliberate, contained movement.",
+      steps: "Body wave x3, arm swings x10 each direction, chest opener x3, closing body wave x1." }
+  ],
+  "10": [
+    { title: "Shaking and Discharge + Grounding Walk", why: "Discharge first, then ground the nervous system back into the present.",
+      steps: "Shake for 2-3 minutes, then walk slowly for 5-10 minutes, noticing 5 things you see, 4 you hear, 3 you feel, 2 you smell, 1 you taste." },
+    { title: "Grounding Walk (Extended)", why: "A longer walk gives more time for movement and sensory noticing to settle the system.",
+      steps: "Walk slowly for 8-10 minutes, noticing your surroundings as you go, letting your pace settle naturally." },
+    { title: "Self-Touch Activation (Extended)", why: "A longer round of gentle touch offers more time to reconnect.",
+      steps: "Place your hands on your face in a slow, skincare-ritual style. Move slowly and with intention for 8-10 minutes." },
+    { title: "Qigong Flow (Partial)", why: "A fuller structured sequence offers a bridge back into a broader range of motion.",
+      steps: "Body wave x3, arm swings x10 each direction, trunk twist x6 each side, chest opener x3, march with high knees x10 each side, closing body wave x1." }
+  ],
+  "30": [
+    { title: "Extended Shaking + Grounding Walk", why: "A longer discharge followed by sustained walking lets energy fully move through and out.",
+      steps: "Shake from the feet up for 5 minutes, letting the whole body move. Then walk for 15-20 minutes, letting your pace settle as you go." },
+    { title: "Grounding Walk (Full)", why: "An extended walk offers sustained movement and sensory grounding.",
+      steps: "Walk slowly for 20-25 minutes, letting your attention move freely between your body and your surroundings." },
+    { title: "Self-Touch Activation + Qigong Flow (Partial)", why: "Gentle touch followed by structured movement offers a gradual bridge into fuller motion.",
+      steps: "Self-Touch Activation for 5 minutes, then: body wave x3, arm swings x10 each direction, chest opener x3, march with high knees x10 each side, closing body wave x1." },
+    { title: "Qigong Flow (Full)", why: "The complete sequence offers a full, structured pathway through the body.",
+      steps: "Body wave x3, hops x10, arm swings x10 each direction, trunk twist x6 each side, golf swing x3 each side, chest opener x3, deep pli\u00e9 x3, kick step x10 each leg, punches x20, march with high knees x10 each side, closing body wave x1." }
+  ]
+};
+
+var SOUND_LIBRARY = {
+  "5": [
+    { title: "Bilateral Tapping", why: "Bilateral stimulation calms the nervous system quickly without requiring stillness it can't hold yet.",
+      steps: "Cross your arms over your chest and alternate tapping each shoulder slowly, or tap alternating knees, for 2-3 minutes." },
+    { title: "Grounded Pause", why: "A quick sensory anchor without needing physical touch.",
+      steps: "Feel your feet on the floor. Notice 3 things you can see, 2 you can hear, 1 you can touch. Let your shoulders drop on the exhale." },
+    { title: "Body Scan (Short)", why: "A slow scan without any fixing gives the body permission to just be noticed.",
+      steps: "Sit with feet flat on the floor. Slowly scan from your feet to the crown of your head for 3-5 minutes. Notice without trying to fix or change anything you find." },
+    { title: "Statement Scan (Excerpt)", why: "A short body-based check-in interrupts the cycle before reacting.",
+      steps: "Read slowly, pausing after: \u201cI know what needs to change. I have known for a long time.\u201d Notice where in your body that lands." }
+  ],
+  "10": [
+    { title: "Bilateral Tapping (Extended)", why: "A longer bilateral practice gives more time to settle into rhythm.",
+      steps: "Cross your arms and alternate tapping each shoulder slowly, or tap alternating knees, for 5-6 minutes." },
+    { title: "Grounded Pause (Extended)", why: "A fuller sensory scan gives more anchoring than a quick check-in.",
+      steps: "Notice 5 things you can see, 4 you can hear, 3 you can feel, 2 you can smell, 1 you can taste, pausing between each." },
+    { title: "Body Scan (Full)", why: "A longer scan offers more time to reconnect at your own pace.",
+      steps: "Sit with feet flat on the floor. Slowly scan from feet to crown of your head, 5-7 minutes. Notice without fixing." },
+    { title: "Statement Scan (Full)", why: "Reading through the full sequence slowly lets what's underneath actually be heard.",
+      steps: "Read each statement slowly, pausing after each to notice where in the body it lands: \u201cI always make sure everyone else is okay before I check on myself.\u201d \u201cI say yes when I mean no and feel it immediately.\u201d \u201cI am never quite enough no matter how much I accomplish.\u201d \u201cI have been waiting for permission to fully show up as myself.\u201d \u201cI know what needs to change. I have known for a long time.\u201d" }
+  ],
+  "30": [
+    { title: "Bilateral Tapping (Extended) + Body Scan", why: "A longer bilateral practice followed by a full scan tracks what has shifted.",
+      steps: "Bilateral tapping for 5-6 minutes, then a full body scan from feet to crown, noticing what has settled or moved." },
+    { title: "Grounded Pause + Body Scan", why: "A brief sensory check-in followed by a fuller scan reinforces reconnection.",
+      steps: "Notice 5-4-3-2-1 senses slowly, then a full body scan from feet to crown, 5-7 minutes." },
+    { title: "Body Scan (Extended)", why: "A longer, unhurried scan gives the fullest amount of time to reconnect.",
+      steps: "Full Body Scan, 8-10 minutes, scanning slowly from feet to crown, pausing wherever you notice something." },
+    { title: "Statement Scan (Full) + Reflection", why: "Naming what's underneath, then sitting with it, moves through both layers.",
+      steps: "Read the full Statement Scan sequence slowly, pausing after each. Then sit quietly for a few minutes with whatever came up." }
+  ]
+};
+
+var SCENT_LIBRARY = {
+  fight: {
+    "5": [
+      { title: "Cold Water", why: "Cold water triggers the dive reflex, which slows the heart rate almost immediately.",
+        steps: "Run cold water over your wrists and the back of your neck for 30-60 seconds." },
+      { title: "Focus Blend", why: "This blend supports mental clarity when energy is high.",
+        steps: "Apply Focus blend to your pulse points and take three slow breaths in through the nose, noticing the scent.", aroma: "fight" },
+      { title: "Warmth", why: "A temperature-based cue offers a different kind of down-shift than cold or scent.",
+        steps: "Hold a warm drink or a warm object with both hands for one minute, feeling the weight and temperature." }
+    ],
+    "10": [
+      { title: "Cold Water + Focus Blend", why: "Combines a fast physical down-shift with mental clarity support.",
+        steps: "Cold water on wrists/neck (30-60 sec), then apply Focus blend to pulse points and breathe it in slowly for a minute.", aroma: "fight" },
+      { title: "Warmth + Focus Blend", why: "Combining warmth with scent offers a steadier down-shift than cold alone.",
+        steps: "Hold a warm drink with both hands, sipping slowly, with Focus blend applied to your wrists.", aroma: "fight" },
+      { title: "Cold Water (Extended)", why: "Alternating temperature gives a stronger physical signal than a single application.",
+        steps: "Run cool water over your wrists and neck for 60-90 seconds, then hold your wrists under warm water for 30 seconds, noticing the shift." }
+    ],
+    "30": [
+      { title: "Full Aromatherapy Ritual + Journaling", why: "Extended time allows for full nervous system down-regulation plus reflection.",
+        steps: "Apply Focus blend to pulse points. Sit somewhere quiet. Journal on: \u201cWhat did my body need today that I didn't give it?\u201d", aroma: "fight" },
+      { title: "Cold Water + Focus Blend + Walk", why: "Stacking a fast physical reset with scent and movement gives multiple ways to discharge.",
+        steps: "Cold water on wrists and neck, Focus blend applied to pulse points, then a slow 15-20 minute walk outside.", aroma: "fight" },
+      { title: "Warmth + Walk", why: "A slower, temperature-based ritual paired with movement offers a different pathway for a longer reset.",
+        steps: "Hold a warm drink with both hands for a few minutes, then walk slowly outside for 15-20 minutes." }
+    ]
+  },
+  flight: {
+    "5": [
+      { title: "Anxiety Relief Blend + Cold Water", why: "Scent reaches the nervous system fast, and cold water gives the mind something physical to land on.",
+        steps: "Apply Anxiety Relief blend to your pulse points and breathe it in slowly. Run cold water over your wrists for 30-60 seconds.", aroma: "flight" },
+      { title: "Cold Water (Only)", why: "A purely physical cue can interrupt a racing mind quickly, without needing anything applied.",
+        steps: "Run cold water over your wrists and the back of your neck for 30-60 seconds." },
+      { title: "Anxiety Relief Blend (Only)", why: "Scent alone, without water, can still interrupt a racing mind quickly.",
+        steps: "Apply Anxiety Relief blend to your pulse points and breathe it in slowly for one minute.", aroma: "flight" }
+    ],
+    "10": [
+      { title: "Anxiety Relief Blend + Midday Pause", why: "Combines scent regulation with a structured pause that interrupts the mental loop.",
+        steps: "Apply Anxiety Relief blend to pulse points. Close everything except what you need. Feel your feet on the floor. Do a 5-4-3-2-1 sensory scan. Take 3 slow breaths.", aroma: "flight" },
+      { title: "Anxiety Relief Blend + Warmth", why: "Combining scent with weight and warmth offers a steadier settle than scent alone.",
+        steps: "Apply Anxiety Relief blend to pulse points. Hold a warm drink with both hands, sipping slowly.", aroma: "flight" },
+      { title: "Cold Water + Grounded Pause", why: "A fast physical reset paired with a brief sensory check-in gives two different anchors.",
+        steps: "Cold water on your wrists for 30-60 seconds, then notice 3 things you can see, 2 you can hear, 1 you can feel." }
+    ],
+    "30": [
+      { title: "Full Anxiety Relief Ritual", why: "Extended sensory regulation gives the nervous system enough time to fully come out of flight mode.",
+        steps: "Apply Anxiety Relief blend to pulse points. Sit somewhere quiet with a warm drink, holding it with both hands, sipping slowly.", aroma: "flight" },
+      { title: "Anxiety Relief Ritual + Grounding Walk", why: "Stacking scent regulation with movement gives a racing mind more than one anchor.",
+        steps: "Apply Anxiety Relief blend to pulse points, then walk slowly for 15-20 minutes, noticing your surroundings as you go.", aroma: "flight" },
+      { title: "Warmth Ritual (Extended)", why: "A slower, weighted warmth practice offers sustained regulation without relying on scent.",
+        steps: "Hold a warm drink with both hands. Sip slowly for 15-20 minutes, letting the warmth and weight be the only thing you focus on." }
+    ]
+  },
+  freeze: {
+    "5": [
+      { title: "Grounding Blend + Warmth", why: "Scent and warmth both signal safety to a nervous system that has gone offline.",
+        steps: "Apply Grounding blend to pulse points. Hold a warm drink with both hands. Feel the weight and temperature. Sip slowly.", aroma: "freeze" },
+      { title: "Warmth (Only)", why: "Warmth alone signals safety to a nervous system that has gone offline.",
+        steps: "Hold a warm drink or a warm object with both hands. Feel the weight and temperature for one minute." },
+      { title: "Grounding Blend (Only)", why: "Scent alone offers a low-demand safety cue.",
+        steps: "Apply Grounding blend to your pulse points and breathe it in slowly for one minute.", aroma: "freeze" }
+    ],
+    "10": [
+      { title: "Grounding Blend + Body Scan", why: "Combines sensory safety cues with a slower, fuller check-in with the body.",
+        steps: "Apply Grounding blend to pulse points. Sit with feet flat and do the full Body Scan, 5-7 minutes.", aroma: "freeze" },
+      { title: "Warmth (Extended)", why: "A longer, purely temperature-based practice gives more time to register safety.",
+        steps: "Hold a warm drink with both hands for 8-10 minutes, sipping slowly, letting the warmth spread through your hands and chest." },
+      { title: "Grounding Blend + Warmth (Extended)", why: "A longer round of scent and warmth together gives more time to register safety.",
+        steps: "Apply Grounding blend to pulse points. Hold a warm drink with both hands for 8-10 minutes, sipping slowly.", aroma: "freeze" }
+    ],
+    "30": [
+      { title: "Full Grounding Ritual", why: "Extended time with sensory and warmth cues gives the nervous system room to slowly come back online.",
+        steps: "Apply Grounding blend to pulse points. Sit somewhere quiet with a warm drink. Follow with the full Body Scan.", aroma: "freeze" },
+      { title: "Warmth Ritual + Self-Touch", why: "Pairing sustained warmth with gentle touch offers two different safety cues.",
+        steps: "Hold a warm drink with both hands for several minutes. Follow with Self-Touch Activation, hands on face in slow, intentional touch, for 5 minutes." },
+      { title: "Full Grounding Ritual + Self-Touch", why: "Stacking scent, warmth, and touch offers multiple safety cues at once for a longer reset.",
+        steps: "Apply Grounding blend to pulse points. Sit with a warm drink. Follow with Self-Touch Activation for 5 minutes.", aroma: "freeze" }
+    ]
+  },
+  fawn: {
+    "5": [
+      { title: "Heart Opening Blend", why: "This blend supports self-connection, which a fawn response tends to override.",
+        steps: "Apply Heart Opening blend to your chest and pulse points. Breathe it in slowly for a minute.", aroma: "fawn" },
+      { title: "Warmth (Only)", why: "A temperature-based cue offers self-connection without relying on scent.",
+        steps: "Hold a warm drink with both hands for one minute, feeling the weight and warmth without needing to do anything else." },
+      { title: "Heart Opening Blend (Extended)", why: "A longer moment with a self-connecting scent reinforces the pause before performing resumes.",
+        steps: "Apply Heart Opening blend to your chest and pulse points. Breathe it in slowly for 2-3 minutes, noticing what you actually feel underneath it.", aroma: "fawn" }
+    ],
+    "10": [
+      { title: "Heart Opening Blend + Self-Touch", why: "Combines scent-based self-connection with intentional touch, both of which counter self-erasure.",
+        steps: "Apply Heart Opening blend to pulse points. Follow with Self-Touch Activation, hands on face in slow, intentional touch, for 5 minutes.", aroma: "fawn" },
+      { title: "Warmth (Extended)", why: "A longer warmth practice offers sustained self-connection through a different sense than scent.",
+        steps: "Hold a warm drink with both hands, sipping slowly for 8-10 minutes, letting the warmth ground you without needing to perform anything." },
+      { title: "Heart Opening Blend + Warmth", why: "Combining scent with warmth offers a steadier self-connecting cue than scent alone.",
+        steps: "Apply Heart Opening blend to pulse points. Hold a warm drink with both hands, sipping slowly for 8-10 minutes.", aroma: "fawn" }
+    ],
+    "30": [
+      { title: "Full Heart Opening Ritual", why: "Extended time with self-connecting scent and touch practices counters a long-standing pattern of self-erasure.",
+        steps: "Apply Heart Opening blend to pulse points. Follow with Self-Touch Activation. Sit quietly afterward and journal on: what have I been performing, and for whom?", aroma: "fawn" },
+      { title: "Warmth Ritual + Walk", why: "Sustained warmth paired with time alone outside offers two different ways to reconnect with what you want.",
+        steps: "Hold a warm drink with both hands for several minutes, then walk slowly for 10-15 minutes, noticing what you want rather than what's expected." },
+      { title: "Full Heart Opening Ritual + Walk", why: "Stacking scent, touch, and movement gives self-erasure patterns more than one point of interruption.",
+        steps: "Apply Heart Opening blend to pulse points. Follow with Self-Touch Activation. Close with a slow 10-15 minute walk.", aroma: "fawn" }
+    ]
+  }
+};
+
+var GUIDED_LIBRARY = {
+  fight: {
+    "5": [
+      { title: "Statement Scan (Excerpt)", why: "A short body-based check-in interrupts the activation cycle before reacting.",
+        steps: "Read slowly, pausing after each: \u201cI am never quite enough no matter how much I accomplish.\u201d Notice where in your body that lands. \u201cI know what needs to change. I have known for a long time.\u201d Notice again." },
+      { title: "EFT Tapping (Ultra-Short)", why: "Two tapping points can interrupt the activation cycle even with almost no time.",
+        steps: "Tap the karate chop point 3 times while saying: I am allowed to feel this. Tap the top of the head: I can handle what is mine to handle." },
+      { title: "Sovereignty Imagination (Short)", why: "A brief imagination practice gives fight energy a grounded, embodied place to land.",
+        steps: "Take three slow breaths. Imagine yourself standing tall in a room, shoulders back, feeling the ground under your feet. Let that feeling anchor for a minute." }
+    ],
+    "10": [
+      { title: "Full Statement Scan", why: "Slower pacing lets the activation settle enough to actually hear what's underneath it.",
+        steps: "Read each statement slowly, pausing between each: \u201cI always make sure everyone else is okay before I check on myself.\u201d \u201cI say yes when I mean no and feel it immediately.\u201d \u201cI am never quite enough no matter how much I accomplish.\u201d \u201cI have been waiting for permission to fully show up as myself.\u201d \u201cI know what needs to change. I have known for a long time.\u201d" },
+      { title: "EFT Tapping \u2014 Fight State", why: "A full tapping round addresses both the physical activation and the belief underneath it.",
+        steps: "Setup phrase (karate chop point, repeat 3x): \u201cEven though I feel completely overwhelmed and like everything is too much right now, I deeply and completely accept myself.\u201d Tap through: Eyebrow \u2014 This overwhelm. Side of eye \u2014 Everything feels like too much. Under eye \u2014 I cannot keep up with all of it. Under nose \u2014 I am so tired of trying to be enough. Chin \u2014 I do not have to have it all together. Collarbone \u2014 I am allowed to feel this. Under arm \u2014 My nervous system is just trying to protect me. Top of head \u2014 I choose to release what I do not need to carry right now. Closing: take one deep breath. I am safe. I am enough." },
+      { title: "Sovereignty Imagination", why: "An imagination practice gives fight energy a grounded, embodied place to land.",
+        steps: "Take three slow breaths. Imagine yourself walking into a room and feeling completely at home in your own body. Notice how you walk, feel the ground under each step. Let that feeling anchor in your chest, your feet, your spine." }
+    ],
+    "30": [
+      { title: "EFT Tapping + Sovereignty Imagination", why: "Moves from releasing the activation to embodying a regulated, grounded state.",
+        steps: "Full EFT Fight tapping sequence (setup phrase, eight points, closing statement), then the Sovereignty Imagination: three slow breaths, imagining yourself walking into a room feeling at home in your own body, letting that feeling anchor in your chest, feet, and spine." },
+      { title: "Statement Scan + Sovereignty Imagination", why: "Naming what's underneath the activation, then embodying a grounded version of yourself, moves through both layers.",
+        steps: "Full Statement Scan, reading each statement slowly and pausing after each. Then the Sovereignty Imagination, staying as long as you need." },
+      { title: "EFT Tapping + Coherence Breathing", why: "Combines belief-level release with sustained nervous system balancing.",
+        steps: "Full EFT Fight tapping sequence, followed by Coherence Breathing: inhale 5 counts, exhale 5 counts, for 5 minutes." }
+    ]
+  },
+  flight: {
+    "5": [
+      { title: "Safe Place Imagination (Short)", why: "A racing mind needs somewhere to land, and imagination gives it a concrete place to go instead of spinning.",
+        steps: "Take a slow breath in and let it go. Imagine a place that feels completely safe. Notice what is under your feet. Notice the temperature of the air. Let your body feel the safety of this place for a minute." },
+      { title: "EFT Tapping (Ultra-Short)", why: "Two tapping points offer quick relief when there is almost no time.",
+        steps: "Tap the karate chop point 3 times while saying: My mind keeps spinning and that's okay. Tap the top of the head: I am safe to slow down." },
+      { title: "Future Self Imagination (Short)", why: "A brief imagination practice gives a racing mind a stable, trusted version of you to return to.",
+        steps: "Close your eyes or soften your gaze. Take three slow breaths. Imagine the version of you who has already worked through this moment standing nearby. Let that feeling stay with you for a minute." }
+    ],
+    "10": [
+      { title: "Full Safe Place Imagination", why: "A longer, fully sensory imagination script gives an anxious mind somewhere real to settle.",
+        steps: "Take a slow breath in and let it go. Imagine a place that feels completely safe, real or made up. Notice what is around you, above you, under your feet. Feel the temperature of the air. Let your body feel the safety of this place in your chest, shoulders, belly. Stay as long as you need." },
+      { title: "EFT Tapping \u2014 Flight State", why: "A full tapping round addresses both the racing thoughts and the self-doubt underneath them.",
+        steps: "Setup phrase (karate chop point, repeat 3x): \u201cEven though my mind will not stop racing and I cannot seem to trust myself right now, I deeply and completely accept myself.\u201d Tap through: Eyebrow \u2014 This anxious feeling. Side of eye \u2014 My mind keeps spinning. Under eye \u2014 I do not trust my own thoughts. Under nose \u2014 What if I get it wrong. Chin \u2014 I have gotten things wrong before and survived. Collarbone \u2014 My intuition has always been there. Under arm \u2014 I am learning to trust it again. Top of head \u2014 I am safe to slow down and listen. Closing: I trust what I know." },
+      { title: "Future Self Imagination", why: "Gives a racing mind a stable, trusted version of you to return to.",
+        steps: "Close your eyes or soften your gaze. Take three slow breaths. Imagine stepping into a space that feels entirely yours. Imagine the version of you who has done the work standing nearby. Notice how she holds herself. Stay as long as you need." }
+    ],
+    "30": [
+      { title: "EFT Tapping + Safe Place Imagination", why: "Releasing the anxious belief first, then settling into an imagined safe place, moves through both layers.",
+        steps: "Full EFT Flight tapping sequence (setup phrase, eight points, closing statement), then the full Safe Place Imagination, staying as long as you need." },
+      { title: "EFT Tapping + Future Self Imagination", why: "Moves from releasing anxious thought patterns to embodying a version of you who already trusts herself.",
+        steps: "Full EFT Flight tapping sequence, then the Future Self Imagination, staying as long as you need." },
+      { title: "Safe Place + Future Self Imagination", why: "Settling somewhere safe first, then meeting a trusted version of you, moves through both layers.",
+        steps: "Full Safe Place Imagination, then the Future Self Imagination, letting one lead naturally into the other." }
+    ]
+  },
+  freeze: {
+    "5": [
+      { title: "EFT Tapping \u2014 Freeze State (Short)", why: "A brief tapping round meets numbness gently, without asking for more energy than is available.",
+        steps: "Setup phrase (karate chop point, repeat 3x): \u201cEven though I feel completely shut down and cannot seem to get moving, I deeply and completely accept myself.\u201d Tap: Eyebrow \u2014 This frozen feeling. Chin \u2014 And I have moved through it before. Top of head \u2014 I just have to do one small thing right now." },
+      { title: "Self-Touch Activation (Guided)", why: "Gentle touch paired with a few words offers a low-demand entry point for a shut-down body.",
+        steps: "Place a hand on your chest and one on your belly. Say quietly: I am allowed to start small. Breathe under your hands for one minute." },
+      { title: "Safe Place Imagination (Short)", why: "A brief imagination practice gives a numb or frozen body somewhere safe to land.",
+        steps: "Take a slow breath in and let it go. Imagine a place that feels completely safe. Notice what is under your feet and the temperature of the air. Let your body feel the safety of this place for a minute." }
+    ],
+    "10": [
+      { title: "EFT Tapping + Safe Place Imagination", why: "Releases the belief underneath the shutdown, then offers somewhere safe to land.",
+        steps: "Setup phrase (karate chop point, repeat 3x): \u201cEven though I feel completely shut down and cannot seem to get moving, I deeply and completely accept myself.\u201d Tap through: Eyebrow \u2014 This frozen feeling. Side of eye \u2014 I cannot seem to start. Under eye \u2014 Everything feels too heavy. Under nose \u2014 I have been here before. Chin \u2014 And I have moved through it before. Collarbone \u2014 My body is just trying to keep me safe. Under arm \u2014 I do not have to do everything. Top of head \u2014 I just have to do one small thing right now. Then the Safe Place Imagination." },
+      { title: "Full Safe Place Imagination", why: "A longer, fully sensory imagination script gives a shut-down body somewhere real to settle.",
+        steps: "Take a slow breath in and let it go. Imagine a place that feels completely safe. Notice what is around you, above you, under your feet. Feel the temperature of the air. Let your body feel the safety of this place. Stay as long as you need." },
+      { title: "Future Self Imagination", why: "Gives a numb or frozen body a version of you who is already present and engaged.",
+        steps: "Close your eyes or soften your gaze. Take three slow breaths. Imagine the version of you who has done the work standing nearby. Notice how she holds herself. Stay as long as you need." }
+    ],
+    "30": [
+      { title: "EFT Tapping + Future Self Imagination", why: "Moves from releasing the shutdown to imagining a version of you who is already present and engaged.",
+        steps: "Full EFT Freeze tapping sequence (setup phrase, eight points, closing statement), then the Future Self Imagination, staying as long as you need." },
+      { title: "EFT Tapping + Safe Place Imagination (Extended)", why: "Releasing the belief underneath the shutdown, then resting somewhere safe, moves through both layers.",
+        steps: "Full EFT Freeze tapping sequence, then the full Safe Place Imagination, staying as long as you need." },
+      { title: "Safe Place + Future Self Imagination", why: "Settling somewhere safe first, then meeting an engaged version of you, moves through both layers.",
+        steps: "Full Safe Place Imagination, then the Future Self Imagination, letting one lead naturally into the other." }
+    ]
+  },
+  fawn: {
+    "5": [
+      { title: "EFT Tapping \u2014 Fawn State (Short)", why: "A brief tapping round starts to interrupt the reflex to put everyone else first.",
+        steps: "Setup phrase (karate chop point, repeat 3x): \u201cEven though I have lost track of what I actually want and I keep putting everyone else first, I deeply and completely accept myself.\u201d Tap: Eyebrow \u2014 I keep saying yes when I mean no. Collarbone \u2014 My needs are not an inconvenience. Top of head \u2014 I am enough even when I am not performing for anyone." },
+      { title: "Reflection (Quick)", why: "A direct question, without needing to tap through a script, counters the reflex to defer.",
+        steps: "Ask yourself quietly: what would I choose right now if no one's reaction mattered? Notice the first answer that comes, without editing it." },
+      { title: "Sovereignty Imagination (Short)", why: "A brief imagination practice offers a version of you who takes up space without performing.",
+        steps: "Take three slow breaths. Imagine yourself standing tall in a room, feeling completely at home in your own body. Let that feeling anchor for a minute." }
+    ],
+    "10": [
+      { title: "EFT Tapping \u2014 Fawn State", why: "A full tapping round addresses both the pattern of self-erasure and the belief underneath it.",
+        steps: "Setup phrase (karate chop point, repeat 3x): \u201cEven though I have lost track of what I actually want and I keep putting everyone else first, I deeply and completely accept myself.\u201d Tap through: Eyebrow \u2014 I keep saying yes when I mean no. Side of eye \u2014 I do not even know what I want anymore. Under eye \u2014 I am so used to making everyone else comfortable. Under nose \u2014 It is exhausting to be needed this much. Chin \u2014 I am allowed to have needs of my own. Collarbone \u2014 My needs are not an inconvenience. Under arm \u2014 I choose to come back to myself right now. Top of head \u2014 I am enough even when I am not performing for anyone. Closing: I choose myself." },
+      { title: "Reflection (Without Tapping)", why: "A direct question, without needing to explain your answer to anyone, counters the reflex to defer.",
+        steps: "Sit quietly and ask yourself: if no one's reaction mattered right now, what would I actually choose? Let the answer come without editing it. Write it down if that helps it stay real." },
+      { title: "Sovereignty Imagination", why: "Offers a version of you who takes up space without performing for anyone in it.",
+        steps: "Take three slow breaths. Imagine yourself walking into a room and feeling completely at home in your own body. Notice how you walk, feel the ground under each step. Let that feeling anchor in your chest, feet, spine." }
+    ],
+    "30": [
+      { title: "EFT Tapping + Sovereignty Imagination", why: "Moves from releasing the fawn pattern to embodying a version of you who takes up space without performing.",
+        steps: "Full EFT Fawn tapping sequence (setup phrase, eight points, closing statement), then the Sovereignty Imagination, staying as long as you need." },
+      { title: "EFT Tapping + Future Self Imagination", why: "Releasing the fawn pattern, then imagining a version of you who already trusts her own needs, moves through both layers.",
+        steps: "Full EFT Fawn tapping sequence, then the Future Self Imagination, staying as long as you need." },
+      { title: "Reflection + Sovereignty Imagination", why: "Naming what you actually want, then embodying a version of you who takes up space, moves through both layers.",
+        steps: "Sit quietly and ask yourself what you would choose if no one's reaction mattered. Then the Sovereignty Imagination, staying as long as you need." }
+    ]
+  }
+};
+
+function calculateResult() {
+  document.getElementById('assessment').style.display = 'none';
+  document.getElementById('result').style.display = 'block';
+  window.scrollTo(0,0);
+
+  var firstName = document.getElementById('firstName').value.trim() || 'there';
+  var archetypeCode = document.getElementById('archetypeSelect').value;
+  var patternInfo = PATTERNS[selectedState];
+
+  document.getElementById('result-greeting').innerHTML = firstName + ', <em>here is your regulation protocol.</em>';
+
+  /* Build a uniform parts list: one part per selected modality.
+     Single modality at any time length uses the full dedicated tier entry.
+     Multiple modalities use a shorter component tier so they stack into one session. */
+  var multi = selectedModalities.length > 1;
+  var componentTier = multi ? (selectedTime === '30' ? '10' : '5') : selectedTime;
+
+  currentParts = selectedModalities.map(function(mod){
+    var alts = getAlts(selectedState, componentTier, mod);
+    return { modality: mod, tier: componentTier, alts: alts, altIndex: 0 };
+  });
+
+  if (multi) {
+    document.getElementById('practice-title').textContent = 'Your Full Regulation Toolkit';
+  }
+
+  renderParts();
+}
+
+function getAlts(state, tier, modality) {
+  var primary = PRACTICE_BANK[state][tier][modality];
+  var library;
+  if (modality === 'breath') { library = BREATH_LIBRARY[tier]; }
+  else if (modality === 'movement') { library = MOVEMENT_LIBRARY[tier]; }
+  else if (modality === 'sound') { library = SOUND_LIBRARY[tier]; }
+  else if (modality === 'scent') { library = SCENT_LIBRARY[state][tier]; }
+  else if (modality === 'guided') { library = GUIDED_LIBRARY[state][tier]; }
+  else { library = []; }
+
+  var result = [primary];
+  library.forEach(function(item){
+    if (item.title !== primary.title) { result.push(item); }
+  });
+  return result;
+}
+
+function swapPart(i) {
+  var part = currentParts[i];
+  part.altIndex = (part.altIndex + 1) % part.alts.length;
+  renderParts();
+}
+
+function renderParts() {
+  var multi = currentParts.length > 1;
+  var practiceHtml = '';
+
+  if (multi) {
+    practiceHtml += '<p><strong>Why this matches:</strong> Layering practices across ' + currentParts.length + ' modalities gives your nervous system more than one entry point back to regulated. Move through each part in order.</p>';
+  }
+
+  currentParts.forEach(function(part, i){
+    var entry = part.alts[part.altIndex];
+    var hasAlt = part.alts.length > 1;
+
+    if (multi) {
+      practiceHtml += '<div class="plan-part">';
+      practiceHtml += '<p class="plan-part-label">Part ' + (i + 1) + ' of ' + currentParts.length + '</p>';
+      practiceHtml += '<h4 style="font-size:1rem;text-transform:none;letter-spacing:0;color:#FFFFFF;margin-bottom:8px;">' + entry.title + '</h4>';
+      practiceHtml += '<p>' + entry.steps + '</p>';
+    } else {
+      document.getElementById('practice-title').textContent = entry.title;
+      practiceHtml += '<p><strong>Why this matches:</strong> ' + entry.why + '</p>';
+      practiceHtml += '<h4>Steps</h4><p>' + entry.steps + '</p>';
+    }
+
+    if (entry.aroma) {
+      var a = STATE_AROMA[entry.aroma];
+      practiceHtml += '<span class="aroma-tag">' + a.name + ': ' + a.formula + '</span>';
+    }
+    if (hasAlt) {
+      practiceHtml += '<div><button class="btn-skip" onclick="swapPart(' + i + ')" style="padding-left:0;margin-top:8px;">Try a different one \u21bb</button></div>';
+    }
+    if (multi) { practiceHtml += '</div>'; }
+  });
+
+  document.getElementById('practice-content').innerHTML = practiceHtml;
+
+  var patternInfo = PATTERNS[selectedState];
+  var archetypeCode = document.getElementById('archetypeSelect').value;
+
+  document.getElementById('pattern-title').textContent = patternInfo.label + ' Patterns';
+  var patternHtml = '<p>This state most often connects to ' + patternInfo.label + ' patterns: ' + patternInfo.patterns.join(', ') + '. This connects to your pattern assessment results.</p>';
+  if (archetypeCode && ARCHETYPES[archetypeCode]) {
+    patternHtml += '<p style="margin-top:14px;"><strong>Your archetype:</strong> ' + ARCHETYPES[archetypeCode] + '</p>';
+  }
+  document.getElementById('pattern-content').innerHTML = patternHtml;
+
+  /* Elemental Grounding (optional) */
+  var sun = document.getElementById('toolkitSun').value;
+  var moon = document.getElementById('toolkitMoon').value;
+  var rising = document.getElementById('toolkitRising').value;
+
+  if (sun && moon && rising) {
+    document.getElementById('element-block').style.display = 'block';
+    var sunName = getSignText('toolkitSun');
+    var moonName = getSignText('toolkitMoon');
+    var risingName = getSignText('toolkitRising');
+    var sunEl = ELEMENTS[sun];
+    var moonEl = ELEMENTS[moon];
+    var risEl = ELEMENTS[rising];
+    var div = '<div style="height:1px;background:rgba(201,168,118,0.2);margin:22px 0;"></div>';
+
+    var elHtml =
+      '<h4>MOON IN ' + moonName.toUpperCase() + ' \u2014 Emotional Regulation</h4>' +
+      '<p><strong>' + moonEl.name + '</strong></p>' +
+      '<p>' + moonEl.prescription + '</p>' +
+      '<p><em>On the go:</em> ' + moonEl.onthego + '</p>' + div +
+
+      '<h4>SUN IN ' + sunName.toUpperCase() + ' \u2014 Mental Regulation</h4>' +
+      '<p><strong>' + sunEl.name + '</strong></p>' +
+      '<p>' + sunEl.prescription + '</p>' +
+      '<p><em>On the go:</em> ' + sunEl.onthego + '</p>' + div +
+
+      '<h4>RISING IN ' + risingName.toUpperCase() + ' \u2014 Environmental Regulation</h4>' +
+      '<p><strong>' + risEl.name + '</strong></p>' +
+      '<p>' + risEl.prescription + '</p>' +
+      '<p><em>On the go:</em> ' + risEl.onthego + '</p>';
+
+    /* Check for 2+ placements in the same element -> opposite grounding note */
+    var counts = { earth: 0, water: 0, air: 0, fire: 0 };
+    counts[sun]++; counts[moon]++; counts[rising]++;
+    var dominantElement = null, dominantCount = 0;
+    for (var el in counts) { if (counts[el] > dominantCount) { dominantCount = counts[el]; dominantElement = el; } }
+
+    if (dominantCount >= 2) {
+      var oppositeKey = ELEMENTS[dominantElement].opposite;
+      var oppositeEl = ELEMENTS[oppositeKey];
+      var dominantLabel = dominantElement.charAt(0).toUpperCase() + dominantElement.slice(1);
+      var oppositeLabel = oppositeKey.charAt(0).toUpperCase() + oppositeKey.slice(1);
+      elHtml += '<div class="grounding-note"><p>*** You have a high ' + dominantLabel + ' placement (2 or more) which may require grounding in the opposite element when overwhelmed. Your opposite is ' + oppositeLabel + ' — here are grounding practices that align with that: ***</p>' +
+        '<p>' + oppositeEl.prescription + '</p>' +
+        '<p><em>On the go:</em> ' + oppositeEl.onthego + '</p></div>';
+    }
+
+    document.getElementById('element-content').innerHTML = elHtml;
+  } else {
+    document.getElementById('element-block').style.display = 'none';
+  }
+}
+
+function getSignText(selectId) {
+  var el = document.getElementById(selectId);
+  return el.options[el.selectedIndex].text;
+}
+
+/* ============ EMAIL ============ */
+function emailResult() {
+  var firstName = document.getElementById('firstName').value.trim() || 'there';
+  var practiceTitle = document.getElementById('practice-title').textContent;
+  var stateLabel = STATE_LABELS[selectedState];
+
+  var userEmail = prompt('Enter your email address to send this result to yourself:');
+  if (!userEmail) { return; }
+
+  var subject = encodeURIComponent('Your Nervous System Regulation Protocol: ' + practiceTitle);
+  var body = encodeURIComponent(
+    'Hi ' + firstName + ',\n\n' +
+    'Here is the regulation protocol you just received.\n\n' +
+    'STATE: You described feeling ' + stateLabel + '\n' +
+    'PRACTICE: ' + practiceTitle + '\n\n' +
+    'Return to the full tool anytime to get a new practice matched to how you are feeling:\n' +
+    'https://opewithleah.github.io/Reset-Room-Tools/regulation-toolkit.html\n\n' +
+    'With love,\n' +
+    'Leah Fairchild\n' +
+    'The Pattern Interrupter | On Purpose Evolution'
+  );
+
+  var mailtoLink = 'mailto:' + userEmail + '?cc=onpurposeevolution@gmail.com&subject=' + subject + '&body=' + body;
+  setTimeout(function(){ window.location.href = mailtoLink; }, 100);
+}
+</script>
+</body>
+</html>
