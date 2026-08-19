@@ -492,10 +492,13 @@ var STATE_LABELS = {
 };
 
 var STATE_AROMA = {
-  fight:  { name: "Focus", formula: "Peppermint 4 / Sweet Orange 3 / Sandalwood 3" },
-  flight: { name: "Anxiety Relief", formula: "Lavender 3 / Clary Sage 2 / Vetiver 2 / Frankincense 1" },
-  freeze: { name: "Grounding", formula: "Frankincense 3 / Cedarwood 4 / Sandalwood 3" },
-  fawn:   { name: "Heart Opening", formula: "Cedarwood 4 / Sandalwood 3 / Ylang Ylang 2" }
+  fight:     { name: "Focus", formula: "Peppermint 4 / Sweet Orange 3 / Sandalwood 3" },
+  flight:    { name: "Anxiety Relief", formula: "Lavender 3 / Clary Sage 2 / Vetiver 2 / Frankincense 1" },
+  freeze:    { name: "Grounding", formula: "Frankincense 3 / Cedarwood 4 / Sandalwood 3" },
+  fawn:      { name: "Heart Opening", formula: "Cedarwood 4 / Sandalwood 3 / Ylang Ylang 2" },
+  alignment: { name: "Alignment", formula: "Bergamot 4 / Lavender 4 / Sandalwood 3" },
+  sleep:     { name: "Sleep", formula: "Lavender 5 / Clary Sage 4 / Vetiver 3" },
+  abundance: { name: "Abundance", formula: "Bergamot 4 / Peppermint 3 / Cinnamon Bark 3" }
 };
 
 var ARCHETYPES = {
@@ -749,7 +752,9 @@ var MOVEMENT_LIBRARY = {
     { title: "Self-Touch Activation", why: "Gentle, intentional touch releases oxytocin and offers a low-demand way back into the body.",
       steps: "Place your hands on your face in a slow, skincare-ritual style. Move slowly and with intention for 5 minutes. There is nowhere to get to." },
     { title: "Qigong Flow (Brief)", why: "A structured sequence channels energy into deliberate, contained movement.",
-      steps: "Body wave x3, arm swings x10 each direction, chest opener x3, closing body wave x1." }
+      steps: "Body wave x3, arm swings x10 each direction, chest opener x3, closing body wave x1." },
+    { title: "Progressive Muscle Release", why: "Deliberately tensing and releasing gives the body a clear before-and-after signal of what relaxed actually feels like.",
+      steps: "Clench your fists tightly for 5 seconds, then release. Do the same with your shoulders, then your jaw. Notice the difference each time." }
   ],
   "10": [
     { title: "Shaking and Discharge + Grounding Walk", why: "Discharge first, then ground the nervous system back into the present.",
@@ -759,7 +764,9 @@ var MOVEMENT_LIBRARY = {
     { title: "Self-Touch Activation (Extended)", why: "A longer round of gentle touch offers more time to reconnect.",
       steps: "Place your hands on your face in a slow, skincare-ritual style. Move slowly and with intention for 8-10 minutes." },
     { title: "Qigong Flow (Partial)", why: "A fuller structured sequence offers a bridge back into a broader range of motion.",
-      steps: "Body wave x3, arm swings x10 each direction, trunk twist x6 each side, chest opener x3, march with high knees x10 each side, closing body wave x1." }
+      steps: "Body wave x3, arm swings x10 each direction, trunk twist x6 each side, chest opener x3, march with high knees x10 each side, closing body wave x1." },
+    { title: "Progressive Muscle Release (Full Body)", why: "Working through the whole body gives a fuller, more sustained release than a few muscle groups alone.",
+      steps: "Working from your feet to your head, tense each muscle group for 5 seconds then release: feet, calves, thighs, stomach, hands, arms, shoulders, jaw. Notice the weight settling after each release." }
   ],
   "30": [
     { title: "Extended Shaking + Grounding Walk", why: "A longer discharge followed by sustained walking lets energy fully move through and out.",
@@ -769,7 +776,9 @@ var MOVEMENT_LIBRARY = {
     { title: "Self-Touch Activation + Qigong Flow (Partial)", why: "Gentle touch followed by structured movement offers a gradual bridge into fuller motion.",
       steps: "Self-Touch Activation for 5 minutes, then: body wave x3, arm swings x10 each direction, chest opener x3, march with high knees x10 each side, closing body wave x1." },
     { title: "Qigong Flow (Full)", why: "The complete sequence offers a full, structured pathway through the body.",
-      steps: "Body wave x3, hops x10, arm swings x10 each direction, trunk twist x6 each side, golf swing x3 each side, chest opener x3, deep pli\u00e9 x3, kick step x10 each leg, punches x20, march with high knees x10 each side, closing body wave x1." }
+      steps: "Body wave x3, hops x10, arm swings x10 each direction, trunk twist x6 each side, golf swing x3 each side, chest opener x3, deep pli\u00e9 x3, kick step x10 each leg, punches x20, march with high knees x10 each side, closing body wave x1." },
+    { title: "Progressive Muscle Release + Grounding Walk", why: "A full-body release followed by movement offers two different ways to fully discharge.",
+      steps: "Working from your feet to your head, tense each muscle group for 5 seconds then release: feet, calves, thighs, stomach, hands, arms, shoulders, jaw. Then walk slowly for 15-20 minutes." }
   ]
 };
 
@@ -782,7 +791,9 @@ var SOUND_LIBRARY = {
     { title: "Body Scan (Short)", why: "A slow scan without any fixing gives the body permission to just be noticed.",
       steps: "Sit with feet flat on the floor. Slowly scan from your feet to the crown of your head for 3-5 minutes. Notice without trying to fix or change anything you find." },
     { title: "Statement Scan (Excerpt)", why: "A short body-based check-in interrupts the cycle before reacting.",
-      steps: "Read slowly, pausing after: \u201cI know what needs to change. I have known for a long time.\u201d Notice where in your body that lands." }
+      steps: "Read slowly, pausing after: \u201cI know what needs to change. I have known for a long time.\u201d Notice where in your body that lands." },
+    { title: "Humming or Toning", why: "Humming stimulates the vagus nerve directly through vibration, offering a quick reset through sound itself.",
+      steps: "Hum a low, steady note for 30-60 seconds, feeling the vibration in your chest and throat. Repeat 2-3 times." }
   ],
   "10": [
     { title: "Bilateral Tapping (Extended)", why: "A longer bilateral practice gives more time to settle into rhythm.",
@@ -792,7 +803,9 @@ var SOUND_LIBRARY = {
     { title: "Body Scan (Full)", why: "A longer scan offers more time to reconnect at your own pace.",
       steps: "Sit with feet flat on the floor. Slowly scan from feet to crown of your head, 5-7 minutes. Notice without fixing." },
     { title: "Statement Scan (Full)", why: "Reading through the full sequence slowly lets what's underneath actually be heard.",
-      steps: "Read each statement slowly, pausing after each to notice where in the body it lands: \u201cI always make sure everyone else is okay before I check on myself.\u201d \u201cI say yes when I mean no and feel it immediately.\u201d \u201cI am never quite enough no matter how much I accomplish.\u201d \u201cI have been waiting for permission to fully show up as myself.\u201d \u201cI know what needs to change. I have known for a long time.\u201d" }
+      steps: "Read each statement slowly, pausing after each to notice where in the body it lands: \u201cI always make sure everyone else is okay before I check on myself.\u201d \u201cI say yes when I mean no and feel it immediately.\u201d \u201cI am never quite enough no matter how much I accomplish.\u201d \u201cI have been waiting for permission to fully show up as myself.\u201d \u201cI know what needs to change. I have known for a long time.\u201d" },
+    { title: "Humming or Toning (Extended)", why: "A longer round of vagal toning through sound gives more time for the nervous system to shift.",
+      steps: "Hum a low, steady note for 60-90 seconds at a time, feeling the vibration in your chest and throat. Repeat 4-5 times, resting between rounds." }
   ],
   "30": [
     { title: "Bilateral Tapping (Extended) + Body Scan", why: "A longer bilateral practice followed by a full scan tracks what has shifted.",
@@ -802,7 +815,9 @@ var SOUND_LIBRARY = {
     { title: "Body Scan (Extended)", why: "A longer, unhurried scan gives the fullest amount of time to reconnect.",
       steps: "Full Body Scan, 8-10 minutes, scanning slowly from feet to crown, pausing wherever you notice something." },
     { title: "Statement Scan (Full) + Reflection", why: "Naming what's underneath, then sitting with it, moves through both layers.",
-      steps: "Read the full Statement Scan sequence slowly, pausing after each. Then sit quietly for a few minutes with whatever came up." }
+      steps: "Read the full Statement Scan sequence slowly, pausing after each. Then sit quietly for a few minutes with whatever came up." },
+    { title: "Humming or Toning + Body Scan", why: "Vagal toning through sound, followed by a full scan, gives two different ways to settle.",
+      steps: "Hum a low, steady note for 60-90 seconds at a time, repeating 5-6 rounds. Then a full body scan from feet to crown, 5-7 minutes." }
   ]
 };
 
@@ -814,7 +829,11 @@ var SCENT_LIBRARY = {
       { title: "Focus Blend", why: "This blend supports mental clarity when energy is high.",
         steps: "Apply Focus blend to your pulse points and take three slow breaths in through the nose, noticing the scent.", aroma: "fight" },
       { title: "Warmth", why: "A temperature-based cue offers a different kind of down-shift than cold or scent.",
-        steps: "Hold a warm drink or a warm object with both hands for one minute, feeling the weight and temperature." }
+        steps: "Hold a warm drink or a warm object with both hands for one minute, feeling the weight and temperature." },
+      { title: "Grounding Blend", why: "A grounding scent can settle activation as effectively as a more energizing one.",
+        steps: "Apply Grounding blend to your pulse points and breathe it in slowly for one minute.", aroma: "freeze" },
+      { title: "Alignment Blend", why: "This blend supports returning to center when activation has taken over.",
+        steps: "Apply Alignment blend to your pulse points and breathe it in slowly for one minute.", aroma: "alignment" }
     ],
     "10": [
       { title: "Cold Water + Focus Blend", why: "Combines a fast physical down-shift with mental clarity support.",
@@ -822,7 +841,11 @@ var SCENT_LIBRARY = {
       { title: "Warmth + Focus Blend", why: "Combining warmth with scent offers a steadier down-shift than cold alone.",
         steps: "Hold a warm drink with both hands, sipping slowly, with Focus blend applied to your wrists.", aroma: "fight" },
       { title: "Cold Water (Extended)", why: "Alternating temperature gives a stronger physical signal than a single application.",
-        steps: "Run cool water over your wrists and neck for 60-90 seconds, then hold your wrists under warm water for 30 seconds, noticing the shift." }
+        steps: "Run cool water over your wrists and neck for 60-90 seconds, then hold your wrists under warm water for 30 seconds, noticing the shift." },
+      { title: "Grounding Blend + Warmth", why: "A grounding scent paired with warmth offers a steadier settle for sustained activation.",
+        steps: "Apply Grounding blend to your pulse points. Hold a warm drink with both hands, sipping slowly for 8-10 minutes.", aroma: "freeze" },
+      { title: "Alignment Blend + Grounded Pause", why: "Scent paired with a brief sensory check-in offers two ways to return to center.",
+        steps: "Apply Alignment blend to your pulse points, then notice 5 things you see, 4 you hear, 3 you feel, 2 you smell, 1 you taste.", aroma: "alignment" }
     ],
     "30": [
       { title: "Full Aromatherapy Ritual + Journaling", why: "Extended time allows for full nervous system down-regulation plus reflection.",
@@ -830,7 +853,11 @@ var SCENT_LIBRARY = {
       { title: "Cold Water + Focus Blend + Walk", why: "Stacking a fast physical reset with scent and movement gives multiple ways to discharge.",
         steps: "Cold water on wrists and neck, Focus blend applied to pulse points, then a slow 15-20 minute walk outside.", aroma: "fight" },
       { title: "Warmth + Walk", why: "A slower, temperature-based ritual paired with movement offers a different pathway for a longer reset.",
-        steps: "Hold a warm drink with both hands for a few minutes, then walk slowly outside for 15-20 minutes." }
+        steps: "Hold a warm drink with both hands for a few minutes, then walk slowly outside for 15-20 minutes." },
+      { title: "Grounding Ritual + Walk", why: "A grounding scent paired with movement offers a sustained pathway out of activation.",
+        steps: "Apply Grounding blend to pulse points. Sit quietly for a few minutes, then walk slowly for 15-20 minutes.", aroma: "freeze" },
+      { title: "Alignment Ritual + Journaling", why: "A centering scent paired with reflection offers a slower, integrative reset.",
+        steps: "Apply Alignment blend to pulse points. Sit somewhere quiet. Journal on: what do I need to let go of right now to feel more like myself?", aroma: "alignment" }
     ]
   },
   flight: {
@@ -840,7 +867,11 @@ var SCENT_LIBRARY = {
       { title: "Cold Water (Only)", why: "A purely physical cue can interrupt a racing mind quickly, without needing anything applied.",
         steps: "Run cold water over your wrists and the back of your neck for 30-60 seconds." },
       { title: "Anxiety Relief Blend (Only)", why: "Scent alone, without water, can still interrupt a racing mind quickly.",
-        steps: "Apply Anxiety Relief blend to your pulse points and breathe it in slowly for one minute.", aroma: "flight" }
+        steps: "Apply Anxiety Relief blend to your pulse points and breathe it in slowly for one minute.", aroma: "flight" },
+      { title: "Grounding Blend", why: "Grounding scents work well for anxious spiraling too, not just shutdown.",
+        steps: "Apply Grounding blend to your pulse points and breathe it in slowly for one minute.", aroma: "freeze" },
+      { title: "Alignment Blend", why: "This blend supports returning to center when your mind is racing ahead of you.",
+        steps: "Apply Alignment blend to your pulse points and breathe it in slowly for one minute.", aroma: "alignment" }
     ],
     "10": [
       { title: "Anxiety Relief Blend + Midday Pause", why: "Combines scent regulation with a structured pause that interrupts the mental loop.",
@@ -848,7 +879,11 @@ var SCENT_LIBRARY = {
       { title: "Anxiety Relief Blend + Warmth", why: "Combining scent with weight and warmth offers a steadier settle than scent alone.",
         steps: "Apply Anxiety Relief blend to pulse points. Hold a warm drink with both hands, sipping slowly.", aroma: "flight" },
       { title: "Cold Water + Grounded Pause", why: "A fast physical reset paired with a brief sensory check-in gives two different anchors.",
-        steps: "Cold water on your wrists for 30-60 seconds, then notice 3 things you can see, 2 you can hear, 1 you can feel." }
+        steps: "Cold water on your wrists for 30-60 seconds, then notice 3 things you can see, 2 you can hear, 1 you can feel." },
+      { title: "Grounding Blend + Body Scan", why: "A grounding scent paired with a slow scan gives a racing mind somewhere specific to land.",
+        steps: "Apply Grounding blend to your pulse points. Sit with feet flat and scan slowly from feet to crown, 5-7 minutes.", aroma: "freeze" },
+      { title: "Alignment Blend + Grounded Pause", why: "A centering scent paired with sensory noticing offers two ways to settle a racing mind.",
+        steps: "Apply Alignment blend to your pulse points, then notice 5 things you see, 4 you hear, 3 you feel, 2 you smell, 1 you taste.", aroma: "alignment" }
     ],
     "30": [
       { title: "Full Anxiety Relief Ritual", why: "Extended sensory regulation gives the nervous system enough time to fully come out of flight mode.",
@@ -856,7 +891,11 @@ var SCENT_LIBRARY = {
       { title: "Anxiety Relief Ritual + Grounding Walk", why: "Stacking scent regulation with movement gives a racing mind more than one anchor.",
         steps: "Apply Anxiety Relief blend to pulse points, then walk slowly for 15-20 minutes, noticing your surroundings as you go.", aroma: "flight" },
       { title: "Warmth Ritual (Extended)", why: "A slower, weighted warmth practice offers sustained regulation without relying on scent.",
-        steps: "Hold a warm drink with both hands. Sip slowly for 15-20 minutes, letting the warmth and weight be the only thing you focus on." }
+        steps: "Hold a warm drink with both hands. Sip slowly for 15-20 minutes, letting the warmth and weight be the only thing you focus on." },
+      { title: "Grounding Ritual + Walk", why: "A grounding scent paired with movement offers sustained relief from a racing mind.",
+        steps: "Apply Grounding blend to pulse points. Sit quietly for a few minutes, then walk slowly for 15-20 minutes.", aroma: "freeze" },
+      { title: "Alignment Ritual + Journaling", why: "A centering scent paired with reflection offers a slower, integrative way out of the spiral.",
+        steps: "Apply Alignment blend to pulse points. Sit somewhere quiet. Journal on: what am I actually afraid will happen if I slow down?", aroma: "alignment" }
     ]
   },
   freeze: {
@@ -866,7 +905,11 @@ var SCENT_LIBRARY = {
       { title: "Warmth (Only)", why: "Warmth alone signals safety to a nervous system that has gone offline.",
         steps: "Hold a warm drink or a warm object with both hands. Feel the weight and temperature for one minute." },
       { title: "Grounding Blend (Only)", why: "Scent alone offers a low-demand safety cue.",
-        steps: "Apply Grounding blend to your pulse points and breathe it in slowly for one minute.", aroma: "freeze" }
+        steps: "Apply Grounding blend to your pulse points and breathe it in slowly for one minute.", aroma: "freeze" },
+      { title: "Sleep Blend", why: "This blend supports a slow, restful wind-down, which mirrors what a shut-down system often needs.",
+        steps: "Apply Sleep blend to your pulse points and breathe it in slowly for one minute.", aroma: "sleep" },
+      { title: "Alignment Blend", why: "This blend supports gently coming back online without needing to rush.",
+        steps: "Apply Alignment blend to your pulse points and breathe it in slowly for one minute.", aroma: "alignment" }
     ],
     "10": [
       { title: "Grounding Blend + Body Scan", why: "Combines sensory safety cues with a slower, fuller check-in with the body.",
@@ -874,7 +917,11 @@ var SCENT_LIBRARY = {
       { title: "Warmth (Extended)", why: "A longer, purely temperature-based practice gives more time to register safety.",
         steps: "Hold a warm drink with both hands for 8-10 minutes, sipping slowly, letting the warmth spread through your hands and chest." },
       { title: "Grounding Blend + Warmth (Extended)", why: "A longer round of scent and warmth together gives more time to register safety.",
-        steps: "Apply Grounding blend to pulse points. Hold a warm drink with both hands for 8-10 minutes, sipping slowly.", aroma: "freeze" }
+        steps: "Apply Grounding blend to pulse points. Hold a warm drink with both hands for 8-10 minutes, sipping slowly.", aroma: "freeze" },
+      { title: "Sleep Blend + Warmth", why: "A restful scent paired with warmth gives a shut-down system a slow, low-demand way to reconnect.",
+        steps: "Apply Sleep blend to pulse points. Hold a warm drink with both hands for 8-10 minutes, sipping slowly.", aroma: "sleep" },
+      { title: "Alignment Blend + Body Scan", why: "A centering scent paired with a full scan offers a gentle way back into the body.",
+        steps: "Apply Alignment blend to pulse points. Sit with feet flat and scan slowly from feet to crown, 5-7 minutes.", aroma: "alignment" }
     ],
     "30": [
       { title: "Full Grounding Ritual", why: "Extended time with sensory and warmth cues gives the nervous system room to slowly come back online.",
@@ -882,7 +929,11 @@ var SCENT_LIBRARY = {
       { title: "Warmth Ritual + Self-Touch", why: "Pairing sustained warmth with gentle touch offers two different safety cues.",
         steps: "Hold a warm drink with both hands for several minutes. Follow with Self-Touch Activation, hands on face in slow, intentional touch, for 5 minutes." },
       { title: "Full Grounding Ritual + Self-Touch", why: "Stacking scent, warmth, and touch offers multiple safety cues at once for a longer reset.",
-        steps: "Apply Grounding blend to pulse points. Sit with a warm drink. Follow with Self-Touch Activation for 5 minutes.", aroma: "freeze" }
+        steps: "Apply Grounding blend to pulse points. Sit with a warm drink. Follow with Self-Touch Activation for 5 minutes.", aroma: "freeze" },
+      { title: "Sleep Ritual + Self-Touch", why: "A restful scent paired with gentle touch offers a slow, sustained way back into the body.",
+        steps: "Apply Sleep blend to pulse points. Sit with a warm drink. Follow with Self-Touch Activation, hands on face in slow, intentional touch, for 5 minutes.", aroma: "sleep" },
+      { title: "Alignment Ritual + Body Scan", why: "A centering scent paired with a full scan offers a sustained, gentle reset.",
+        steps: "Apply Alignment blend to pulse points. Sit somewhere quiet with a warm drink. Follow with the full Body Scan.", aroma: "alignment" }
     ]
   },
   fawn: {
@@ -892,7 +943,11 @@ var SCENT_LIBRARY = {
       { title: "Warmth (Only)", why: "A temperature-based cue offers self-connection without relying on scent.",
         steps: "Hold a warm drink with both hands for one minute, feeling the weight and warmth without needing to do anything else." },
       { title: "Heart Opening Blend (Extended)", why: "A longer moment with a self-connecting scent reinforces the pause before performing resumes.",
-        steps: "Apply Heart Opening blend to your chest and pulse points. Breathe it in slowly for 2-3 minutes, noticing what you actually feel underneath it.", aroma: "fawn" }
+        steps: "Apply Heart Opening blend to your chest and pulse points. Breathe it in slowly for 2-3 minutes, noticing what you actually feel underneath it.", aroma: "fawn" },
+      { title: "Abundance Blend", why: "This blend supports moving out of scarcity and fear-based thinking, which often drives people pleasing.",
+        steps: "Apply Abundance blend to your pulse points and breathe it in slowly for one minute.", aroma: "abundance" },
+      { title: "Alignment Blend", why: "This blend supports returning to center when you have lost track of what you actually want.",
+        steps: "Apply Alignment blend to your pulse points and breathe it in slowly for one minute.", aroma: "alignment" }
     ],
     "10": [
       { title: "Heart Opening Blend + Self-Touch", why: "Combines scent-based self-connection with intentional touch, both of which counter self-erasure.",
@@ -900,7 +955,11 @@ var SCENT_LIBRARY = {
       { title: "Warmth (Extended)", why: "A longer warmth practice offers sustained self-connection through a different sense than scent.",
         steps: "Hold a warm drink with both hands, sipping slowly for 8-10 minutes, letting the warmth ground you without needing to perform anything." },
       { title: "Heart Opening Blend + Warmth", why: "Combining scent with warmth offers a steadier self-connecting cue than scent alone.",
-        steps: "Apply Heart Opening blend to pulse points. Hold a warm drink with both hands, sipping slowly for 8-10 minutes.", aroma: "fawn" }
+        steps: "Apply Heart Opening blend to pulse points. Hold a warm drink with both hands, sipping slowly for 8-10 minutes.", aroma: "fawn" },
+      { title: "Abundance Blend + Reflection", why: "Countering scarcity-based thinking, then sitting with what comes up, moves through both layers.",
+        steps: "Apply Abundance blend to pulse points. Sit quietly and ask yourself: what am I afraid will happen if I stop overgiving?", aroma: "abundance" },
+      { title: "Alignment Blend + Body Scan", why: "A centering scent paired with a slow scan offers a private way to notice your own needs.",
+        steps: "Apply Alignment blend to pulse points. Sit with feet flat and scan slowly from feet to crown, 5-7 minutes.", aroma: "alignment" }
     ],
     "30": [
       { title: "Full Heart Opening Ritual", why: "Extended time with self-connecting scent and touch practices counters a long-standing pattern of self-erasure.",
@@ -908,7 +967,11 @@ var SCENT_LIBRARY = {
       { title: "Warmth Ritual + Walk", why: "Sustained warmth paired with time alone outside offers two different ways to reconnect with what you want.",
         steps: "Hold a warm drink with both hands for several minutes, then walk slowly for 10-15 minutes, noticing what you want rather than what's expected." },
       { title: "Full Heart Opening Ritual + Walk", why: "Stacking scent, touch, and movement gives self-erasure patterns more than one point of interruption.",
-        steps: "Apply Heart Opening blend to pulse points. Follow with Self-Touch Activation. Close with a slow 10-15 minute walk.", aroma: "fawn" }
+        steps: "Apply Heart Opening blend to pulse points. Follow with Self-Touch Activation. Close with a slow 10-15 minute walk.", aroma: "fawn" },
+      { title: "Abundance Ritual + Journaling", why: "Countering scarcity-based thinking with reflection offers a sustained way to reconnect with your own wants.",
+        steps: "Apply Abundance blend to pulse points. Sit somewhere quiet. Journal on: what would I choose if I trusted there was enough to go around?", aroma: "abundance" },
+      { title: "Alignment Ritual + Walk", why: "A centering scent paired with time alone offers a sustained return to yourself.",
+        steps: "Apply Alignment blend to pulse points. Sit quietly for a few minutes, then walk slowly for 10-15 minutes, noticing what you want rather than what's expected.", aroma: "alignment" }
     ]
   }
 };
@@ -921,7 +984,12 @@ var GUIDED_LIBRARY = {
       { title: "EFT Tapping (Ultra-Short)", why: "Two tapping points can interrupt the activation cycle even with almost no time.",
         steps: "Tap the karate chop point 3 times while saying: I am allowed to feel this. Tap the top of the head: I can handle what is mine to handle." },
       { title: "Sovereignty Imagination (Short)", why: "A brief imagination practice gives fight energy a grounded, embodied place to land.",
-        steps: "Take three slow breaths. Imagine yourself standing tall in a room, shoulders back, feeling the ground under your feet. Let that feeling anchor for a minute." }
+        steps: "Take three slow breaths. Imagine yourself standing tall in a room, shoulders back, feeling the ground under your feet. Let that feeling anchor for a minute." },
+      { title: "Journaling Prompt", why: "Writing it down gives the activation somewhere to go besides your body.",
+        steps: "Write for 2-3 minutes on: what is actually asking for my attention right now, underneath the overwhelm?" },
+      { title: "Guided Meditation", why: "A guided voice can be easier to follow than doing it alone, especially when energy is high.",
+        steps: "Return to a meditation playlist you already trust, if you have one. If not, search the theme below on Spotify or YouTube for a guided meditation that matches where you are right now.",
+        searchTheme: "5 minute guided meditation for releasing anger and overwhelm" }
     ],
     "10": [
       { title: "Full Statement Scan", why: "Slower pacing lets the activation settle enough to actually hear what's underneath it.",
@@ -929,7 +997,12 @@ var GUIDED_LIBRARY = {
       { title: "EFT Tapping \u2014 Fight State", why: "A full tapping round addresses both the physical activation and the belief underneath it.",
         steps: "Setup phrase (karate chop point, repeat 3x): \u201cEven though I feel completely overwhelmed and like everything is too much right now, I deeply and completely accept myself.\u201d Tap through: Eyebrow \u2014 This overwhelm. Side of eye \u2014 Everything feels like too much. Under eye \u2014 I cannot keep up with all of it. Under nose \u2014 I am so tired of trying to be enough. Chin \u2014 I do not have to have it all together. Collarbone \u2014 I am allowed to feel this. Under arm \u2014 My nervous system is just trying to protect me. Top of head \u2014 I choose to release what I do not need to carry right now. Closing: take one deep breath. I am safe. I am enough." },
       { title: "Sovereignty Imagination", why: "An imagination practice gives fight energy a grounded, embodied place to land.",
-        steps: "Take three slow breaths. Imagine yourself walking into a room and feeling completely at home in your own body. Notice how you walk, feel the ground under each step. Let that feeling anchor in your chest, your feet, your spine." }
+        steps: "Take three slow breaths. Imagine yourself walking into a room and feeling completely at home in your own body. Notice how you walk, feel the ground under each step. Let that feeling anchor in your chest, your feet, your spine." },
+      { title: "Journaling Prompt (Extended)", why: "Writing it out gives sustained processing time for what is underneath the activation.",
+        steps: "Write for 5-8 minutes on: what would I need to believe about myself to stop needing to prove this?" },
+      { title: "Guided Meditation", why: "A longer guided practice can hold more of the activation than a self-led one.",
+        steps: "Return to a meditation playlist you already trust, if you have one. If not, search the theme below on Spotify or YouTube for a guided meditation that matches where you are right now.",
+        searchTheme: "10 minute guided meditation for releasing anger and overwhelm" }
     ],
     "30": [
       { title: "EFT Tapping + Sovereignty Imagination", why: "Moves from releasing the activation to embodying a regulated, grounded state.",
@@ -937,7 +1010,12 @@ var GUIDED_LIBRARY = {
       { title: "Statement Scan + Sovereignty Imagination", why: "Naming what's underneath the activation, then embodying a grounded version of yourself, moves through both layers.",
         steps: "Full Statement Scan, reading each statement slowly and pausing after each. Then the Sovereignty Imagination, staying as long as you need." },
       { title: "EFT Tapping + Coherence Breathing", why: "Combines belief-level release with sustained nervous system balancing.",
-        steps: "Full EFT Fight tapping sequence, followed by Coherence Breathing: inhale 5 counts, exhale 5 counts, for 5 minutes." }
+        steps: "Full EFT Fight tapping sequence, followed by Coherence Breathing: inhale 5 counts, exhale 5 counts, for 5 minutes." },
+      { title: "Journaling Ritual", why: "Extended writing time lets the activation move from body to page and settle there.",
+        steps: "Write for 10-15 minutes on: what pattern keeps putting me in this position, and what would it look like to interrupt it?" },
+      { title: "Guided Meditation", why: "With more time available, a longer guided practice can offer a fuller reset than a quick one.",
+        steps: "Return to a meditation playlist you already trust, if you have one. If not, search the theme below on Spotify or YouTube for a guided meditation that matches where you are right now.",
+        searchTheme: "20 minute guided meditation for releasing anger and overwhelm" }
     ]
   },
   flight: {
@@ -947,7 +1025,12 @@ var GUIDED_LIBRARY = {
       { title: "EFT Tapping (Ultra-Short)", why: "Two tapping points offer quick relief when there is almost no time.",
         steps: "Tap the karate chop point 3 times while saying: My mind keeps spinning and that's okay. Tap the top of the head: I am safe to slow down." },
       { title: "Future Self Imagination (Short)", why: "A brief imagination practice gives a racing mind a stable, trusted version of you to return to.",
-        steps: "Close your eyes or soften your gaze. Take three slow breaths. Imagine the version of you who has already worked through this moment standing nearby. Let that feeling stay with you for a minute." }
+        steps: "Close your eyes or soften your gaze. Take three slow breaths. Imagine the version of you who has already worked through this moment standing nearby. Let that feeling stay with you for a minute." },
+      { title: "Journaling Prompt", why: "Writing it down slows a racing mind down to the speed of a pen.",
+        steps: "Write for 2-3 minutes on: what is my mind actually trying to warn me about right now?" },
+      { title: "Guided Meditation", why: "A guided voice can be easier for a racing mind to follow than a self-led practice.",
+        steps: "Return to a meditation playlist you already trust, if you have one. If not, search the theme below on Spotify or YouTube for a guided meditation that matches where you are right now.",
+        searchTheme: "5 minute guided meditation for anxiety and racing thoughts" }
     ],
     "10": [
       { title: "Full Safe Place Imagination", why: "A longer, fully sensory imagination script gives an anxious mind somewhere real to settle.",
@@ -955,7 +1038,12 @@ var GUIDED_LIBRARY = {
       { title: "EFT Tapping \u2014 Flight State", why: "A full tapping round addresses both the racing thoughts and the self-doubt underneath them.",
         steps: "Setup phrase (karate chop point, repeat 3x): \u201cEven though my mind will not stop racing and I cannot seem to trust myself right now, I deeply and completely accept myself.\u201d Tap through: Eyebrow \u2014 This anxious feeling. Side of eye \u2014 My mind keeps spinning. Under eye \u2014 I do not trust my own thoughts. Under nose \u2014 What if I get it wrong. Chin \u2014 I have gotten things wrong before and survived. Collarbone \u2014 My intuition has always been there. Under arm \u2014 I am learning to trust it again. Top of head \u2014 I am safe to slow down and listen. Closing: I trust what I know." },
       { title: "Future Self Imagination", why: "Gives a racing mind a stable, trusted version of you to return to.",
-        steps: "Close your eyes or soften your gaze. Take three slow breaths. Imagine stepping into a space that feels entirely yours. Imagine the version of you who has done the work standing nearby. Notice how she holds herself. Stay as long as you need." }
+        steps: "Close your eyes or soften your gaze. Take three slow breaths. Imagine stepping into a space that feels entirely yours. Imagine the version of you who has done the work standing nearby. Notice how she holds herself. Stay as long as you need." },
+      { title: "Journaling Prompt (Extended)", why: "A longer writing session gives a racing mind somewhere to fully unspool.",
+        steps: "Write for 5-8 minutes on: what is the worst thing I am imagining right now, and how likely is it, really?" },
+      { title: "Guided Meditation", why: "A longer guided practice can hold a racing mind more steadily than a self-led one.",
+        steps: "Return to a meditation playlist you already trust, if you have one. If not, search the theme below on Spotify or YouTube for a guided meditation that matches where you are right now.",
+        searchTheme: "10 minute guided meditation for anxiety and racing thoughts" }
     ],
     "30": [
       { title: "EFT Tapping + Safe Place Imagination", why: "Releasing the anxious belief first, then settling into an imagined safe place, moves through both layers.",
@@ -963,7 +1051,12 @@ var GUIDED_LIBRARY = {
       { title: "EFT Tapping + Future Self Imagination", why: "Moves from releasing anxious thought patterns to embodying a version of you who already trusts herself.",
         steps: "Full EFT Flight tapping sequence, then the Future Self Imagination, staying as long as you need." },
       { title: "Safe Place + Future Self Imagination", why: "Settling somewhere safe first, then meeting a trusted version of you, moves through both layers.",
-        steps: "Full Safe Place Imagination, then the Future Self Imagination, letting one lead naturally into the other." }
+        steps: "Full Safe Place Imagination, then the Future Self Imagination, letting one lead naturally into the other." },
+      { title: "Journaling Ritual", why: "Extended writing gives a racing mind a sustained place to land besides the spiral.",
+        steps: "Write for 10-15 minutes on: what would need to be true for me to feel like I could slow down right now?" },
+      { title: "Guided Meditation", why: "With more time available, a longer guided practice offers sustained support for a racing mind.",
+        steps: "Return to a meditation playlist you already trust, if you have one. If not, search the theme below on Spotify or YouTube for a guided meditation that matches where you are right now.",
+        searchTheme: "20 minute guided meditation for anxiety and racing thoughts" }
     ]
   },
   freeze: {
@@ -973,7 +1066,12 @@ var GUIDED_LIBRARY = {
       { title: "Self-Touch Activation (Guided)", why: "Gentle touch paired with a few words offers a low-demand entry point for a shut-down body.",
         steps: "Place a hand on your chest and one on your belly. Say quietly: I am allowed to start small. Breathe under your hands for one minute." },
       { title: "Safe Place Imagination (Short)", why: "A brief imagination practice gives a numb or frozen body somewhere safe to land.",
-        steps: "Take a slow breath in and let it go. Imagine a place that feels completely safe. Notice what is under your feet and the temperature of the air. Let your body feel the safety of this place for a minute." }
+        steps: "Take a slow breath in and let it go. Imagine a place that feels completely safe. Notice what is under your feet and the temperature of the air. Let your body feel the safety of this place for a minute." },
+      { title: "Journaling Prompt (Low-Demand)", why: "Even a single written line can offer a low-effort way to reconnect.",
+        steps: "Write one sentence, nothing more: right now, my body needs..." },
+      { title: "Guided Meditation", why: "A guided voice can offer structure when it is hard to know where to start on your own.",
+        steps: "Return to a meditation playlist you already trust, if you have one. If not, search the theme below on Spotify or YouTube for a guided meditation that matches where you are right now.",
+        searchTheme: "5 minute guided meditation for feeling numb or shut down" }
     ],
     "10": [
       { title: "EFT Tapping + Safe Place Imagination", why: "Releases the belief underneath the shutdown, then offers somewhere safe to land.",
@@ -981,7 +1079,12 @@ var GUIDED_LIBRARY = {
       { title: "Full Safe Place Imagination", why: "A longer, fully sensory imagination script gives a shut-down body somewhere real to settle.",
         steps: "Take a slow breath in and let it go. Imagine a place that feels completely safe. Notice what is around you, above you, under your feet. Feel the temperature of the air. Let your body feel the safety of this place. Stay as long as you need." },
       { title: "Future Self Imagination", why: "Gives a numb or frozen body a version of you who is already present and engaged.",
-        steps: "Close your eyes or soften your gaze. Take three slow breaths. Imagine the version of you who has done the work standing nearby. Notice how she holds herself. Stay as long as you need." }
+        steps: "Close your eyes or soften your gaze. Take three slow breaths. Imagine the version of you who has done the work standing nearby. Notice how she holds herself. Stay as long as you need." },
+      { title: "Journaling Prompt", why: "Writing offers a low-demand way to reconnect without needing to move much.",
+        steps: "Write for 2-3 minutes on: what was I doing right before I went offline, and what did I need in that moment?" },
+      { title: "Guided Meditation", why: "A longer guided practice can offer sustained, low-demand structure for a shut-down system.",
+        steps: "Return to a meditation playlist you already trust, if you have one. If not, search the theme below on Spotify or YouTube for a guided meditation that matches where you are right now.",
+        searchTheme: "10 minute guided meditation for feeling numb or shut down" }
     ],
     "30": [
       { title: "EFT Tapping + Future Self Imagination", why: "Moves from releasing the shutdown to imagining a version of you who is already present and engaged.",
@@ -989,7 +1092,12 @@ var GUIDED_LIBRARY = {
       { title: "EFT Tapping + Safe Place Imagination (Extended)", why: "Releasing the belief underneath the shutdown, then resting somewhere safe, moves through both layers.",
         steps: "Full EFT Freeze tapping sequence, then the full Safe Place Imagination, staying as long as you need." },
       { title: "Safe Place + Future Self Imagination", why: "Settling somewhere safe first, then meeting an engaged version of you, moves through both layers.",
-        steps: "Full Safe Place Imagination, then the Future Self Imagination, letting one lead naturally into the other." }
+        steps: "Full Safe Place Imagination, then the Future Self Imagination, letting one lead naturally into the other." },
+      { title: "Journaling Ritual", why: "Extended writing gives a shut-down system a slow, low-demand way to reconnect.",
+        steps: "Write for 10-15 minutes on: what has felt too heavy to deal with lately, and what is one small piece of it?" },
+      { title: "Guided Meditation", why: "With more time available, a longer guided practice offers sustained, gentle support.",
+        steps: "Return to a meditation playlist you already trust, if you have one. If not, search the theme below on Spotify or YouTube for a guided meditation that matches where you are right now.",
+        searchTheme: "20 minute guided meditation for feeling numb or shut down" }
     ]
   },
   fawn: {
@@ -999,7 +1107,12 @@ var GUIDED_LIBRARY = {
       { title: "Reflection (Quick)", why: "A direct question, without needing to tap through a script, counters the reflex to defer.",
         steps: "Ask yourself quietly: what would I choose right now if no one's reaction mattered? Notice the first answer that comes, without editing it." },
       { title: "Sovereignty Imagination (Short)", why: "A brief imagination practice offers a version of you who takes up space without performing.",
-        steps: "Take three slow breaths. Imagine yourself standing tall in a room, feeling completely at home in your own body. Let that feeling anchor for a minute." }
+        steps: "Take three slow breaths. Imagine yourself standing tall in a room, feeling completely at home in your own body. Let that feeling anchor for a minute." },
+      { title: "Journaling Prompt", why: "Writing gives you a private space to notice your own answer before anyone else's reaction is in the room.",
+        steps: "Write for 2-3 minutes on: what have I said yes to recently that I actually wanted to say no to?" },
+      { title: "Guided Meditation", why: "A guided voice offers structure without needing to perform or explain anything to anyone.",
+        steps: "Return to a meditation playlist you already trust, if you have one. If not, search the theme below on Spotify or YouTube for a guided meditation that matches where you are right now.",
+        searchTheme: "5 minute guided meditation for reconnecting with yourself" }
     ],
     "10": [
       { title: "EFT Tapping \u2014 Fawn State", why: "A full tapping round addresses both the pattern of self-erasure and the belief underneath it.",
@@ -1007,7 +1120,10 @@ var GUIDED_LIBRARY = {
       { title: "Reflection (Without Tapping)", why: "A direct question, without needing to explain your answer to anyone, counters the reflex to defer.",
         steps: "Sit quietly and ask yourself: if no one's reaction mattered right now, what would I actually choose? Let the answer come without editing it. Write it down if that helps it stay real." },
       { title: "Sovereignty Imagination", why: "Offers a version of you who takes up space without performing for anyone in it.",
-        steps: "Take three slow breaths. Imagine yourself walking into a room and feeling completely at home in your own body. Notice how you walk, feel the ground under each step. Let that feeling anchor in your chest, feet, spine." }
+        steps: "Take three slow breaths. Imagine yourself walking into a room and feeling completely at home in your own body. Notice how you walk, feel the ground under each step. Let that feeling anchor in your chest, feet, spine." },
+      { title: "Guided Meditation", why: "A guided voice offers sustained structure without needing to perform or explain anything to anyone.",
+        steps: "Return to a meditation playlist you already trust, if you have one. If not, search the theme below on Spotify or YouTube for a guided meditation that matches where you are right now.",
+        searchTheme: "10 minute guided meditation for reconnecting with yourself" }
     ],
     "30": [
       { title: "EFT Tapping + Sovereignty Imagination", why: "Moves from releasing the fawn pattern to embodying a version of you who takes up space without performing.",
@@ -1015,7 +1131,12 @@ var GUIDED_LIBRARY = {
       { title: "EFT Tapping + Future Self Imagination", why: "Releasing the fawn pattern, then imagining a version of you who already trusts her own needs, moves through both layers.",
         steps: "Full EFT Fawn tapping sequence, then the Future Self Imagination, staying as long as you need." },
       { title: "Reflection + Sovereignty Imagination", why: "Naming what you actually want, then embodying a version of you who takes up space, moves through both layers.",
-        steps: "Sit quietly and ask yourself what you would choose if no one's reaction mattered. Then the Sovereignty Imagination, staying as long as you need." }
+        steps: "Sit quietly and ask yourself what you would choose if no one's reaction mattered. Then the Sovereignty Imagination, staying as long as you need." },
+      { title: "Journaling Ritual + Reflection", why: "Extended writing followed by a direct question gives sustained space to notice your own answer.",
+        steps: "Write for 8-10 minutes on: whose voice am I actually hearing when I say yes? Then sit quietly and ask: what would I choose if that voice wasn't in the room?" },
+      { title: "Guided Meditation", why: "With more time available, a longer guided practice offers sustained support for reconnecting with yourself.",
+        steps: "Return to a meditation playlist you already trust, if you have one. If not, search the theme below on Spotify or YouTube for a guided meditation that matches where you are right now.",
+        searchTheme: "20 minute guided meditation for reconnecting with yourself" }
     ]
   }
 };
@@ -1098,6 +1219,14 @@ function renderParts() {
     if (entry.aroma) {
       var a = STATE_AROMA[entry.aroma];
       practiceHtml += '<span class="aroma-tag">' + a.name + ': ' + a.formula + '</span>';
+    }
+    if (entry.searchTheme) {
+      var q = encodeURIComponent(entry.searchTheme);
+      practiceHtml += '<div style="margin-top:10px;">';
+      practiceHtml += '<p style="font-size:0.82rem;color:#B0A0CC;font-style:italic;margin-bottom:8px;">Suggested search: \u201c' + entry.searchTheme + '\u201d</p>';
+      practiceHtml += '<a href="https://open.spotify.com/search/' + q + '" target="_blank" rel="noopener" style="display:inline-block;margin-right:16px;color:#C9A876;text-decoration:underline;font-size:0.85rem;">Search Spotify \u2192</a>';
+      practiceHtml += '<a href="https://www.youtube.com/results?search_query=' + q + '" target="_blank" rel="noopener" style="color:#C9A876;text-decoration:underline;font-size:0.85rem;">Search YouTube \u2192</a>';
+      practiceHtml += '</div>';
     }
     if (hasAlt) {
       practiceHtml += '<div><button class="btn-skip" onclick="swapPart(' + i + ')" style="padding-left:0;margin-top:8px;">Try a different one \u21bb</button></div>';
