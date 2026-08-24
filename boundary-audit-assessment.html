@@ -126,6 +126,29 @@
   .single-question:last-of-type { margin-bottom: 8px; }
   .sq-text { font-size: 1.02rem; color: #FFFFFF; line-height: 1.5; margin-bottom: 16px; }
 
+  .na-toggle {
+    display: flex; align-items: center; gap: 12px; cursor: pointer;
+    padding: 16px 18px; border-radius: 14px; margin-bottom: 30px;
+    background: rgba(255,255,255,0.04); border: 1.5px dashed rgba(255,255,255,0.22);
+    transition: all 0.18s ease;
+  }
+  .na-toggle:hover { border-color: rgba(201,168,118,0.5); }
+  .na-toggle span { font-size: 0.88rem; color: #D7CBEB; line-height: 1.5; }
+  .na-checkbox {
+    flex-shrink: 0; width: 20px; height: 20px; border-radius: 6px;
+    border: 1.5px solid rgba(255,255,255,0.35); position: relative;
+  }
+  .na-checkbox.checked { background: var(--gold); border-color: var(--gold); }
+  .na-checkbox.checked::after {
+    content: ''; position: absolute; left: 6px; top: 2px; width: 5px; height: 10px;
+    border: solid #1A0830; border-width: 0 2px 2px 0; transform: rotate(45deg);
+  }
+  .na-note {
+    padding: 20px 22px; border-radius: 14px; background: rgba(201,168,118,0.07);
+    border-left: 2px solid var(--gold); font-size: 0.9rem; color: #D7CBEB;
+    font-style: italic; line-height: 1.6; margin-bottom: 8px;
+  }
+
   .option-list { display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 8px; }
   .option-chip {
     display: flex; align-items: center; gap: 8px; text-align: left;
@@ -168,10 +191,13 @@
   .overview-bar-fill.strong { background: linear-gradient(90deg, #7FBF8F, #A8D9B4); }
   .overview-bar-fill.attention { background: linear-gradient(90deg, var(--gold), #E3C79A); }
   .overview-bar-fill.priority { background: linear-gradient(90deg, #C97676, #E3A8A8); }
+  .overview-bar-fill.na { background: rgba(255,255,255,0.14); }
+  .overview-score { flex: 0 0 44px; font-size: 0.75rem; color: #B7A6D4; text-align: right; }
   .overview-label { flex: 0 0 118px; font-size: 0.72rem; letter-spacing: 0.5px; text-align: right; }
   .overview-label.strong { color: #A8D9B4; }
   .overview-label.attention { color: var(--gold); }
   .overview-label.priority { color: #E3A8A8; }
+  .overview-label.na { color: #8B7AA8; font-style: italic; }
 
   .result-block {
     background: rgba(45,17,71,0.62); backdrop-filter: blur(8px);
@@ -186,6 +212,19 @@
 
   .celebrate-block { border-color: rgba(168,217,180,0.3); }
   .celebrate-block h3 { color: #EAF7ED; }
+  .result-score { font-size: 0.78rem; letter-spacing: 0.5px; color: #A090BB; margin-bottom: 14px; }
+  .result-score .num { color: var(--gold); font-weight: 600; }
+  .celebrate-block .result-score .num { color: #A8D9B4; }
+
+  .boundary-callout {
+    margin-top: 4px; margin-bottom: 20px; padding: 20px 22px; border-radius: 14px;
+    background: rgba(201,168,118,0.1); border: 1px solid rgba(201,168,118,0.4);
+  }
+  .boundary-callout .bc-label {
+    font-size: 11px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase;
+    color: var(--gold); margin-bottom: 8px;
+  }
+  .boundary-callout p { font-size: 1rem; color: #FFFFFF; margin-bottom: 0; line-height: 1.6; }
 
   .script-box {
     margin-top: 18px; padding: 18px 20px; border-radius: 14px;
@@ -219,8 +258,9 @@
     .question-wrap { padding: 36px 16px 20px; }
     .card-actions { flex-direction: column-reverse; align-items: stretch; }
     .card-actions .btn-primary { width: 100%; text-align: center; }
-    .overview-name { flex-basis: 120px; font-size: 0.8rem; }
-    .overview-label { flex-basis: 90px; font-size: 0.66rem; }
+    .overview-name { flex-basis: 100px; font-size: 0.78rem; }
+    .overview-score { flex-basis: 34px; font-size: 0.68rem; }
+    .overview-label { flex-basis: 80px; font-size: 0.64rem; }
     .option-chip { min-width: 80px; font-size: 0.82rem; padding: 10px 12px; }
   }
 
@@ -228,8 +268,8 @@
     #cover, .assessment-header, #assessment { display: none !important; }
     body { background: #FFFFFF; color: #1A0830; }
     #results { display: block !important; padding: 20px; }
-    .result-block, .result-closing, .script-box { background: none; border: 1px solid #ccc; box-shadow: none; }
-    .result-block p, .result-block h3, .result-closing p, .script-box p { color: #1A0830; }
+    .result-block, .result-closing, .script-box, .boundary-callout { background: none; border: 1px solid #ccc; box-shadow: none; }
+    .result-block p, .result-block h3, .result-closing p, .script-box p, .boundary-callout p { color: #1A0830; }
   }
 </style>
 </head>
@@ -291,6 +331,8 @@
         { "text": "I protect at least 30 minutes of daily time that is entirely mine with no household demands.", "reverse": true }
       ],
       "whyItMatters": "This is where invisible labor piles up until it becomes invisible exhaustion. If you are the default manager of everything at home, your nervous system never actually gets to clock out.",
+      "strengthNote": "You are not carrying the household on your own, and you have built in protected time that is actually yours. Tasks get shared, or at least seen for what they are.",
+      "suggestedBoundary": "Name one recurring task you have been managing invisibly and hand it fully to someone else, without a reminder system attached.",
       "scripts": [
         { "title": "Shifting from requesting to informing", "body": "Replace tentative asks with clear statements. Instead of asking permission to take care of yourself, state your intention. Example: I am going to the gym at 6PM so dinner will be on your own tonight." },
         { "title": "Redistributing the invisible load", "body": "I have been managing most of the household planning and I need that to be shared. Can we sit down this week and divide these tasks so I am not the default for everything?" }
@@ -306,6 +348,8 @@
         { "text": "I allow family members to experience the natural consequences of their own choices without rescuing them.", "reverse": true }
       ],
       "whyItMatters": "Family systems reward whoever holds the most. If you are the one absorbing everyone else's emotions and crises, you are running the version of care that costs you the most and gets acknowledged the least.",
+      "strengthNote": "You know the difference between supporting a family member and rescuing them, and you are not the one holding everyone's emotional weather.",
+      "suggestedBoundary": "Choose one moment this week to let a family member sit with a consequence you would normally step in to prevent.",
       "scripts": [
         { "title": "Declining the default crisis manager role", "body": "I love you and I want to support you. I am not able to be the person who holds all of this right now. I think we need to figure out how to share this responsibility as a family." },
         { "title": "Protecting your intuition", "body": "I hear what you are saying and I am going to take some time to check in with myself before I respond to that." }
@@ -314,15 +358,19 @@
     {
       "id": "work",
       "name": "Work &amp; Career",
+      "allowNA": true,
+      "naLabel": "I'm not currently working in any capacity (between roles, retired, or not currently employed)",
       "questions": [
-        { "text": "I take on low-visibility support tasks at work such as organizing, note-taking, or emotional mediation that do not advance my career.", "reverse": false },
-        { "text": "I am available to colleagues or clients outside of my designated working hours.", "reverse": false },
-        { "text": "I say yes to additional work without asking what gets deprioritized to make room for it.", "reverse": false },
+        { "text": "I take on low-visibility tasks, admin, organizing, or emotional mediation, that don't move my work or business forward.", "reverse": false },
+        { "text": "I am available to clients, colleagues, or collaborators outside of my designated working hours.", "reverse": false },
+        { "text": "I say yes to additional work, projects, or clients without asking what gets deprioritized to make room for it.", "reverse": false },
         { "text": "I protect focused uninterrupted work time on my calendar.", "reverse": true }
       ],
-      "whyItMatters": "The tasks that keep everyone else comfortable rarely show up on your performance review. Porous boundaries here do not just cost your time, they quietly cost your advancement.",
+      "whyItMatters": "The tasks that keep everyone else comfortable rarely move your work forward, whether you clock in somewhere or built the thing yourself. Porous boundaries here do not just cost your time, they quietly cost your growth.",
+      "strengthNote": "You protect your working hours and your focus time, and you are not absorbing tasks that quietly cost you your growth, whether that is a promotion or a business you are building.",
+      "suggestedBoundary": "Block one recurring chunk of focus time on your calendar this week and treat it as a commitment you cannot move.",
       "scripts": [
-        { "title": "Declining office housework", "body": "I need to keep my focus on core project goals this quarter so I am not able to take that on. I am happy to help think through who else might be a good fit for it." },
+        { "title": "Declining low-value tasks", "body": "I need to keep my focus on core project goals this quarter so I am not able to take that on. I am happy to help think through who else might be a good fit for it." },
         { "title": "Pushing back on scope creep", "body": "I can take this on but I want to make sure I do it well. Which of my current priorities should I deprioritize to make room for it?" }
       ]
     },
@@ -336,6 +384,8 @@
         { "text": "I feel comfortable declining invitations without over-explaining or apologizing.", "reverse": true }
       ],
       "whyItMatters": "Friendship should replenish you, not just take from a well you already dip into for everyone else. If you are saying yes out of guilt, the relationship is running on your depletion instead of your desire.",
+      "strengthNote": "You say yes because you want to, not because you feel obligated, and you can decline without a paragraph of explanation.",
+      "suggestedBoundary": "Decline one invitation this week that you do not actually want to attend, in one sentence, with no apology attached.",
       "scripts": [
         { "title": "Declining an invitation without over-explaining", "body": "Thank you so much for thinking of me. I do not have the capacity to show up fully for this right now so I am going to sit this one out." },
         { "title": "Setting availability limits with friends", "body": "I love talking with you and I need to be honest that I cannot always respond right away. I will always get back to you but it might not be the same day." }
@@ -351,6 +401,8 @@
         { "text": "I have designated times where I am fully offline and unavailable.", "reverse": true }
       ],
       "whyItMatters": "Constant availability trains your nervous system to stay in low-grade alert. Every notification becomes a tiny demand, and your body does not always know the difference between an emergency and an email.",
+      "strengthNote": "You have real windows of being unreachable, and a message sitting unanswered for a few hours does not spike your anxiety.",
+      "suggestedBoundary": "Set one specific block of time this week, even just an hour, where your phone is out of reach and notifications are off.",
       "scripts": [
         { "title": "Managing response expectations", "body": "I am stepping away from my phone to focus and recharge. I will get back to you by tomorrow afternoon." },
         { "title": "Setting working hours expectations", "body": "My working hours are Monday through Friday 9AM to 5PM. I will respond to anything outside those hours on the next business day." }
@@ -366,6 +418,8 @@
         { "text": "I honor what my body communicates about its current limits.", "reverse": true }
       ],
       "whyItMatters": "Your body has been sending you information the whole time. Overriding it does not build resilience, it teaches your system that its signals do not matter, which is exactly how depletion becomes chronic.",
+      "strengthNote": "When your body signals it is at capacity, you adjust instead of overriding it, and rest is not something you have to justify.",
+      "suggestedBoundary": "Notice one moment this week your body signals it needs to slow down, and actually adjust your plans instead of pushing through.",
       "scripts": [
         { "title": "Communicating capacity changes to household", "body": "My body needs more recovery time than it used to and I am honoring that. I am going to rest on Sunday mornings and I need that to be protected." },
         { "title": "Declining when physically depleted", "body": "I am not at capacity right now and I would not be able to show up the way I want to. I am going to pass on this one." }
@@ -381,6 +435,8 @@
         { "text": "I treat my energy as a resource that requires protection and management.", "reverse": true }
       ],
       "whyItMatters": "Energy is not an infinite resource you prove your worth by exhausting. Treating rest as something you have to earn is how you end every day with nothing left for the one person who actually needs you: you.",
+      "strengthNote": "You treat your energy like a resource worth managing, and you are not routinely running on empty by the end of the day.",
+      "suggestedBoundary": "Protect one specific block of rest or personal time this week in advance, and do not let it get renegotiated when something else comes up.",
       "scripts": [
         { "title": "Protecting restoration time", "body": "I have protected this time for myself and I need it to stay protected. This is not negotiable for me right now." },
         { "title": "Communicating depletion before it becomes resentment", "body": "I am running low and I need some time to refill before I can give anything else. I am going to take some time for myself tonight." }
@@ -396,6 +452,8 @@
         { "text": "I allow myself to feel and express what I am experiencing without immediately trying to fix the room.", "reverse": true }
       ],
       "whyItMatters": "Managing everyone else's emotional state is a full-time job nobody is paying you for. When you are always regulating the room, you rarely get the chance to actually feel what is happening in your own body.",
+      "strengthNote": "You can feel your own emotions without immediately shifting into managing everyone else's, and you are not the default emotional temperature control for the room.",
+      "suggestedBoundary": "Notice one moment this week you start smoothing over someone else's discomfort, and pause instead of stepping in to fix it.",
       "scripts": [
         { "title": "Declining to absorb someone else's emotional state", "body": "I can hear that you are upset and I care about you. I am not able to hold all of this right now. What do you actually need from me in this moment?" },
         { "title": "Returning responsibility for emotions", "body": "I notice I have been trying to manage how you are feeling and I realize that is not mine to carry. I trust you to work through this." }
@@ -413,6 +471,10 @@ var OPTIONS = ['Never', 'Sometimes', 'Often', 'Always'];
 // answers[areaId] = array of 4 point values (0-3) aligned to question index, or null if unanswered
 var answers = {};
 AREAS.forEach(function(a){ answers[a.id] = new Array(a.questions.length).fill(null); });
+
+// naFlags[areaId] = true if the user marked this area as not applicable (only for areas with allowNA)
+var naFlags = {};
+AREAS.forEach(function(a){ if (a.allowNA) naFlags[a.id] = false; });
 
 var currentArea = 0; // index into AREAS
 var started = false;
@@ -440,22 +502,35 @@ function buildAreaCard(areaIdx){
   var card = document.createElement('div');
   card.className = 'question-card active';
 
+  var isNA = area.allowNA && naFlags[area.id];
+
   var html = '';
   html += '<p class="q-kicker">Area ' + (areaIdx+1) + ' of ' + AREAS.length + '</p>';
   html += '<h3>' + area.name + '</h3>';
-  html += '<p class="q-instruction">Rate how true each statement is for you right now.</p>';
 
-  area.questions.forEach(function(q, qi){
-    html += '<div class="single-question">';
-    html += '<p class="sq-text">' + q.text + '</p>';
-    html += '<div class="option-list">';
-    OPTIONS.forEach(function(opt, oi){
-      var selected = answers[area.id][qi] === pointsFor(q.reverse, oi);
-      html += '<div class="option-chip' + (selected ? ' selected' : '') + '" data-area="' + area.id + '" data-qi="' + qi + '" data-oi="' + oi + '" onclick="selectOption(this)">' + opt + '</div>';
+  if (area.allowNA){
+    html += '<div class="na-toggle" onclick="toggleNA(\'' + area.id + '\')">';
+    html += '<div class="na-checkbox' + (isNA ? ' checked' : '') + '"></div>';
+    html += '<span>' + area.naLabel + '</span>';
+    html += '</div>';
+  }
+
+  if (isNA){
+    html += '<div class="na-note">This area will be marked not applicable and left out of your results. Uncheck the box above if you would like to answer it instead.</div>';
+  } else {
+    html += '<p class="q-instruction">Rate how true each statement is for you right now.</p>';
+    area.questions.forEach(function(q, qi){
+      html += '<div class="single-question">';
+      html += '<p class="sq-text">' + q.text + '</p>';
+      html += '<div class="option-list">';
+      OPTIONS.forEach(function(opt, oi){
+        var selected = answers[area.id][qi] === pointsFor(q.reverse, oi);
+        html += '<div class="option-chip' + (selected ? ' selected' : '') + '" data-area="' + area.id + '" data-qi="' + qi + '" data-oi="' + oi + '" onclick="selectOption(this)">' + opt + '</div>';
+      });
+      html += '</div>';
+      html += '</div>';
     });
-    html += '</div>';
-    html += '</div>';
-  });
+  }
 
   html += '<div class="card-actions">';
   if (areaIdx > 0){
@@ -470,6 +545,11 @@ function buildAreaCard(areaIdx){
   card.innerHTML = html;
   wrap.appendChild(card);
   updateContinueState(area.id);
+}
+
+function toggleNA(areaId){
+  naFlags[areaId] = !naFlags[areaId];
+  buildAreaCard(currentArea);
 }
 
 function selectOption(el){
@@ -492,6 +572,11 @@ function selectOption(el){
 function updateContinueState(areaId){
   var btn = document.getElementById('continueBtn');
   if (!btn) return;
+  var area = AREAS[currentArea];
+  if (area.allowNA && naFlags[areaId]){
+    btn.disabled = false;
+    return;
+  }
   var allAnswered = answers[areaId].every(function(v){ return v !== null; });
   btn.disabled = !allAnswered;
 }
@@ -528,6 +613,9 @@ function areaLabel(score){
 
 function computeAreaScores(){
   return AREAS.map(function(area){
+    if (area.allowNA && naFlags[area.id]){
+      return { area: area, score: null, label: { key: 'na', text: 'Not Applicable' } };
+    }
     var pts = answers[area.id].reduce(function(sum, v){ return sum + (v || 0); }, 0);
     return { area: area, score: pts, label: areaLabel(pts) };
   });
@@ -536,7 +624,7 @@ function computeAreaScores(){
 function finishAssessment(){
   var results = computeAreaScores();
 
-  var ranked = results.slice().sort(function(a,b){ return b.score - a.score; });
+  var ranked = results.filter(function(r){ return r.score !== null; }).sort(function(a,b){ return b.score - a.score; });
   var top2 = ranked.slice(0, 2);
   var bottom3 = ranked.slice(-3).sort(function(a,b){ return a.score - b.score; });
 
@@ -548,8 +636,15 @@ function finishAssessment(){
   results.forEach(function(r){
     html += '<div class="overview-row">';
     html += '<div class="overview-name">' + r.area.name + '</div>';
-    html += '<div class="overview-bar-wrap"><div class="overview-bar-fill ' + r.label.key + '" data-pct="' + Math.round((r.score/12)*100) + '"></div></div>';
-    html += '<div class="overview-label ' + r.label.key + '">' + r.label.text + '</div>';
+    if (r.score === null){
+      html += '<div class="overview-bar-wrap"><div class="overview-bar-fill na" style="width:100%"></div></div>';
+      html += '<div class="overview-score">&mdash;</div>';
+      html += '<div class="overview-label na">Not Applicable</div>';
+    } else {
+      html += '<div class="overview-bar-wrap"><div class="overview-bar-fill ' + r.label.key + '" data-pct="' + Math.round((r.score/12)*100) + '"></div></div>';
+      html += '<div class="overview-score">' + r.score + '/12</div>';
+      html += '<div class="overview-label ' + r.label.key + '">' + r.label.text + '</div>';
+    }
     html += '</div>';
   });
   html += '</div>';
@@ -559,7 +654,8 @@ function finishAssessment(){
   top2.forEach(function(r){
     html += '<div class="result-block celebrate-block">';
     html += '<h3>' + r.area.name + '</h3>';
-    html += '<p>This is a place where your boundaries are genuinely working. Whatever you are already doing here, keep doing it. It is not an accident, it is a skill you have built.</p>';
+    html += '<p class="result-score">Score: <span class="num">' + r.score + '/12</span> &nbsp;&middot;&nbsp; ' + r.label.text + '</p>';
+    html += '<p>' + r.area.strengthNote + '</p>';
     html += '</div>';
   });
 
@@ -569,7 +665,10 @@ function finishAssessment(){
     html += '<div class="result-block">';
     html += '<p class="result-rank">Priority ' + (i+1) + '</p>';
     html += '<h3>' + r.area.name + '</h3>';
+    html += '<p class="result-score">Score: <span class="num">' + r.score + '/12</span> &nbsp;&middot;&nbsp; ' + r.label.text + '</p>';
     html += '<p>' + r.area.whyItMatters + '</p>';
+    html += '<div class="boundary-callout"><p class="bc-label">Your Boundary To Work On This Week</p><p>' + r.area.suggestedBoundary + '</p></div>';
+    html += '<p style="font-size:0.85rem; color:#B7A6D4; letter-spacing:0.5px; margin-bottom:14px;">Language to help you say it:</p>';
     r.area.scripts.forEach(function(s){
       html += '<div class="script-box"><p class="script-title">' + s.title + '</p><p>&ldquo;' + s.body + '&rdquo;</p></div>';
     });
@@ -582,7 +681,7 @@ function finishAssessment(){
   window._lastResults = { results: results, top2: top2, bottom3: bottom3 };
 
   setTimeout(function(){
-    document.querySelectorAll('.overview-bar-fill').forEach(function(el){
+    document.querySelectorAll('.overview-bar-fill:not(.na)').forEach(function(el){
       el.style.width = el.getAttribute('data-pct') + '%';
     });
   }, 80);
@@ -595,17 +694,42 @@ function emailResult(){
   if (!res){ return; }
   var lines = [];
   lines.push('MY BOUNDARY AUDIT RESULTS');
+  lines.push('======================================');
   lines.push('');
-  lines.push('ALL AREAS:');
-  res.results.forEach(function(r){ lines.push('- ' + r.area.name.replace(/&amp;/g,'&') + ': ' + r.score + '/12 (' + r.label.text + ')'); });
+  lines.push('YOUR BOUNDARY MAP');
+  lines.push('--------------------------------------');
+  res.results.forEach(function(r){
+    var scoreText = r.score === null ? 'Not Applicable' : (r.score + '/12 (' + r.label.text + ')');
+    lines.push(r.area.name.replace(/&amp;/g,'&') + ': ' + scoreText);
+  });
   lines.push('');
-  lines.push('HOLDING STRONG:');
-  res.top2.forEach(function(r){ lines.push('- ' + r.area.name.replace(/&amp;/g,'&')); });
+  lines.push('WHERE YOU ARE ALREADY HOLDING THE LINE');
+  lines.push('--------------------------------------');
+  res.top2.forEach(function(r){
+    lines.push('');
+    lines.push(r.area.name.replace(/&amp;/g,'&') + '  (' + r.score + '/12)');
+    lines.push(r.area.strengthNote);
+  });
   lines.push('');
-  lines.push('BOUNDARY PRIORITIES THIS WEEK:');
-  res.bottom3.forEach(function(r, i){ lines.push((i+1) + '. ' + r.area.name.replace(/&amp;/g,'&')); });
+  lines.push('YOUR BOUNDARY PRIORITIES THIS WEEK');
+  lines.push('--------------------------------------');
+  res.bottom3.forEach(function(r, i){
+    lines.push('');
+    lines.push('Priority ' + (i+1) + ': ' + r.area.name.replace(/&amp;/g,'&') + '  (' + r.score + '/12)');
+    lines.push(r.area.whyItMatters);
+    lines.push('');
+    lines.push('YOUR BOUNDARY TO WORK ON THIS WEEK:');
+    lines.push(r.area.suggestedBoundary);
+    lines.push('');
+    lines.push('Language to help you say it:');
+    r.area.scripts.forEach(function(s){
+      lines.push('- ' + s.title + ': "' + s.body + '"');
+    });
+  });
   lines.push('');
-  lines.push('Full scripts and explanations are available on your saved or printed copy.');
+  lines.push('======================================');
+  lines.push('Setting a boundary is not an act of conflict. It is an act of clarity.');
+  lines.push('Choose one area and set one limit this week. Just one.');
   lines.push('');
   lines.push('On Purpose Evolution | Leah Fairchild | The Pattern Interrupter');
 
