@@ -1,0 +1,678 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Pattern Recognition Assessment | On Purpose Evolution</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --purple-dark:  #2D1147;
+    --purple:       #5B2D8E;
+    --purple-mid:   #7B4DB8;
+    --purple-light: #F0EAF7;
+    --gold:         #C9A876;
+    --white:        #FFFFFF;
+    --off-white:    #F5F0FA;
+    --gray:         #CCBBDD;
+  }
+
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: 'Inter', sans-serif;
+    color: var(--white);
+    min-height: 100vh;
+    line-height: 1.7;
+    background-image:
+      linear-gradient(160deg, rgba(26,8,48,0.90) 0%, rgba(45,17,71,0.84) 50%, rgba(61,27,94,0.90) 100%),
+      url('Blank_Reset_Room_Image.jpg');
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+    background-repeat: no-repeat;
+  }
+
+  .hidden { display: none !important; }
+
+  /* ── COVER ── */
+  #cover {
+    min-height: 100vh; display: flex; flex-direction: column;
+    align-items: center; justify-content: center; text-align: center;
+    padding: 60px 24px;
+  }
+  .cover-eyebrow { font-size: 11px; font-weight: 600; letter-spacing: 4px; text-transform: uppercase; color: var(--gold); margin-bottom: 24px; }
+  .cover-title { font-family: 'Playfair Display', serif; font-size: clamp(2.2rem, 6vw, 4rem); font-weight: 700; line-height: 1.15; max-width: 720px; margin-bottom: 8px; color: #FFFFFF; }
+  .cover-title em { font-style: italic; color: var(--gold); }
+  .cover-divider { width: 80px; height: 1px; background: var(--gold); margin: 28px auto; }
+  .cover-sub { font-size: clamp(1rem, 2vw, 1.15rem); color: #E8DFF5; max-width: 560px; margin-bottom: 48px; }
+  .cover-byline { margin-top: 40px; font-size: 0.8rem; color: #A090BB; letter-spacing: 1px; }
+  .cover-meta { margin-top: 14px; font-size: 0.78rem; color: #B7A6D4; max-width: 480px; }
+
+  /* ── BUTTONS ── */
+  .btn-primary {
+    display: inline-block; background: var(--gold); color: #1A0830;
+    font-family: 'Inter', sans-serif; font-weight: 600; font-size: 0.95rem;
+    letter-spacing: 0.5px; padding: 16px 40px; border-radius: 100px;
+    border: none; cursor: pointer; transition: transform 0.2s ease, box-shadow 0.2s ease;
+    text-decoration: none;
+  }
+  .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 10px 30px rgba(201,168,118,0.35); }
+  .btn-primary:disabled { opacity: 0.4; cursor: not-allowed; transform: none; box-shadow: none; }
+
+  .btn-secondary {
+    display: inline-block; background: transparent; color: var(--gold);
+    font-family: 'Inter', sans-serif; font-weight: 500; font-size: 0.88rem;
+    letter-spacing: 0.5px; padding: 13px 30px; border-radius: 100px;
+    border: 1px solid rgba(201,168,118,0.5); cursor: pointer; transition: all 0.2s ease;
+    text-decoration: none;
+  }
+  .btn-secondary:hover { background: rgba(201,168,118,0.1); border-color: var(--gold); }
+
+  .btn-ghost {
+    display: inline-block; background: none; border: none; color: #B7A6D4;
+    font-family: 'Inter', sans-serif; font-size: 0.85rem; letter-spacing: 0.5px;
+    cursor: pointer; padding: 10px 4px; text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+  .btn-ghost:hover { color: var(--gold); }
+
+  .btn-row { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; margin-top: 8px; }
+
+  /* ── ASSESSMENT SHELL ── */
+  #assessment { min-height: 100vh; padding: 0 0 60px; }
+  .assessment-header {
+    position: sticky; top: 0; z-index: 20;
+    background: rgba(26,8,48,0.92); backdrop-filter: blur(10px);
+    padding: 20px 24px 16px; border-bottom: 1px solid rgba(201,168,118,0.2);
+    text-align: center;
+  }
+  .assessment-header h2 {
+    font-family: 'Playfair Display', serif; font-style: italic; font-weight: 400;
+    font-size: 1rem; color: var(--gold); letter-spacing: 0.5px; margin-bottom: 12px;
+  }
+  .progress-bar-wrap {
+    max-width: 480px; margin: 0 auto; height: 5px; border-radius: 100px;
+    background: rgba(255,255,255,0.12); overflow: hidden;
+  }
+  .progress-bar-fill {
+    height: 100%; width: 0%; background: linear-gradient(90deg, var(--gold), #E3C79A);
+    border-radius: 100px; transition: width 0.4s ease;
+  }
+  .progress-label { font-size: 0.72rem; color: #A090BB; letter-spacing: 1px; margin-top: 8px; text-transform: uppercase; }
+
+  .question-wrap { max-width: 640px; margin: 0 auto; padding: 48px 24px 20px; }
+
+  /* ── CARDS ── */
+  .question-card {
+    display: none;
+    background: rgba(45,17,71,0.62); backdrop-filter: blur(8px);
+    border: 1px solid rgba(201,168,118,0.22); border-radius: 20px;
+    padding: 40px 36px; box-shadow: 0 20px 60px rgba(0,0,0,0.35);
+    animation: fadeUp 0.5s ease both;
+  }
+  .question-card.active { display: block; }
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(14px);} to { opacity: 1; transform: translateY(0);} }
+
+  .q-kicker { font-size: 11px; font-weight: 600; letter-spacing: 3px; text-transform: uppercase; color: var(--gold); margin-bottom: 14px; }
+  .question-card h3 {
+    font-family: 'Playfair Display', serif; font-weight: 700; font-size: 1.5rem;
+    line-height: 1.4; margin-bottom: 10px; color: #FFFFFF;
+  }
+  .q-instruction { font-size: 0.88rem; color: #C7B6E3; margin-bottom: 28px; line-height: 1.6; }
+
+  .option-list { display: flex; flex-direction: column; gap: 10px; margin-bottom: 8px; }
+  .option-chip {
+    display: flex; align-items: flex-start; gap: 12px; text-align: left;
+    background: rgba(255,255,255,0.04); border: 1.5px solid rgba(255,255,255,0.14);
+    border-radius: 14px; padding: 16px 18px; cursor: pointer; transition: all 0.18s ease;
+    font-size: 0.95rem; color: #EFE7F7; line-height: 1.5;
+  }
+  .option-chip:hover { border-color: rgba(201,168,118,0.5); background: rgba(201,168,118,0.06); }
+  .option-chip.selected {
+    border-color: var(--gold); background: rgba(201,168,118,0.14);
+    color: #FFFFFF;
+  }
+  .option-check {
+    flex-shrink: 0; width: 20px; height: 20px; border-radius: 6px;
+    border: 1.5px solid rgba(255,255,255,0.3); margin-top: 1px;
+    display: flex; align-items: center; justify-content: center;
+    transition: all 0.18s ease;
+  }
+  .option-chip.selected .option-check { background: var(--gold); border-color: var(--gold); }
+  .option-check svg { width: 12px; height: 12px; opacity: 0; transition: opacity 0.15s ease; }
+  .option-chip.selected .option-check svg { opacity: 1; }
+
+  .option-divider { display: flex; align-items: center; gap: 12px; margin: 14px 0; }
+  .option-divider .line { flex: 1; height: 1px; background: rgba(255,255,255,0.12); }
+  .option-divider span { font-size: 0.7rem; letter-spacing: 2px; text-transform: uppercase; color: #8B7AA8; }
+
+  .option-chip.special { border-style: dashed; }
+  .option-chip.special.selected { border-style: solid; }
+
+  .card-actions { display: flex; justify-content: space-between; align-items: center; margin-top: 32px; gap: 16px; }
+
+  /* Section intro cards */
+  .section-header-card { text-align: left; }
+  .section-header-card .cat-eyebrow { font-size: 11px; font-weight: 700; letter-spacing: 3px; text-transform: uppercase; color: var(--gold); margin-bottom: 16px; }
+  .section-header-card h3 { font-size: 1.9rem; margin-bottom: 18px; }
+  .section-header-card p { color: #D7CBEB; font-size: 1rem; line-height: 1.75; margin-bottom: 8px; }
+  .section-header-card .center-btn { display: flex; justify-content: center; margin-top: 30px; }
+
+  /* ── RESULTS ── */
+  #results { max-width: 720px; margin: 0 auto; padding: 90px 24px 80px; display: none; }
+  #results.active { display: block; }
+  .results-eyebrow { text-align: center; font-size: 11px; font-weight: 600; letter-spacing: 4px; text-transform: uppercase; color: var(--gold); margin-bottom: 18px; }
+  .results-title { text-align: center; font-family: 'Playfair Display', serif; font-size: clamp(1.9rem, 5vw, 2.8rem); font-weight: 700; margin-bottom: 14px; }
+  .results-sub { text-align: center; color: #D7CBEB; max-width: 480px; margin: 0 auto 56px; font-size: 1rem; }
+
+  .results-section-label {
+    font-size: 12px; font-weight: 700; letter-spacing: 3px; text-transform: uppercase;
+    color: var(--gold); margin: 56px 0 22px; display: flex; align-items: center; gap: 14px;
+  }
+  .results-section-label::after { content: ''; flex: 1; height: 1px; background: rgba(201,168,118,0.25); }
+  .results-section-label:first-of-type { margin-top: 0; }
+
+  .result-block {
+    background: rgba(45,17,71,0.62); backdrop-filter: blur(8px);
+    border: 1px solid rgba(201,168,118,0.22); border-radius: 18px;
+    padding: 32px 32px 30px; margin-bottom: 20px;
+    animation: fadeUp 0.6s ease both;
+  }
+  .result-rank { font-size: 0.72rem; letter-spacing: 2px; text-transform: uppercase; color: #A090BB; margin-bottom: 6px; }
+  .result-block h3 { font-family: 'Playfair Display', serif; font-size: 1.5rem; margin-bottom: 4px; color: #FFFFFF; }
+  .result-block .cat-tag { font-size: 0.75rem; color: var(--gold); letter-spacing: 0.5px; margin-bottom: 18px; display:block; }
+
+  .score-bar-wrap { height: 8px; border-radius: 100px; background: rgba(255,255,255,0.1); overflow: hidden; margin-bottom: 22px; }
+  .score-bar-fill { height: 100%; background: linear-gradient(90deg, var(--gold), #E3C79A); border-radius: 100px; width: 0%; transition: width 1s ease; }
+
+  .result-block p { font-size: 0.97rem; color: rgba(255,255,255,0.85); line-height: 1.75; margin-bottom: 16px; }
+  .result-block p:last-child { margin-bottom: 0; }
+  .result-block h4 { font-size: 11px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: var(--gold); margin: 22px 0 8px; }
+
+  .light-note {
+    margin-top: 16px; padding: 14px 16px; border-left: 2px solid var(--gold);
+    background: rgba(201,168,118,0.07); font-size: 0.85rem; color: #D7CBEB;
+    font-style: italic; line-height: 1.6;
+  }
+
+  .notable-mention {
+    display: flex; justify-content: space-between; align-items: baseline;
+    padding: 16px 22px; border: 1px solid rgba(255,255,255,0.12); border-radius: 12px;
+    margin-bottom: 10px; background: rgba(255,255,255,0.03);
+  }
+  .notable-mention .nm-name { font-family: 'Playfair Display', serif; font-size: 1.05rem; color: #FFFFFF; }
+  .notable-mention .nm-cat { font-size: 0.72rem; color: #A090BB; letter-spacing: 1px; }
+
+  .disclaimer-box {
+    margin-top: 22px; padding: 20px 22px; border-radius: 14px;
+    background: rgba(123,45,142,0.22); border: 1px solid rgba(201,168,118,0.35);
+  }
+  .disclaimer-box p { font-size: 0.9rem; color: #EFE7F7; margin-bottom: 16px; }
+  .disclaimer-box .cta-row { display: flex; gap: 12px; flex-wrap: wrap; }
+  .disclaimer-box .btn-secondary, .disclaimer-box .btn-primary { font-size: 0.82rem; padding: 11px 22px; }
+
+  .result-closing {
+    text-align: center; margin-top: 56px; padding: 36px 20px 0;
+    border-top: 1px solid rgba(201,168,118,0.2);
+  }
+  .result-closing p {
+    font-family: 'Playfair Display', serif; font-size: 1.1rem; font-style: italic;
+    color: rgba(255,255,255,0.75); line-height: 1.6; max-width: 480px; margin: 0 auto;
+  }
+  .result-closing .byline {
+    margin-top: 16px; font-size: 0.78rem; color: rgba(255,255,255,0.4);
+    letter-spacing: 1px; font-family: 'Inter', sans-serif; font-style: normal;
+  }
+
+  .email-note { text-align: center; font-size: 0.78rem; color: #A090BB; margin-top: 14px; line-height: 1.6; max-width: 440px; margin-left: auto; margin-right: auto; }
+  .result-actions { display: flex; justify-content: center; gap: 14px; flex-wrap: wrap; margin-top: 40px; }
+
+  @media (max-width: 480px) {
+    .question-card { padding: 30px 22px; }
+    .result-block { padding: 26px 22px; }
+    .question-wrap { padding: 36px 16px 20px; }
+    .section-header-card h3 { font-size: 1.5rem; }
+    .card-actions { flex-direction: column-reverse; align-items: stretch; }
+    .card-actions .btn-primary { width: 100%; text-align: center; }
+  }
+
+  @media print {
+    #cover, .assessment-header, #assessment { display: none !important; }
+    body { background: #FFFFFF; color: #1A0830; }
+    #results { display: block !important; padding: 20px; }
+    .result-block, .result-closing { background: none; border: 1px solid #ccc; box-shadow: none; }
+    .result-block p, .result-block h3, .result-closing p { color: #1A0830; }
+  }
+</style>
+</head>
+<body>
+<!-- ── COVER ── -->
+<section id="cover">
+  <p class="cover-eyebrow">On Purpose Evolution</p>
+  <h1 class="cover-title">The Pattern <em>Recognition</em> Assessment</h1>
+  <div class="cover-divider"></div>
+  <p class="cover-sub">The patterns you keep repeating are not character flaws. They are protections your nervous system built a long time ago. This is where you start seeing them clearly.</p>
+  <button class="btn-primary" onclick="startAssessment()">Begin</button>
+  <p class="cover-byline">Leah Fairchild &nbsp;|&nbsp; The Pattern Interrupter &nbsp;|&nbsp; onpurposeevolution.com</p>
+  <p class="cover-meta">75 questions, about 15&ndash;20 minutes. Answer as you actually are, not as you wish you were.</p>
+</section>
+
+<!-- ── ASSESSMENT ── -->
+<section id="assessment" class="hidden">
+  <div class="assessment-header">
+    <h2>The Pattern Recognition Assessment</h2>
+    <div class="progress-bar-wrap"><div class="progress-bar-fill" id="progressBar"></div></div>
+    <div class="progress-label" id="progressLabel">Question 1 of 75</div>
+  </div>
+  <div class="question-wrap" id="questionWrap">
+    <!-- cards injected by JS -->
+  </div>
+</section>
+
+<!-- ── RESULTS ── -->
+<section id="results">
+  <p class="results-eyebrow">Your Oracle Has Spoken</p>
+  <h2 class="results-title">Your Patterns Have<br><em style="color:var(--gold); font-style:italic;">Been Revealed</em></h2>
+  <p class="results-sub">These are the six patterns showing up loudest in you right now. Not a diagnosis. A map.</p>
+
+  <div id="resultsContent"><!-- injected by JS --></div>
+
+  <div class="result-closing">
+    <p>Naming a pattern is not the same as being defined by it. This is your map for what comes next.</p>
+    <p class="byline">On Purpose Evolution | Leah Fairchild | The Pattern Interrupter</p>
+  </div>
+
+  <p class="email-note" style="margin-top:36px;">For best results open this assessment in <strong>Safari</strong> or <strong>Firefox</strong>, not Chrome. Chrome may block the email button.</p>
+  <div class="result-actions">
+    <button class="btn-primary" onclick="emailResult()">Email My Result</button>
+    <button class="btn-secondary" onclick="window.print()">Save or Print</button>
+  </div>
+  <p class="email-note">Email it to yourself or save as a PDF to return to it throughout the rest of your 12 weeks.</p>
+</section>
+
+<script id="assessment-data" type="application/json">
+{"patterns": [{"id": "selfErasure", "name": "Self-Erasure and Overgiving", "category": "Giving & Boundaries", "definition": "You give until there is nothing left, and then you keep giving anyway. Your needs get quietly filed under later, and later rarely comes.", "origin": "This usually formed early, in a home or relationship where your worth was tied to what you provided rather than who you were. Being needed felt safer than being seen.", "nsConnection": "Your nervous system learned that disappearing your own needs kept the peace and kept you attached. Overgiving is often a fawn response wearing the costume of generosity.", "interrupt": "Before you say yes to the next request, put one hand on your chest and ask what you would actually need to say yes and mean it. If the answer is nothing, that is your answer too.", "trauma": false}, {"id": "greyZoneYes", "name": "The Grey Zone Yes and People Pleasing", "category": "Giving & Boundaries", "definition": "You say yes in the moment and resent it by the time you get to your car. Your yes is rarely a clean yes, it is shaped by what will keep things comfortable.", "origin": "Somewhere along the way, a clear no cost you something, connection, safety, approval. So your yes stopped being a decision and became a reflex.", "nsConnection": "This is your nervous system scanning for the fastest route back to safety, and agreement is often the fastest route. The resentment that follows is the cost of skipping your own consent.", "interrupt": "Practice the pause. When asked for anything, say let me check and get back to you, every time, even when you already know. Give yourself the twenty seconds you never gave yourself before.", "trauma": false}, {"id": "beingIndispensable", "name": "Being Indispensable", "category": "Giving & Boundaries", "definition": "You have made yourself the one person everything runs through, at work, at home, in your friendships. If you stopped, you are not sure what would happen, and part of you does not want to find out.", "origin": "Being needed became proof you belonged. Somewhere you learned that your value was measured by how much the system depended on you, not by who you were without the role.", "nsConnection": "Indispensability keeps your system in a low grade vigilance, always scanning for what would fall apart without you. Rest starts to feel dangerous instead of restorative.", "interrupt": "Pick one small thing this week that only you do, and let someone else do it wrong. Notice what happens in your body when you do not step in to fix it.", "trauma": false}, {"id": "neverAskingHelp", "name": "Never Asking for Help", "category": "Giving & Boundaries", "definition": "You will help anyone, but asking for help yourself feels close to unbearable. You would rather struggle in private than let someone see you need something.", "origin": "Somewhere you learned that needing things made you a burden, or that asking was met with disappointment or being let down. So you stopped asking, and started managing everything alone.", "nsConnection": "This is hyper independence at the nervous system level, your body decided that self reliance was the only reliable form of safety. Asking for help can register as a threat, not a relief.", "interrupt": "This week, ask for one small thing out loud, from someone you trust. Not a hint, not a hope they will notice. A direct ask. Notice the urge to take it back.", "trauma": false}, {"id": "goodGirlCompliance", "name": "Good Girl Compliance", "category": "Giving & Boundaries", "definition": "You follow the rules, meet the expectations, and keep everyone comfortable, even when it costs you your own voice. Being good has always felt safer than being honest.", "origin": "Compliance was likely rewarded early, praise, approval, peace, while pushing back was met with tension or withdrawal. You learned that being good kept you loved.", "nsConnection": "Your system paired obedience with safety so early that stepping outside the lines can trigger real anxiety, even when nothing is actually at risk. Rule breaking and self expression got wired as dangerous.", "interrupt": "Find one small rule you have been following out of habit, not values, and break it on purpose. Notice the discomfort without needing to fix it or explain it to anyone.", "trauma": false}, {"id": "externalValidation", "name": "External Validation", "category": "Self-Image & Identity", "definition": "You know something is true about yourself only once someone else confirms it. A compliment can carry your whole day, and its absence can quietly wreck it.", "origin": "At some point, your own sense of yourself was not enough, or was not trusted, so you outsourced the verdict to other people. Their opinion became the measure you use instead of your own.", "nsConnection": "Your nervous system learned to treat approval as safety and its absence as a threat, so you stay alert to how you are being received at all times. That vigilance is exhausting and it is not actually regulation.", "interrupt": "At the end of each day this week, write one honest sentence about yourself that no one else confirmed. Let it stand on its own, without needing an audience.", "trauma": false}, {"id": "shapeshifting", "name": "Shapeshifting", "category": "Self-Image & Identity", "definition": "You become whoever the room needs you to be. Your personality, opinions, even your voice shift depending on who you are with, and you have lost track of which version is actually you.", "origin": "This often forms in environments where being your full self was not safe, met with unpredictability, criticism, or conflict. Shapeshifting was not a personality trait, it was a survival strategy.", "nsConnection": "This is a fawn response, your system learned to scan the room and morph before a threat could fully land. It kept you safe once. It also kept you a stranger to yourself.", "interrupt": "Before you enter a room today, ask what you would say if no one's reaction mattered. Say one true, unshifted thing, even if it is small.", "trauma": true}, {"id": "oldLabels", "name": "Living by Old Labels", "category": "Self-Image & Identity", "definition": "You are still operating from a version of yourself that is years out of date, the responsible one, the strong one, the one who does not need much. The label fit once. It does not fit now.", "origin": "A label given to you early, by family, by circumstance, by necessity, became an identity you never got to question. You built a life around it before you knew you had a choice.", "nsConnection": "Old labels feel safe because they are familiar, and your nervous system prefers familiar over true. Outgrowing a label can feel like losing yourself, even when it is actually finding yourself.", "interrupt": "Write down the label you have been living by since before you can remember choosing it. Then write one sentence about who you are becoming instead.", "trauma": false}, {"id": "livingThroughProxies", "name": "Living Through Proxies", "category": "Self-Image & Identity", "definition": "Your identity is built around who you are to other people, someone's mother, someone's partner, someone's go to person, rather than who you are on your own. Take away the roles, and you are not sure what is left.", "origin": "Somewhere along the way, being someone else's something became easier and safer than existing as your own person with your own wants. The roles gave you a place to stand.", "nsConnection": "Living through proxies lets your system avoid the vulnerability of an unattached, unproven self. Attachment to others feels safer than attachment to your own becoming.", "interrupt": "Spend fifteen minutes this week doing something that has nothing to do with any role you hold. No audience, no benefit to anyone but you.", "trauma": false}, {"id": "ghostSelves", "name": "Comparison to Ghost Selves", "category": "Self-Image & Identity", "definition": "You measure your current life against a version of yourself that no longer exists, who you were before kids, before the divorce, before you got tired. You are grieving someone who is not coming back, and holding it against who you are now.", "origin": "Change happened faster than your identity could catch up with it, so part of you stayed anchored to the old version, using her as the standard for who you should still be.", "nsConnection": "Comparing yourself to a ghost self keeps your system in a low grade grief loop, mourning a past that cannot return instead of meeting the present that is actually here.", "interrupt": "Write one sentence thanking who you used to be for what she gave you. Then write one sentence about what only this version of you can do now.", "trauma": false}, {"id": "allOrNothing", "name": "All or Nothing Mindset", "category": "Thinking Patterns", "definition": "If you cannot do something perfectly, you would often rather not do it at all. One missed day and the whole plan feels ruined, so you scrap it instead of adjusting it.", "origin": "This usually forms where partial effort was treated as failure, where only the finished, flawless version counted. The middle ground was never modeled as acceptable.", "nsConnection": "All or nothing thinking is your system trying to avoid the discomfort of ambiguity by collapsing everything into two safe categories, success or failure. Grey area feels unsafe, even when it is the most honest place to live.", "interrupt": "The next time you miss a day or fall short, do the smallest possible version of the thing the very next chance you get. Let imperfect and continued replace perfect or nothing.", "trauma": false}, {"id": "perfectionism", "name": "Perfectionism", "category": "Thinking Patterns", "definition": "Good enough rarely feels like enough. You revise, redo, and hold yourself to a standard that keeps moving the moment you get close to it.", "origin": "Somewhere, your worth got tied to your output, and mistakes were treated as evidence of something wrong with you rather than part of being human. Perfect became the price of acceptance.", "nsConnection": "Perfectionism keeps your system braced against the anticipated criticism that never actually arrives. It is not really about the task, it is about staying safe from judgment.", "interrupt": "Pick one low stakes task this week and finish it at seventy percent on purpose. Let it be visible, unpolished, and done.", "trauma": false}, {"id": "negativeSelfTalk", "name": "Negative Self-Talk and Hidden Low Self-Worth", "category": "Thinking Patterns", "definition": "The voice in your head is harsher with you than you would ever let anyone be with someone you love. Most people would never guess how loud that voice actually is.", "origin": "This inner voice is often borrowed, from a critical parent, a harsh comparison, an early moment when you were made to feel like too much or not enough. It became the narrator, and you stopped questioning who it belonged to.", "nsConnection": "Chronic negative self-talk keeps your body in a low grade threat state, since your own mind has become the source of the danger signal. There is no outrunning a threat that lives inside your own head.", "interrupt": "Catch one harsh thought today and ask whose voice that really is. Then say one sentence back to yourself in the voice you would use with someone you love.", "trauma": false}, {"id": "imposterSyndrome", "name": "Imposter Syndrome", "category": "Thinking Patterns", "definition": "You have the results, the experience, the proof, and it still does not feel earned. Some part of you is waiting to be found out.", "origin": "This often develops when your success was met with suspicion, minimized, or credited to luck rather than skill, so you learned not to trust your own competence, even with the evidence in front of you.", "nsConnection": "Imposter syndrome keeps your system scanning for the moment the ground gives out, because trusting your own capability has never felt fully safe. Confidence without vigilance can feel like a setup.", "interrupt": "Keep a running list this week of things you did well, no qualifiers, no it was easy. Read it out loud to yourself at the end of the week.", "trauma": false}, {"id": "chronologicalTrap", "name": "Chronological Trap", "category": "Thinking Patterns", "definition": "You keep waiting for the right time, when the kids are older, when work slows down, when things settle. The timeline keeps moving, and so does the thing you actually want.", "origin": "Somewhere you learned to sequence your own wants behind everyone else's needs, believing your turn would come once the conditions were finally right. The conditions rarely arrive on their own.", "nsConnection": "Waiting for the right time can be your system's way of avoiding the exposure of trying now and it not working. Delay feels safer than a real attempt with a real outcome.", "interrupt": "Pick the thing you have been waiting for the right time to do, and do the smallest possible version of it this week, on purpose, before you feel ready.", "trauma": false}, {"id": "productivityProcrastination", "name": "Procrastination via Productivity", "category": "Avoidance & Numbing", "definition": "You stay busy with everything except the thing that actually matters. The laundry gets done, the inbox gets cleared, and the real thing waits again.", "origin": "Being productive was likely praised more than being honest about what was hard, so staying busy became a socially acceptable way to avoid what actually needed your attention.", "nsConnection": "Productive avoidance still counts as avoidance to your nervous system, it just looks respectable from the outside. The discomfort you are dodging does not disappear, it waits.", "interrupt": "Before you start any task tomorrow, ask if this is the thing, or if this is instead of the thing. Do the actual thing first, for ten minutes, before anything else.", "trauma": false}, {"id": "sensoryOverload", "name": "Sensory Overload Numbing", "category": "Avoidance & Numbing", "definition": "The scrolling, the snacking, the noise in the background of everything, it is not really about any of those things. It is about not feeling what is underneath them.", "origin": "At some point feeling things fully was not safe or was not welcomed, so numbing became the more manageable option. Sensation got traded for static.", "nsConnection": "Numbing is a nervous system strategy for turning the volume down on a system that has been overstimulated for too long. It works in the short term and costs you your own signal in the long term.", "interrupt": "Pick one numbing habit and give it a five minute delay before you reach for it. In that five minutes, name out loud what you are actually feeling.", "trauma": false}, {"id": "preemptiveSelfSabotage", "name": "Preemptive Self-Sabotage", "category": "Avoidance & Numbing", "definition": "You pull back right before things start going well. Success starts to feel unfamiliar enough that some part of you sabotages it before it can be taken from you.", "origin": "If good things were historically followed by loss, disappointment, or instability, your system learned to associate rising with risk. Sabotaging early can feel like control.", "nsConnection": "This is your nervous system trying to get ahead of an anticipated fall by causing it yourself, on your own terms. It trades a guaranteed small loss for the unbearable uncertainty of a bigger one.", "interrupt": "The next time something starts going well, name it out loud to someone you trust before the urge to sabotage kicks in. Let another person witness the good before your system can talk you out of it.", "trauma": false}, {"id": "believingFantasy", "name": "Believing the Fantasy", "category": "Avoidance & Numbing", "definition": "You keep waiting for a person or a situation to become what you have decided it could be, based on potential rather than what is actually in front of you. The evidence says one thing, and you keep believing another.", "origin": "This often forms after love or safety was inconsistent, teaching you to hold onto the good moments as proof of what is possible, even when the pattern says otherwise. Hope became a way of staying attached.", "nsConnection": "Believing the fantasy can be your system's way of avoiding the grief of what actually is, because the fantasy still feels survivable and the truth does not, yet.", "interrupt": "Write down what is actually happening, not what could happen, not what almost happened. Let the facts sit on the page without the story around them, even just for today.", "trauma": true}, {"id": "marriedToStory", "name": "Married to Your Story", "category": "Stuck Patterns", "definition": "The story of what happened to you has become the story of who you are. It is true, and it has also become the only lens you see yourself through.", "origin": "When something significant happens, the story can become a container that makes sense of an experience that otherwise felt senseless. Over time, the container can start to feel like the whole identity.", "nsConnection": "Staying married to the story can keep your system oriented toward the danger that already happened, which paradoxically feels safer than an unwritten future. The known pain can feel more survivable than the unknown.", "interrupt": "Tell your story once this week the way you always tell it. Then tell it again, out loud or on paper, starting from what you learned instead of what happened. Notice which version feels heavier.", "trauma": true}, {"id": "playingVictim", "name": "Playing Victim and Staying Stuck", "category": "Stuck Patterns", "definition": "Things keep happening to you, and it is rarely, if ever, about a choice you made. The story stays the same even as the circumstances change.", "origin": "If your circumstances once genuinely were out of your control, staying in that framework can feel protective, since claiming any agency also means claiming responsibility for what happens next. That responsibility can feel like too much, too soon.", "nsConnection": "This pattern can keep your system in a state that avoids the vulnerability of trying and failing on your own terms. Powerlessness, uncomfortable as it is, can feel safer than the exposure of real agency.", "interrupt": "Pick one current situation and write one sentence about a choice, however small, that is actually yours to make inside it. Just one. You do not have to fix all of it today.", "trauma": true}, {"id": "shiftingBlame", "name": "Shifting Blame and Making Excuses", "category": "Stuck Patterns", "definition": "There is always a reason it was not your fault, the timing, the other person, the circumstances. The explanations are not lies, but they have become a wall between you and what you actually could have done differently.", "origin": "Somewhere, admitting fault came with a cost that felt too high, punishment, shame, loss of standing, so explaining became safer than owning. The habit outlived the original reason for it.", "nsConnection": "Blame and excuse making can be your system protecting you from the vulnerability of being wrong in front of others, or even in front of yourself. Owning a mistake can feel like it threatens your worth, when it does not.", "interrupt": "The next time something goes wrong, name one piece of it that was actually yours, out loud, before you name anything else. Just one piece. Let it be small and true.", "trauma": false}, {"id": "hyperIndependence", "name": "Hyper-Independence", "category": "Trust & Relationships", "definition": "You would rather do it alone than risk needing someone and having that need go unmet. Independence has become a shield, not a preference.", "origin": "This often forms after depending on someone did not go well, they were not there, or they made you regret needing them. Self-reliance became the safer bet.", "nsConnection": "Hyper independence is your nervous system's way of removing the possibility of disappointment by removing the need for anyone else entirely. It protects you from being let down and it also keeps you unreachable.", "interrupt": "Let one small task go to someone else this week, on purpose, even if you could do it faster or better alone. Practice tolerating the discomfort of a need being in someone else's hands.", "trauma": false}, {"id": "guardedVulnerability", "name": "Guarded Vulnerability", "category": "Trust & Relationships", "definition": "You can talk about almost anything except what is actually going on underneath. The real thing stays behind a door you keep mostly closed, even with people who love you.", "origin": "Vulnerability likely cost you something once, it was used against you, dismissed, or simply not met with care. So you learned to keep the real material private, even in safe rooms.", "nsConnection": "Guardedness is your system's way of keeping you protected from a repeat of that original exposure. The cost is that connection stays surface level, even when your body is craving something deeper.", "interrupt": "Share one true, slightly uncomfortable thing with someone safe this week. Not everything. Just one honest sentence you would normally keep to yourself.", "trauma": false}, {"id": "secondGuessingIntuition", "name": "Second-Guessing Intuition", "category": "Trust & Relationships", "definition": "You know something before you can explain it, and then you talk yourself out of it anyway. By the time you act, the moment your gut was responding to has usually already passed.", "origin": "If your intuition was dismissed, overridden, or punished early on, by others or by outcomes, you learned to distrust the very signal that was trying to protect you. Doubt became the default response to your own knowing.", "nsConnection": "Second guessing keeps your system stuck between two competing signals, the original knowing and the learned distrust of it. That loop is exhausting, and it is not actually indecision, it is unprocessed doubt.", "interrupt": "The next time you feel a fast, quiet knowing about something, write it down before you talk yourself out of it. Come back to it in a day and see how it held up.", "trauma": false}], "questions": [{"qid": "q1", "patternId": "selfErasure", "category": "Giving & Boundaries", "prompt": "When someone important to you, or someone you see regularly, needs something from you, what usually happens, even on days you genuinely don't have the capacity to give?", "sub": "Tap every statement that feels true. There is no reward for choosing fewer.", "statements": ["I say yes before I've even considered what I actually want.", "My own plans quietly get rearranged to make room for theirs.", "I feel guilty even pausing to think about it.", "I find the capacity somewhere, even when I truly don't have it."], "fifth": "I check in with myself first, and I'm honest when I actually don't have it to give.", "fifthType": "healthy"}, {"qid": "q2", "patternId": "selfErasure", "category": "Giving & Boundaries", "prompt": "Think about the last time you were exhausted. What did you do?", "sub": "Tap every statement that feels true. There is no reward for choosing fewer.", "statements": ["I kept going and gave the last of what I had anyway.", "I told myself everyone else needed me more than I needed rest.", "I pushed through instead of naming that I was done.", "I felt guilty for even wanting to stop."], "fifth": "I gave myself permission to rest without guilt.", "fifthType": "healthy"}, {"qid": "q3", "patternId": "selfErasure", "category": "Giving & Boundaries", "prompt": "When you imagine saying I need help right now, what happens in your body?", "sub": "Tap every statement that feels true. There is no reward for choosing fewer.", "statements": ["My chest tightens and I want to take it back immediately.", "I feel like a burden just thinking about saying it.", "I automatically minimize the need before anyone can respond to it.", "I would rather struggle quietly than say the sentence out loud."], "fifth": "I don't mind asking for help if I need it.", "fifthType": "healthy"}, {"qid": "q4", "patternId": "greyZoneYes", "category": "Giving & Boundaries", "prompt": "When you are asked for a favor, how do you usually answer?", "sub": "Tap every statement that feels true. There is no reward for choosing fewer.", "statements": ["I say yes in the moment even when my gut says no.", "I agree to avoid the awkwardness of saying no.", "I say yes and then quietly resent it later.", "I answer based on who it is, not my actual capacity."], "fifth": "I evaluate if it's possible for me and decline if it isn't, unapologetically.", "fifthType": "healthy"}, {"qid": "q5", "patternId": "greyZoneYes", "category": "Giving & Boundaries", "prompt": "How do you usually feel after agreeing to something you did not want to do?", "sub": "Tap every statement that feels true. There is no reward for choosing fewer.", "statements": ["Resentful, but I would never say that out loud.", "Frustrated with myself for agreeing again.", "Trapped, like I talked myself into it without meaning to.", "Tired in a way that has nothing to do with the task itself."], "fifth": "I never agree to things I don't want to do.", "fifthType": "healthy"}, {"qid": "q6", "patternId": "greyZoneYes", "category": "Giving & Boundaries", "prompt": "When someone pushes back on your boundary, what usually happens?", "sub": "Tap every statement that feels true. There is no reward for choosing fewer.", "statements": ["I cave and turn it into a yes.", "I start over explaining and justifying myself.", "I try to compromise with a solution the more they push.", "I agree just to end the conversation."], "fifth": "I let them push but I am firm.", "fifthType": "healthy"}, {"qid": "q7", "patternId": "beingIndispensable", "category": "Giving & Boundaries", "prompt": "If you took a full week off with no contact, what would worry you most?", "sub": "Tap every statement that feels true. There is no reward for choosing fewer.", "statements": ["That something would fall apart without me.", "That people would realize they did not need me as much as I thought.", "That I would come back to a mess only I know how to fix.", "That I would not know who I was without being needed."], "fifth": "Honestly, nothing. I trust it would all still be there, handled or not, when I got back.", "fifthType": "healthy"}, {"qid": "q8", "patternId": "beingIndispensable", "category": "Giving & Boundaries", "prompt": "How do you feel when someone else handles something you usually manage?", "sub": "Tap every statement that feels true. There is no reward for choosing fewer.", "statements": ["Anxious, even when they do it fine.", "The urge to step in and redo it my way.", "Slightly threatened, even though I would never say that.", "Relieved for about five minutes, then uneasy."], "fifth": "I rarely do this.", "fifthType": "healthy"}, {"qid": "q9", "patternId": "beingIndispensable", "category": "Giving & Boundaries", "prompt": "What does being needed actually give you?", "sub": "Tap every statement that feels true. There is no reward for choosing fewer.", "statements": ["A sense that I matter that I do not get anywhere else.", "Proof that I belong.", "A reason to keep going even when I am running on empty.", "Something that feels a lot like safety."], "fifth": "A quiet stress.", "fifthType": "nuance"}, {"qid": "q10", "patternId": "neverAskingHelp", "category": "Giving & Boundaries", "prompt": "When you are struggling with something, what is your first move?", "sub": "Tap every statement that feels true. There is no reward for choosing fewer.", "statements": ["I try to figure it out alone before telling anyone.", "I research it privately instead of asking someone who already knows.", "I wait until I am completely overwhelmed before saying anything.", "I convince myself it is not that big of a deal yet."], "fifth": "I shut down before I have the ability to handle it.", "fifthType": "nuance"}, {"qid": "q11", "patternId": "neverAskingHelp", "category": "Giving & Boundaries", "prompt": "What comes up when you imagine directly asking someone for support?", "sub": "Tap every statement that feels true. There is no reward for choosing fewer.", "statements": ["A feeling that I am being a burden.", "The instinct to soften the ask so much it barely counts.", "Discomfort that makes me want to change the subject.", "A memory of a time asking did not go well."], "fifth": "An uncomfortable feeling of being weak, or needy.", "fifthType": "nuance"}, {"qid": "q12", "patternId": "neverAskingHelp", "category": "Giving & Boundaries", "prompt": "How do you usually respond when someone offers to help you?", "sub": "Tap every statement that feels true. There is no reward for choosing fewer.", "statements": ["I say I am fine even when I am not.", "I downplay how much I actually need it.", "I accept only the smallest version of what they offered.", "I feel the urge to immediately return the favor so I do not owe anyone anything."], "fifth": "I feel the discomfort of accepting everywhere in my body.", "fifthType": "nuance"}, {"qid": "q13", "patternId": "goodGirlCompliance", "category": "Giving & Boundaries", "prompt": "How do you typically respond to rules or expectations you disagree with?", "sub": "Tap every statement that feels true. There is no reward for choosing fewer.", "statements": ["I follow them anyway to avoid the friction of pushing back.", "I keep my actual opinion to myself.", "I look for the version of compliance that keeps everyone comfortable.", "I tell myself it is not worth the conflict."], "fifth": "I follow what aligns with my values and speak up about what doesn't.", "fifthType": "healthy"}, {"qid": "q14", "patternId": "goodGirlCompliance", "category": "Giving & Boundaries", "prompt": "What happens in you when you consider disappointing someone?", "sub": "Tap every statement that feels true. There is no reward for choosing fewer.", "statements": ["A wave of anxiety that outweighs the actual stakes.", "The urge to over explain myself before they can react.", "A pull to fix their reaction before it even happens.", "Genuine fear, even over something small."], "fifth": "I can tolerate someone's disappointment without panicking.", "fifthType": "healthy"}, {"qid": "q15", "patternId": "goodGirlCompliance", "category": "Giving & Boundaries", "prompt": "Growing up, what did being good usually earn you?", "sub": "Tap every statement that feels true. There is no reward for choosing fewer.", "statements": ["Praise that felt like the only reliable form of love.", "Peace in a house where conflict felt dangerous.", "A role I understood I was not supposed to break.", "Approval that I learned to chase over everything else."], "fifth": "I don't tie my worth to how agreeable I am.", "fifthType": "healthy"}, {"qid": "q16", "patternId": "externalValidation", "category": "Self-Image & Identity", "prompt": "How do you know if something you did was actually good?", "sub": "Tap every statement that feels true. There is no reward for choosing fewer.", "statements": ["I wait to hear it from someone else before I believe it.", "I replay the moment looking for a reaction that confirms it.", "I do not fully trust my own read on it.", "I check in with someone before I let myself feel proud."], "fifth": "I trust my own read on it before I look for anyone else's.", "fifthType": "healthy"}, {"qid": "q17", "patternId": "externalValidation", "category": "Self-Image & Identity", "prompt": "What happens when you post, share, or offer something and it gets a quiet response?", "sub": "Tap every statement that feels true. There is no reward for choosing fewer.", "statements": ["I assume it was not good enough.", "I start editing or second guessing it after the fact.", "It affects my mood more than I would like to admit.", "I look for reasons it did not land instead of just letting it exist."], "fifth": "I let it exist without needing a reaction to validate it.", "fifthType": "healthy"}, {"qid": "q18", "patternId": "externalValidation", "category": "Self-Image & Identity", "prompt": "When you receive a genuine compliment, what actually happens inside?", "sub": "Tap every statement that feels true. There is no reward for choosing fewer.", "statements": ["I deflect it before I let it land.", "Part of me does not fully believe it.", "I immediately look for the next thing to earn the same reaction.", "It feels good for a moment and then fades fast."], "fifth": "I take it in and let it land, simply.", "fifthType": "healthy"}, {"qid": "q19", "patternId": "shapeshifting", "category": "Self-Image & Identity", "prompt": "How much does your personality shift depending on who you are with?", "sub": "Tap every statement that feels true. There is no reward for choosing fewer.", "statements": ["I notice I sound like a slightly different person in different rooms.", "I read the room and adjust before I say anything.", "I have lost track of what I actually think in certain relationships.", "I feel like I am performing a version of myself more often than not."], "fifth": "I stay pretty much the same person no matter who I'm with.", "fifthType": "healthy"}, {"qid": "q20", "patternId": "shapeshifting", "category": "Self-Image & Identity", "prompt": "When you disagree with someone in the room, what usually happens?", "sub": "Tap every statement that feels true. There is no reward for choosing fewer.", "statements": ["I keep it to myself and go along with the group.", "I soften it so much it no longer says what I meant.", "I feel myself shift my opinion mid conversation without meaning to.", "I agree out loud and disagree only in my head."], "fifth": "I say what I actually think, even if it's not the popular opinion in the room.", "fifthType": "healthy"}, {"qid": "q21", "patternId": "shapeshifting", "category": "Self-Image & Identity", "prompt": "If you were completely alone with no one to respond to, who would you be?", "sub": "Tap every statement that feels true. There is no reward for choosing fewer.", "statements": ["I honestly am not sure anymore.", "I would need time to remember what I actually like.", "I think I would feel like a stranger to myself at first.", "I have not been fully myself long enough to know."], "fifth": "I know who I am, with or without an audience.", "fifthType": "healthy"}, {"qid": "q22", "patternId": "oldLabels", "category": "Self-Image & Identity", "prompt": "Which old identity do you still feel obligated to live up to?", "sub": "Tap every statement that feels true. There is no reward for choosing fewer.", "statements": ["The responsible one who never falls apart.", "The strong one who does not need much.", "The good one who does not cause problems.", "The reliable one everyone counts on without question."], "fifth": "I've let go of labels that no longer fit who I am now.", "fifthType": "healthy"}, {"qid": "q23", "patternId": "oldLabels", "category": "Self-Image & Identity", "prompt": "When you imagine acting outside the role you always play, the responsible one, the strong one, the good one, whichever one fits you, what happens?", "sub": "Tap every statement that feels true. There is no reward for choosing fewer.", "statements": ["It feels like I would be letting people down.", "I worry people would not recognize me anymore.", "I feel guilty just imagining it.", "I talk myself out of it before I try."], "fifth": "I rarely step outside of my role, it's not what I do.", "fifthType": "nuance"}, {"qid": "q24", "patternId": "oldLabels", "category": "Self-Image & Identity", "prompt": "How closely does the way people describe you match how you actually feel inside?", "sub": "Tap every statement that feels true. There is no reward for choosing fewer.", "statements": ["There is a real gap between the two.", "I perform the description more than I embody it.", "I feel like I am still wearing an old label.", "I am not sure the label was ever fully accurate."], "fifth": "How people describe me actually matches how I feel inside.", "fifthType": "healthy"}, {"qid": "q25", "patternId": "livingThroughProxies", "category": "Self-Image & Identity", "prompt": "If someone asked you who you are, separate from your roles, what happens?", "sub": "Tap every statement that feels true. There is no reward for choosing fewer.", "statements": ["I struggle to answer without mentioning someone else.", "I default to describing what I do for other people.", "I feel a little lost trying to answer honestly.", "My roles feel like the only solid ground I have."], "fifth": "I can describe myself without mentioning anyone else.", "fifthType": "healthy"}, {"qid": "q26", "patternId": "livingThroughProxies", "category": "Self-Image & Identity", "prompt": "How much of your week is spent on something that has nothing to do with a role you hold?", "sub": "Tap every statement that feels true. There is no reward for choosing fewer.", "statements": ["Almost none of it.", "I feel guilty when I try to carve out that time.", "I cannot remember the last time I did something just for me.", "It feels indulgent even to consider it."], "fifth": "I regularly make time for things that are just mine.", "fifthType": "healthy"}, {"qid": "q27", "patternId": "livingThroughProxies", "category": "Self-Image & Identity", "prompt": "What would change about your identity if your roles disappeared tomorrow?", "sub": "Tap every statement that feels true. There is no reward for choosing fewer.", "statements": ["I am genuinely not sure who would be left.", "I would have to rebuild a sense of self from scratch.", "That question makes me uncomfortable to sit with.", "I have avoided thinking about it directly."], "fifth": "I'd still know who I was underneath the roles.", "fifthType": "healthy"}, {"qid": "q28", "patternId": "ghostSelves", "category": "Self-Image & Identity", "prompt": "How often do you compare your current life to who you used to be?", "sub": "Tap every statement that feels true. There is no reward for choosing fewer.", "statements": ["More than I would like to admit.", "I measure my energy against a version of myself that no longer exists.", "I hold myself to a standard from a different season of my life.", "I feel like I am failing a comparison that is not even fair."], "fifth": "I let go of comparing this season of my life to a different one.", "fifthType": "healthy"}, {"qid": "q29", "patternId": "ghostSelves", "category": "Self-Image & Identity", "prompt": "When you think about the person you were before everything changed, what comes up?", "sub": "Tap every statement that feels true. There is no reward for choosing fewer.", "statements": ["Grief for a version of myself I have not fully let go of.", "Guilt for not being her anymore.", "Longing that shows up more than I expect.", "A quiet ache I have not really named until now."], "fifth": "I feel gratitude for who I was without needing to still be her.", "fifthType": "healthy"}, {"qid": "q30", "patternId": "ghostSelves", "category": "Self-Image & Identity", "prompt": "How do you talk to yourself about who you are now, compared to before?", "sub": "Tap every statement that feels true. There is no reward for choosing fewer.", "statements": ["I am often disappointed by the comparison.", "I use the old version as the standard I should still meet.", "I rarely acknowledge what this version of me has actually survived.", "I forget to ask what only this version of me can do."], "fifth": "I give myself credit for what this version of me has actually survived.", "fifthType": "healthy"}, {"qid": "q31", "patternId": "allOrNothing", "category": "Thinking Patterns", "prompt": "When you miss a day on a plan or a goal, what usually happens next?", "sub": "Tap every statement that feels true. There is no reward for choosing fewer.", "statements": ["The whole thing feels ruined so I stop entirely.", "I tell myself I will just start over Monday.", "I feel like the streak breaking means the effort was wasted.", "I abandon it rather than adjust and keep going imperfectly."], "fifth": "I pick back up the next day without needing to start completely over.", "fifthType": "healthy"}, {"qid": "q32", "patternId": "allOrNothing", "category": "Thinking Patterns", "prompt": "How do you feel about doing something at seventy percent instead of perfectly?", "sub": "Tap every statement that feels true. There is no reward for choosing fewer.", "statements": ["It feels almost as bad as not doing it at all.", "I would rather wait until I can do it fully.", "Partial effort feels like it does not count.", "I struggle to see the value in the in-between."], "fifth": "Partial effort still counts as real effort to me.", "fifthType": "healthy"}, {"qid": "q33", "patternId": "allOrNothing", "category": "Thinking Patterns", "prompt": "When a plan does not go exactly as expected, what is your instinct?", "sub": "Tap every statement that feels true. There is no reward for choosing fewer.", "statements": ["I scrap it instead of adjusting it.", "I see it as a failure rather than a data point.", "I lose motivation to keep going at all.", "I struggle to find the middle ground between all and nothing."], "fifth": "I adjust the plan instead of scrapping it.", "fifthType": "healthy"}, {"qid": "q34", "patternId": "perfectionism", "category": "Thinking Patterns", "prompt": "How do you know when something you made is finished?", "sub": "Tap every statement that feels true. There is no reward for choosing fewer.", "statements": ["Honestly, it rarely feels finished.", "I keep revising past the point it was already good.", "I compare it to a standard that keeps moving.", "Someone else usually has to tell me to stop."], "fifth": "I can tell when something is done, even if it's not flawless.", "fifthType": "healthy"}, {"qid": "q35", "patternId": "perfectionism", "category": "Thinking Patterns", "prompt": "What happens when you make a visible mistake?", "sub": "Tap every statement that feels true. There is no reward for choosing fewer.", "statements": ["I replay it far longer than the moment deserves.", "I feel it says something about my worth, not just the task.", "I over correct the next time to make sure it never happens again.", "I struggle to let it go even after it is resolved."], "fifth": "I let a mistake be a mistake and move on.", "fifthType": "healthy"}, {"qid": "q36", "patternId": "perfectionism", "category": "Thinking Patterns", "prompt": "Where did the belief come from that good enough is not enough?", "sub": "Tap every statement that feels true. There is no reward for choosing fewer.", "statements": ["Mistakes were treated as a bigger deal than they needed to be.", "My worth felt tied to my output more than who I was.", "Praise usually came only with flawless results.", "I learned early that close was not the same as done."], "fifth": "For some reason I have tied my worth with getting it exactly right.", "fifthType": "nuance"}, {"qid": "q37", "patternId": "negativeSelfTalk", "category": "Thinking Patterns", "prompt": "How does the voice in your head talk to you when you make a mistake?", "sub": "Tap every statement that feels true. There is no reward for choosing fewer.", "statements": ["Harsher than I would ever let anyone else be with me.", "It jumps straight to what is wrong with me, not just the mistake.", "It sounds like someone specific from my past.", "It rarely gives me the benefit of the doubt."], "fifth": "I talk to myself with the same patience I'd give someone I love.", "fifthType": "healthy"}, {"qid": "q38", "patternId": "negativeSelfTalk", "category": "Thinking Patterns", "prompt": "How often do you catch yourself in genuinely unkind self talk?", "sub": "Tap every statement that feels true. There is no reward for choosing fewer.", "statements": ["More often than I say out loud.", "Regularly enough that I have started to tune it out.", "Enough that I would never repeat it to someone I love.", "So often it barely registers as unusual anymore."], "fifth": "I rarely talk to myself in a way I wouldn't say out loud to someone else.", "fifthType": "healthy"}, {"qid": "q39", "patternId": "negativeSelfTalk", "category": "Thinking Patterns", "prompt": "Underneath the self criticism, what is usually the actual fear?", "sub": "Tap every statement that feels true. There is no reward for choosing fewer.", "statements": ["That I am not enough, no matter what I do.", "That the criticism is somehow protecting me from something worse.", "That if I stop being hard on myself, I will fall apart.", "That the voice is right, even when I know it is not fair."], "fifth": "The fear that I am not enough as I am without constant self-correction.", "fifthType": "nuance"}, {"qid": "q40", "patternId": "imposterSyndrome", "category": "Thinking Patterns", "prompt": "When you succeed at something, what is your first internal reaction?", "sub": "Tap every statement that feels true. There is no reward for choosing fewer.", "statements": ["A quiet feeling that I got lucky.", "Waiting for someone to notice I do not actually deserve it.", "Crediting timing or other people before crediting myself.", "A brief high followed by doubt."], "fifth": "I let myself feel proud without immediately explaining it away.", "fifthType": "healthy"}, {"qid": "q41", "patternId": "imposterSyndrome", "category": "Thinking Patterns", "prompt": "How do you respond when someone compliments your skill or ability?", "sub": "Tap every statement that feels true. There is no reward for choosing fewer.", "statements": ["I explain it away instead of accepting it.", "I mention everyone who helped before I mention myself.", "I feel a flicker of fear that they are wrong about me.", "I change the subject rather than sit with it."], "fifth": "I say thank you and actually believe it.", "fifthType": "healthy"}, {"qid": "q42", "patternId": "imposterSyndrome", "category": "Thinking Patterns", "prompt": "What happens when you are about to take on something bigger than you have done before?", "sub": "Tap every statement that feels true. There is no reward for choosing fewer.", "statements": ["A fear that this is the time I get found out.", "I over-prepare to compensate for feeling unqualified.", "I minimize my experience even though it is real.", "I assume everyone else in the room is more capable than me."], "fifth": "I trust I can grow into it, even without having done it before.", "fifthType": "healthy"}, {"qid": "q43", "patternId": "chronologicalTrap", "category": "Thinking Patterns", "prompt": "What is the thing you keep telling yourself you will do when the time is right?", "sub": "Tap every statement that feels true. There is no reward for choosing fewer.", "statements": ["Something for myself that keeps getting pushed to next season.", "A change I have been circling for longer than I want to admit.", "Something I keep waiting for permission to prioritize.", "A version of my life I keep postponing until things settle."], "fifth": "I've stopped waiting and started doing it in whatever time I actually have.", "fifthType": "healthy"}, {"qid": "q44", "patternId": "chronologicalTrap", "category": "Thinking Patterns", "prompt": "How do you usually decide it is not the right time yet?", "sub": "Tap every statement that feels true. There is no reward for choosing fewer.", "statements": ["Something else always feels more urgent.", "I wait for everyone else's needs to be handled first.", "I convince myself the timing will make more sense later.", "I do not fully trust that now could be enough."], "fifth": "I make room for what matters to me now, not just later.", "fifthType": "healthy"}, {"qid": "q45", "patternId": "chronologicalTrap", "category": "Thinking Patterns", "prompt": "What would have to be true for you to stop waiting?", "sub": "Tap every statement that feels true. There is no reward for choosing fewer.", "statements": ["Honestly, I am not sure anything would ever feel like enough.", "I would need to believe my timeline matters as much as everyone else's.", "I would have to risk trying before I feel fully ready.", "I would have to stop needing permission from the conditions around me."], "fifth": "I already believe my timeline matters as much as anyone else's.", "fifthType": "healthy"}, {"qid": "q46", "patternId": "productivityProcrastination", "category": "Avoidance & Numbing", "prompt": "When you are avoiding something hard, what does your day usually look like?", "sub": "Tap every statement that feels true. There is no reward for choosing fewer.", "statements": ["Suddenly very productive at everything except the actual thing.", "Full of tasks that feel urgent but are not.", "Busy enough that I can tell myself I did not have time.", "Organized around everything except the one thing that matters most."], "fifth": "I do the hard thing first, then let myself be busy with everything else.", "fifthType": "healthy"}, {"qid": "q47", "patternId": "productivityProcrastination", "category": "Avoidance & Numbing", "prompt": "How do you usually feel at the end of a day you avoided something important?", "sub": "Tap every statement that feels true. There is no reward for choosing fewer.", "statements": ["Tired in a way that has nothing to do with what I actually got done.", "Quietly aware I dodged it again.", "Accomplished on the surface and uneasy underneath.", "Frustrated with myself, even though I stayed busy all day."], "fifth": "I feel settled because I actually did the thing that mattered.", "fifthType": "healthy"}, {"qid": "q48", "patternId": "productivityProcrastination", "category": "Avoidance & Numbing", "prompt": "What is usually underneath the thing you are avoiding by staying busy?", "sub": "Tap every statement that feels true. There is no reward for choosing fewer.", "statements": ["A fear that I will not do it well.", "Discomfort I would rather not sit with.", "Uncertainty about whether it will even work.", "A feeling I have not let myself name yet."], "fifth": "I can sit with discomfort without needing to outrun it.", "fifthType": "healthy"}, {"qid": "q49", "patternId": "sensoryOverload", "category": "Avoidance & Numbing", "prompt": "What do you reach for when the day feels like too much?", "sub": "Tap every statement that feels true. There is no reward for choosing fewer.", "statements": ["My phone, without really deciding to pick it up.", "Food, whether or not I am actually hungry.", "Noise or background distraction to fill the quiet.", "Anything that lets me stop feeling for a while."], "fifth": "I pause and actually feel what's going on before I reach for anything.", "fifthType": "healthy"}, {"qid": "q50", "patternId": "sensoryOverload", "category": "Avoidance & Numbing", "prompt": "What usually happens right before you reach for a numbing habit?", "sub": "Tap every statement that feels true. There is no reward for choosing fewer.", "statements": ["A feeling rises that I would rather not sit with.", "I feel overstimulated and want the volume turned down.", "I am not even fully aware I am doing it until I am mid habit.", "Something uncomfortable surfaces and I move to shut it down fast."], "fifth": "I notice the feeling rising and let myself feel it instead of numbing it.", "fifthType": "healthy"}, {"qid": "q51", "patternId": "sensoryOverload", "category": "Avoidance & Numbing", "prompt": "How do you feel in true stillness, with no distraction at all?", "sub": "Tap every statement that feels true. There is no reward for choosing fewer.", "statements": ["Restless almost immediately.", "Like something underneath is trying to get my attention.", "Uncomfortable enough that I usually end it early.", "Aware that stillness is when the real feelings show up."], "fifth": "I can sit in stillness without needing to fill it.", "fifthType": "healthy"}, {"qid": "q52", "patternId": "preemptiveSelfSabotage", "category": "Avoidance & Numbing", "prompt": "What tends to happen right when things start going well?", "sub": "Tap every statement that feels true. There is no reward for choosing fewer.", "statements": ["I pull back before I let myself fully enjoy it.", "I find a reason to doubt it will last.", "I do something that quietly undercuts my own momentum.", "I brace for it to fall apart before it has a chance to."], "fifth": "I let myself enjoy it without looking for the catch.", "fifthType": "healthy"}, {"qid": "q53", "patternId": "preemptiveSelfSabotage", "category": "Avoidance & Numbing", "prompt": "How familiar does sustained success actually feel to you?", "sub": "Tap every statement that feels true. There is no reward for choosing fewer.", "statements": ["Honestly, kind of foreign.", "Like something I do not fully trust yet.", "Like it is temporary, even when there is no evidence of that.", "Uncomfortable in a way I cannot always explain."], "fifth": "It feels earned, and I'm getting used to that.", "fifthType": "healthy"}, {"qid": "q54", "patternId": "preemptiveSelfSabotage", "category": "Avoidance & Numbing", "prompt": "When good things followed good things in your past, what usually happened?", "sub": "Tap every statement that feels true. There is no reward for choosing fewer.", "statements": ["The good did not last, so I stopped expecting it to.", "Something eventually took it away, so I learned to expect that.", "I learned it was safer not to get too attached to it.", "I started controlling the ending myself instead of waiting to be surprised."], "fifth": "I've learned good things can actually last.", "fifthType": "healthy"}, {"qid": "q55", "patternId": "believingFantasy", "category": "Avoidance & Numbing", "prompt": "How closely does what you are hoping for match what is actually happening right now?", "sub": "Tap every statement that feels true. There is no reward for choosing fewer.", "statements": ["There is a real gap between the two.", "I hold onto the good moments as proof of the whole picture.", "I focus on potential more than what is currently true.", "I know the pattern, and I keep hoping this time is different."], "fifth": "I stay grounded in what's actually happening, not what could be.", "fifthType": "healthy"}, {"qid": "q56", "patternId": "believingFantasy", "category": "Avoidance & Numbing", "prompt": "When someone points out the evidence that contradicts your hope, what happens?", "sub": "Tap every statement that feels true. There is no reward for choosing fewer.", "statements": ["I find a reason it does not really apply here.", "I feel defensive before I feel curious.", "I explain away the parts that do not fit the story I want.", "I go quiet rather than really sit with what they said."], "fifth": "I let the evidence change my mind, even when it's disappointing.", "fifthType": "healthy"}, {"qid": "q57", "patternId": "believingFantasy", "category": "Avoidance & Numbing", "prompt": "What does the hope you are holding onto actually protect you from feeling?", "sub": "Tap every statement that feels true. There is no reward for choosing fewer.", "statements": ["A grief I am not ready to fully face.", "The reality that this may not become what I wanted.", "A loss that feels too big to sit with right now.", "The disappointment of letting the story go."], "fifth": "I let myself grieve what isn't working instead of holding onto the fantasy.", "fifthType": "healthy"}, {"qid": "q58", "patternId": "marriedToStory", "category": "Stuck Patterns", "prompt": "How much of how you introduce yourself, even internally, includes what happened to you?", "sub": "Tap every statement that feels true. There is no reward for choosing fewer.", "statements": ["More than I realized until this question.", "The story shows up as part of my identity, not just my history.", "I lead with it, even when I do not mean to.", "It has become part of how I explain who I am."], "fifth": "My story is part of my history, not the whole of my identity.", "fifthType": "healthy"}, {"qid": "q59", "patternId": "marriedToStory", "category": "Stuck Patterns", "prompt": "When you imagine being known for something other than what happened to you, what comes up?", "sub": "Tap every statement that feels true. There is no reward for choosing fewer.", "statements": ["Uncertainty about who I would be without it.", "A little bit of grief, honestly.", "Resistance I was not expecting.", "A sense that I have not been given permission to be more than the story."], "fifth": "I feel free to be known for who I am now, not just what happened to me.", "fifthType": "healthy"}, {"qid": "q60", "patternId": "marriedToStory", "category": "Stuck Patterns", "prompt": "How often do you tell the story the exact same way, versus from what you have learned?", "sub": "Tap every statement that feels true. There is no reward for choosing fewer.", "statements": ["Almost always the same way.", "I have not really tried telling it differently.", "The version I tell has not changed much over time.", "I have not looked for the learning inside it, mostly just the event."], "fifth": "The way I tell my story has changed as I've grown.", "fifthType": "healthy"}, {"qid": "q61", "patternId": "playingVictim", "category": "Stuck Patterns", "prompt": "When you think about your current circumstances, how much feels like it is happening to you versus something you have a hand in?", "sub": "Tap every statement that feels true. There is no reward for choosing fewer.", "statements": ["Mostly like it is happening to me.", "I struggle to see where my own choices fit into it.", "It feels safer to see it as out of my control.", "I have not looked closely at what part might actually be mine."], "fifth": "I can see where my own choices fit into my circumstances.", "fifthType": "healthy"}, {"qid": "q62", "patternId": "playingVictim", "category": "Stuck Patterns", "prompt": "How does it feel to consider that you might have some agency in a hard situation?", "sub": "Tap every statement that feels true. There is no reward for choosing fewer.", "statements": ["Uncomfortable, more than I expected.", "Like it would mean taking on responsibility I am not ready for.", "Like it contradicts the story I have been telling.", "Genuinely hard to sit with."], "fifth": "It feels empowering, not threatening, to see my own agency.", "fifthType": "healthy"}, {"qid": "q63", "patternId": "playingVictim", "category": "Stuck Patterns", "prompt": "What has staying in the same story protected you from having to do?", "sub": "Tap every statement that feels true. There is no reward for choosing fewer.", "statements": ["Trying something and risking it not working.", "Taking a step that could actually change things.", "Facing what might be mine to own in it.", "Moving toward an unknown that feels riskier than the familiar one."], "fifth": "I'd rather try and risk it not working than stay stuck.", "fifthType": "healthy"}, {"qid": "q64", "patternId": "shiftingBlame", "category": "Stuck Patterns", "prompt": "When something goes wrong, what is your first internal reaction?", "sub": "Tap every statement that feels true. There is no reward for choosing fewer.", "statements": ["A reason it was not really my fault.", "An explanation forms before I have even looked at what happened.", "I look at what everyone else did before I look at what I did.", "I feel the pull to defend myself before I understand the full situation."], "fifth": "I look at what was mine before I look anywhere else.", "fifthType": "healthy"}, {"qid": "q65", "patternId": "shiftingBlame", "category": "Stuck Patterns", "prompt": "How do you usually feel when someone points out something you could have done differently?", "sub": "Tap every statement that feels true. There is no reward for choosing fewer.", "statements": ["Defensive before I feel curious.", "The urge to explain myself immediately.", "Like it threatens something bigger than just the one situation.", "Uncomfortable in a way that is hard to sit with quietly."], "fifth": "I can hear that without it threatening how I see myself.", "fifthType": "healthy"}, {"qid": "q66", "patternId": "shiftingBlame", "category": "Stuck Patterns", "prompt": "What would it cost you to say that part was on me, without an explanation attached?", "sub": "Tap every statement that feels true. There is no reward for choosing fewer.", "statements": ["It would feel like admitting something is wrong with me, not just the situation.", "I am not sure I have said that sentence in a long time.", "It feels riskier than it probably actually is.", "I have not practiced owning something without softening it first."], "fifth": "I can say that part was on me without needing to soften it.", "fifthType": "healthy"}, {"qid": "q67", "patternId": "hyperIndependence", "category": "Trust & Relationships", "prompt": "When you need something, what is your honest first instinct?", "sub": "Tap every statement that feels true. There is no reward for choosing fewer.", "statements": ["Handle it myself before anyone else even knows there is a need.", "Avoid asking, even when asking would be faster or easier.", "Assume I am the most reliable option, so I do not bother anyone else.", "Feel uneasy at the idea of depending on someone else for it."], "fifth": "I let people help me when I actually need it.", "fifthType": "healthy"}, {"qid": "q68", "patternId": "hyperIndependence", "category": "Trust & Relationships", "prompt": "What happened the last time you truly depended on someone and it did not go well?", "sub": "Tap every statement that feels true. There is no reward for choosing fewer.", "statements": ["I do not fully remember relying on someone and it going well.", "I learned it was safer to just handle things myself after that.", "I decided depending on people was not worth the risk.", "I have avoided being in that position again since."], "fifth": "I've had people show up for me, and I let that count.", "fifthType": "healthy"}, {"qid": "q69", "patternId": "hyperIndependence", "category": "Trust & Relationships", "prompt": "How comfortable are you letting someone see you actually need something?", "sub": "Tap every statement that feels true. There is no reward for choosing fewer.", "statements": ["Genuinely uncomfortable, more than I let on.", "I would rather appear fine than risk being let down.", "I keep needs to myself until they become unavoidable.", "I struggle to receive help even when it is offered freely."], "fifth": "I'm genuinely comfortable letting people see when I need something.", "fifthType": "healthy"}, {"qid": "q70", "patternId": "guardedVulnerability", "category": "Trust & Relationships", "prompt": "How much of what is actually going on with you do the people closest to you know?", "sub": "Tap every statement that feels true. There is no reward for choosing fewer.", "statements": ["Less than they probably think.", "The surface version, not the real one underneath.", "Only what feels safe enough to share.", "I keep the harder material mostly to myself."], "fifth": "The people closest to me actually know what's going on with me.", "fifthType": "healthy"}, {"qid": "q71", "patternId": "guardedVulnerability", "category": "Trust & Relationships", "prompt": "What happens in you right before you consider being fully honest about how you feel?", "sub": "Tap every statement that feels true. There is no reward for choosing fewer.", "statements": ["A pull to downplay it before I even say it.", "A fear of how it will be received.", "The urge to make it smaller or funnier than it actually is.", "A memory of a time honesty did not go well."], "fifth": "I say the honest thing without needing to shrink it first.", "fifthType": "healthy"}, {"qid": "q72", "patternId": "guardedVulnerability", "category": "Trust & Relationships", "prompt": "What did being vulnerable cost you in the past?", "sub": "Tap every statement that feels true. There is no reward for choosing fewer.", "statements": ["It was used against me at some point.", "It was met with dismissal instead of care.", "It made me feel exposed rather than closer to someone.", "I learned it was safer to keep the real material private."], "fifth": "Being vulnerable has mostly been met with care, so I keep doing it.", "fifthType": "healthy"}, {"qid": "q73", "patternId": "secondGuessingIntuition", "category": "Trust & Relationships", "prompt": "When you get a fast, quiet knowing about something, what usually happens next?", "sub": "Tap every statement that feels true. There is no reward for choosing fewer.", "statements": ["I talk myself out of it almost immediately.", "I look for outside opinions before I trust my own.", "I wait too long and the moment passes.", "I override it with logic even when the logic feels forced."], "fifth": "I trust it and act on it before I have time to talk myself out of it.", "fifthType": "healthy"}, {"qid": "q74", "patternId": "secondGuessingIntuition", "category": "Trust & Relationships", "prompt": "How often does your first instinct turn out to be right, looking back?", "sub": "Tap every statement that feels true. There is no reward for choosing fewer.", "statements": ["More often than I gave it credit for at the time.", "Often enough that I am starting to notice the pattern.", "I usually only realize it in hindsight.", "I rarely trust it in the moment it actually matters."], "fifth": "It's usually right, and I'm learning to trust it in the moment too.", "fifthType": "healthy"}, {"qid": "q75", "patternId": "secondGuessingIntuition", "category": "Trust & Relationships", "prompt": "What happened in the past that taught you to distrust your own gut?", "sub": "Tap every statement that feels true. There is no reward for choosing fewer.", "statements": ["It was dismissed or overridden by someone else.", "I was punished or embarrassed for trusting it once.", "An outcome did not match what I sensed, so I stopped trusting the sense.", "I was taught that logic mattered more than what I felt."], "fifth": "My gut has been reliable enough that I trust it now.", "fifthType": "healthy"}], "categories": [{"name": "Giving & Boundaries", "intro": "The patterns in this section live in what you give away, and what you never ask for back. Answer honestly, not how you wish you operated.", "patternIds": ["selfErasure", "greyZoneYes", "beingIndispensable", "neverAskingHelp", "goodGirlCompliance"]}, {"name": "Self-Image & Identity", "intro": "This section looks at who you actually believe yourself to be, versus who you are performing. There are no wrong answers here.", "patternIds": ["externalValidation", "shapeshifting", "oldLabels", "livingThroughProxies", "ghostSelves"]}, {"name": "Thinking Patterns", "intro": "These questions map the loops your mind runs on repeat. Notice the pattern, not just the thought.", "patternIds": ["allOrNothing", "perfectionism", "negativeSelfTalk", "imposterSyndrome", "chronologicalTrap"]}, {"name": "Avoidance & Numbing", "intro": "This section is about what you reach for, and pull away from, when things get to be too much. Be honest about the small habits, not just the big ones.", "patternIds": ["productivityProcrastination", "sensoryOverload", "preemptiveSelfSabotage", "believingFantasy"]}, {"name": "Stuck Patterns", "intro": "These patterns keep you circling the same ground. Some of these questions may land harder than others, and that is useful information, not a problem to fix right now.", "patternIds": ["marriedToStory", "playingVictim", "shiftingBlame"]}, {"name": "Trust & Relationships", "intro": "The last section looks at how safe it actually feels to need, trust, and be fully known by another person.", "patternIds": ["hyperIndependence", "guardedVulnerability", "secondGuessingIntuition"]}], "traumaIds": ["shapeshifting", "believingFantasy", "marriedToStory", "playingVictim"]}
+</script>
+<script>
+var DATA = JSON.parse(document.getElementById('assessment-data').textContent);
+var PATTERNS = DATA.patterns;
+var QUESTIONS = DATA.questions;
+var CATEGORIES = DATA.categories;
+var TRAUMA_IDS = DATA.traumaIds;
+
+var patternById = {};
+PATTERNS.forEach(function(p){ patternById[p.id] = p; });
+
+// answers[qid] = { slots: {stmt0:bool, stmt1:bool, stmt2:bool, stmt3:bool, fifth:bool}, none:bool }
+var answers = {};
+QUESTIONS.forEach(function(q){
+  answers[q.qid] = { slots: { stmt0:false, stmt1:false, stmt2:false, stmt3:false, fifth:false }, none:false };
+});
+
+// Precompute a shuffled slot order per question (visual only; scoring keys stay tied to slot id)
+var slotOrder = {};
+QUESTIONS.forEach(function(q){
+  var slots = ['stmt0','stmt1','stmt2','stmt3','fifth'];
+  for (var i = slots.length - 1; i > 0; i--){
+    var j = Math.floor(Math.random() * (i+1));
+    var tmp = slots[i]; slots[i] = slots[j]; slots[j] = tmp;
+  }
+  slotOrder[q.qid] = slots;
+});
+
+function slotText(q, slot){
+  if (slot === 'fifth') return q.fifth;
+  var idx = parseInt(slot.replace('stmt',''), 10);
+  return q.statements[idx];
+}
+
+// Build the flat flow
+var flow = [];
+flow.push({ type:'welcome' });
+CATEGORIES.forEach(function(cat, ci){
+  flow.push({ type:'section', category:cat, index: ci+1, total: CATEGORIES.length });
+  QUESTIONS.filter(function(q){ return q.category === cat.name; }).forEach(function(q){
+    flow.push({ type:'question', q:q });
+  });
+});
+flow.push({ type:'confirm' });
+
+var current = 0;
+var totalQuestions = QUESTIONS.length;
+
+function startAssessment(){
+  document.getElementById('cover').classList.add('hidden');
+  document.getElementById('assessment').classList.remove('hidden');
+  renderAll();
+  goTo(0);
+}
+
+function renderAll(){
+  var wrap = document.getElementById('questionWrap');
+  wrap.innerHTML = '';
+  flow.forEach(function(item, i){
+    var card = document.createElement('div');
+    card.className = 'question-card';
+    card.id = 'card-' + i;
+    card.innerHTML = renderCard(item, i);
+    wrap.appendChild(card);
+  });
+}
+
+function renderCard(item, i){
+  if (item.type === 'welcome'){
+    return '' +
+      '<div class="section-header-card">' +
+        '<p class="cat-eyebrow">Before You Begin</p>' +
+        '<h3>Welcome</h3>' +
+        '<p>What you are about to see has been running quietly in the background of your life. Some questions will feel obvious. Some will land harder than others. Both are useful.</p>' +
+        '<p>Tap every statement that feels true for each question, not just the first one you notice. There is no wrong combination, and no score to perform for.</p>' +
+        '<div class="center-btn"><button class="btn-primary" onclick="next()">I Am Ready</button></div>' +
+      '</div>';
+  }
+  if (item.type === 'section'){
+    return '' +
+      '<div class="section-header-card">' +
+        '<p class="cat-eyebrow">Section ' + item.index + ' of ' + item.total + '</p>' +
+        '<h3>' + item.category.name + '</h3>' +
+        '<p>' + item.category.intro + '</p>' +
+        '<div class="card-actions">' +
+          '<button class="btn-ghost" onclick="back()">Back</button>' +
+          '<button class="btn-primary" onclick="next()">Continue</button>' +
+        '</div>' +
+      '</div>';
+  }
+  if (item.type === 'question'){
+    var q = item.q;
+    var qi = QUESTIONS.indexOf(q);
+    var order = slotOrder[q.qid];
+    var opts = order.map(function(slot){
+      return optionChipHTML(q.qid, slot, slotText(q, slot));
+    }).join('');
+    return '' +
+      '<p class="q-kicker">Question ' + (qi+1) + ' of ' + totalQuestions + '</p>' +
+      '<h3>' + q.prompt + '</h3>' +
+      '<p class="q-instruction">' + q.sub + '</p>' +
+      '<div class="option-list">' + opts + '</div>' +
+      '<div class="option-divider"><div class="line"></div><span>or</span><div class="line"></div></div>' +
+      '<div class="option-list">' +
+        optionChipHTML(q.qid, 'none', 'None of These') +
+      '</div>' +
+      '<div class="card-actions">' +
+        '<button class="btn-ghost" onclick="back()">Back</button>' +
+        '<button class="btn-primary" id="continue-' + q.qid + '" onclick="next()" disabled>Continue</button>' +
+      '</div>';
+  }
+  if (item.type === 'confirm'){
+    return '' +
+      '<div class="section-header-card">' +
+        '<p class="cat-eyebrow">Last Step</p>' +
+        '<h3>Ready to see your patterns?</h3>' +
+        '<p>You have named 75 truths about yourself. Take one breath before you see what they add up to.</p>' +
+        '<div class="card-actions">' +
+          '<button class="btn-ghost" onclick="back()">Back</button>' +
+          '<button class="btn-primary" onclick="revealResults()">Reveal My Patterns</button>' +
+        '</div>' +
+      '</div>';
+  }
+  return '';
+}
+
+function optionChipHTML(qid, slot, label){
+  var domId = 'opt-' + qid + '-' + slot;
+  var special = (slot === 'none') ? ' special' : '';
+  return '' +
+    '<div class="option-chip' + special + '" id="' + domId + '" onclick="toggleOption(\'' + qid + '\',\'' + slot + '\')">' +
+      '<span class="option-check"><svg viewBox="0 0 24 24" fill="none" stroke="#1A0830" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg></span>' +
+      '<span>' + label + '</span>' +
+    '</div>';
+}
+
+function toggleOption(qid, slot){
+  var a = answers[qid];
+  if (slot === 'none'){
+    a.none = !a.none;
+    if (a.none){
+      a.slots.stmt0 = a.slots.stmt1 = a.slots.stmt2 = a.slots.stmt3 = a.slots.fifth = false;
+    }
+  } else {
+    a.slots[slot] = !a.slots[slot];
+    if (a.slots[slot]){ a.none = false; }
+  }
+  syncOptionUI(qid);
+  updateContinueState(qid);
+}
+
+function syncOptionUI(qid){
+  var a = answers[qid];
+  ['stmt0','stmt1','stmt2','stmt3','fifth'].forEach(function(slot){
+    var el = document.getElementById('opt-'+qid+'-'+slot);
+    if (el) el.classList.toggle('selected', !!a.slots[slot]);
+  });
+  var noneEl = document.getElementById('opt-'+qid+'-none');
+  if (noneEl) noneEl.classList.toggle('selected', !!a.none);
+}
+
+function updateContinueState(qid){
+  var a = answers[qid];
+  var any = Object.keys(a.slots).some(function(k){ return a.slots[k]; }) || a.none;
+  var btn = document.getElementById('continue-'+qid);
+  if (btn) btn.disabled = !any;
+}
+
+function goTo(i){
+  var cards = document.querySelectorAll('.question-card');
+  cards.forEach(function(c){ c.classList.remove('active'); });
+  var el = document.getElementById('card-'+i);
+  if (el) el.classList.add('active');
+  current = i;
+  updateProgress();
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+
+function next(){
+  if (current < flow.length - 1){ goTo(current+1); }
+}
+function back(){
+  if (current > 0){ goTo(current-1); }
+}
+
+function updateProgress(){
+  var qSeen = 0;
+  var qTotal = totalQuestions;
+  var currentQNum = 0;
+  for (var i=0;i<flow.length;i++){
+    if (flow[i].type === 'question'){
+      qSeen++;
+      if (i <= current) currentQNum = qSeen;
+    }
+  }
+  var pct = Math.min(100, Math.round((currentQNum / qTotal) * 100));
+  var bar = document.getElementById('progressBar');
+  if (bar) bar.style.width = pct + '%';
+  var label = document.getElementById('progressLabel');
+  if (label){
+    if (flow[current] && flow[current].type === 'question'){
+      label.textContent = 'Question ' + currentQNum + ' of ' + qTotal;
+    } else if (flow[current] && flow[current].type === 'welcome'){
+      label.textContent = 'Getting Started';
+    } else if (flow[current] && flow[current].type === 'section'){
+      label.textContent = flow[current].category.name;
+    } else {
+      label.textContent = 'Almost There';
+    }
+  }
+}
+
+// ── SCORING ──
+// Pattern score: counts statement selections AND nuance-type fifth selections (dysfunction evidence).
+// Grounded count: counts healthy-type fifth selections separately, does not add to pattern score.
+function computeScores(){
+  var patternScore = {}, patternMax = {}, groundedCount = {}, groundedMax = {};
+  PATTERNS.forEach(function(p){
+    patternScore[p.id] = 0; patternMax[p.id] = 0;
+    groundedCount[p.id] = 0; groundedMax[p.id] = 0;
+  });
+  QUESTIONS.forEach(function(q){
+    var a = answers[q.qid];
+    var isNuance = (q.fifthType === 'nuance');
+    patternMax[q.patternId] += isNuance ? 5 : 4;
+    if (!isNuance) groundedMax[q.patternId] += 1;
+
+    if (a.none) return;
+
+    var pts = 0;
+    ['stmt0','stmt1','stmt2','stmt3'].forEach(function(slot){
+      if (a.slots[slot]) pts++;
+    });
+    if (a.slots.fifth){
+      if (isNuance){ pts++; }
+      else { groundedCount[q.patternId]++; }
+    }
+    patternScore[q.patternId] += pts;
+  });
+  return { patternScore: patternScore, patternMax: patternMax, groundedCount: groundedCount, groundedMax: groundedMax };
+}
+
+function revealResults(){
+  var s = computeScores();
+  var ranked = PATTERNS.map(function(p){
+    var max = s.patternMax[p.id] || 1;
+    return { pattern: p, score: s.patternScore[p.id], max: max, pct: Math.round((s.patternScore[p.id]/max)*100) };
+  }).sort(function(a,b){ return b.pct - a.pct; });
+
+  var top3 = ranked.slice(0,3);
+  var next3 = ranked.slice(3,6);
+  var notable = ranked.length > 6 ? ranked[6] : null;
+
+  var grounded = PATTERNS.map(function(p){
+    return { pattern: p, count: s.groundedCount[p.id], max: s.groundedMax[p.id] };
+  }).filter(function(g){ return g.max >= 2 && g.count >= 2; })
+    .sort(function(a,b){ return (b.count/b.max) - (a.count/a.max); })
+    .slice(0,3);
+
+  var html = '';
+
+  html += '<p class="results-section-label">Your Primary Patterns</p>';
+  top3.forEach(function(r, i){ html += richResultBlock(r, i+1); });
+
+  html += '<p class="results-section-label">Emerging Patterns</p>';
+  next3.forEach(function(r, i){ html += lightResultBlock(r, i+4); });
+
+  if (notable && notable.score > 0){
+    html += '<p class="results-section-label">Notable Mention</p>';
+    html += '<div class="notable-mention"><span class="nm-name">' + notable.pattern.name + '</span><span class="nm-cat">' + notable.pattern.category + '</span></div>';
+  }
+
+  if (grounded.length > 0){
+    html += '<p class="results-section-label">Where You&rsquo;re Already Grounded</p>';
+    html += '<p style="text-align:center; color:#D7CBEB; font-size:0.9rem; margin-bottom:22px;">This work is not only about what needs fixing. These are showing up as genuine strengths right now.</p>';
+    grounded.forEach(function(g){ html += groundedBlock(g); });
+  }
+
+  document.getElementById('resultsContent').innerHTML = html;
+  document.getElementById('assessment').classList.add('hidden');
+  document.getElementById('results').classList.add('active');
+  window._lastResults = { top3: top3, next3: next3, notable: notable, grounded: grounded };
+
+  setTimeout(function(){
+    document.querySelectorAll('.score-bar-fill').forEach(function(el){
+      el.style.width = el.getAttribute('data-pct') + '%';
+    });
+  }, 80);
+
+  window.scrollTo({top:0, behavior:'smooth'});
+}
+
+function disclaimerHTML(pattern){
+  if (TRAUMA_IDS.indexOf(pattern.id) === -1) return '';
+  return '' +
+    '<div class="disclaimer-box">' +
+      '<p>This pattern often has deeper roots. In a group setting we can identify it and begin to work with it, but if this one landed hard, consider booking a private session with Leah for trauma-informed coaching guidance, or reaching out to a licensed therapist for deeper support.</p>' +
+      '<div class="cta-row">' +
+        '<a class="btn-primary" href="#" onclick="alert(\'Add your private session booking link here.\'); return false;">Book a Private Session with Leah</a>' +
+        '<a class="btn-secondary" href="https://www.psychologytoday.com/us/therapists" target="_blank" rel="noopener">Find a Therapist</a>' +
+      '</div>' +
+    '</div>';
+}
+
+function richResultBlock(r, rank){
+  var p = r.pattern;
+  return '' +
+    '<div class="result-block">' +
+      '<p class="result-rank">Pattern ' + rank + '</p>' +
+      '<h3>' + p.name + '</h3>' +
+      '<span class="cat-tag">' + p.category + '</span>' +
+      '<div class="score-bar-wrap"><div class="score-bar-fill" data-pct="' + r.pct + '"></div></div>' +
+      '<p>' + p.definition + '</p>' +
+      '<h4>Where It Comes From</h4>' +
+      '<p>' + p.origin + '</p>' +
+      '<h4>Your Nervous System</h4>' +
+      '<p>' + p.nsConnection + '</p>' +
+      '<h4>Pattern Interrupt Practice</h4>' +
+      '<p>' + p.interrupt + '</p>' +
+      disclaimerHTML(p) +
+    '</div>';
+}
+
+function lightResultBlock(r, rank){
+  var p = r.pattern;
+  return '' +
+    '<div class="result-block">' +
+      '<p class="result-rank">Pattern ' + rank + '</p>' +
+      '<h3>' + p.name + '</h3>' +
+      '<span class="cat-tag">' + p.category + '</span>' +
+      '<div class="score-bar-wrap"><div class="score-bar-fill" data-pct="' + r.pct + '"></div></div>' +
+      '<p>' + p.definition + '</p>' +
+      '<div class="light-note">This one is still showing up, just a little quieter. Keep it in view, it is worth a fuller conversation as you keep doing this work.</div>' +
+      disclaimerHTML(p) +
+    '</div>';
+}
+
+function groundedBlock(g){
+  var p = g.pattern;
+  return '' +
+    '<div class="result-block">' +
+      '<h3>' + p.name + '</h3>' +
+      '<span class="cat-tag">' + p.category + '</span>' +
+      '<p>Your answers here consistently reflected a grounded, regulated relationship to this pattern. Keep noticing what you are already doing right.</p>' +
+    '</div>';
+}
+
+function emailResult(){
+  var res = window._lastResults;
+  if (!res){ return; }
+  var lines = [];
+  lines.push('MY PATTERN RECOGNITION RESULTS');
+  lines.push('On Purpose Evolution');
+  lines.push('');
+  lines.push('PRIMARY PATTERNS:');
+  res.top3.forEach(function(r, i){ lines.push((i+1) + '. ' + r.pattern.name + ' (' + r.pct + '%)'); });
+  lines.push('');
+  lines.push('EMERGING PATTERNS:');
+  res.next3.forEach(function(r, i){ lines.push((i+4) + '. ' + r.pattern.name + ' (' + r.pct + '%)'); });
+  if (res.notable && res.notable.score > 0){
+    lines.push('');
+    lines.push('NOTABLE MENTION: ' + res.notable.pattern.name);
+  }
+  if (res.grounded && res.grounded.length){
+    lines.push('');
+    lines.push('WHERE YOU ARE ALREADY GROUNDED:');
+    res.grounded.forEach(function(g){ lines.push('- ' + g.pattern.name); });
+  }
+  lines.push('');
+  lines.push('Full descriptions are available on your saved or printed copy.');
+  lines.push('');
+  lines.push('On Purpose Evolution | Leah Fairchild | The Pattern Interrupter');
+
+  var subject = encodeURIComponent('My Pattern Recognition Results');
+  var body = encodeURIComponent(lines.join('\n'));
+  var mailto = 'mailto:?cc=onpurposeevolution@gmail.com&subject=' + subject + '&body=' + body;
+  window.location.href = mailto;
+}
+
+</script>
+</body>
+</html>
