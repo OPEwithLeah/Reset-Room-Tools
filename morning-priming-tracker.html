@@ -1,0 +1,623 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Morning Priming Tracker | The Reset Room</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --gold: #c9a25e;
+    --gold-bright: #dcb96f;
+    --gold-dim: rgba(201, 162, 94, 0.35);
+    --overlay-bg: rgba(20, 12, 32, 0.82);
+    --card-bg: rgba(255, 255, 255, 0.04);
+    --white: #f5f2ee;
+    --white-dim: rgba(245, 242, 238, 0.72);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html, body {
+    min-height: 100%;
+  }
+
+  body {
+    font-family: 'Inter', sans-serif;
+    color: var(--white);
+    min-height: 100vh;
+    background-image: url('Blank_Reset_Room_Image.jpg');
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+  }
+
+  .screen {
+    width: 100%;
+    max-width: 560px;
+    background: var(--overlay-bg);
+    border: 1px solid var(--gold-dim);
+    border-radius: 18px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.45);
+    padding: 48px 36px;
+    backdrop-filter: blur(6px);
+    animation: fadeIn 0.6s ease;
+  }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .hidden { display: none !important; }
+
+  .brand {
+    text-align: center;
+    font-family: 'Playfair Display', serif;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    font-size: 13px;
+    color: var(--gold);
+    margin-bottom: 18px;
+  }
+
+  .divider {
+    width: 60px;
+    height: 1px;
+    background: var(--gold);
+    margin: 22px auto;
+    opacity: 0.6;
+  }
+
+  /* ---- Cover screen ---- */
+  .cover-title {
+    font-family: 'Playfair Display', serif;
+    font-weight: 600;
+    font-size: 34px;
+    text-align: center;
+    color: var(--white);
+    line-height: 1.25;
+  }
+
+  .cover-title span {
+    display: block;
+    color: var(--gold-bright);
+  }
+
+  .cover-subtitle {
+    text-align: center;
+    font-size: 15px;
+    color: var(--white-dim);
+    margin-top: 14px;
+    line-height: 1.6;
+  }
+
+  .commitment-block {
+    margin-top: 32px;
+  }
+
+  .commitment-label {
+    display: block;
+    font-size: 12px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 10px;
+    text-align: center;
+  }
+
+  .commitment-input {
+    display: block;
+    width: 100%;
+    background: transparent;
+    border: none;
+    border-bottom: 1px solid var(--gold-dim);
+    color: var(--white);
+    font-family: 'Playfair Display', serif;
+    font-size: 20px;
+    text-align: center;
+    padding: 10px 8px;
+    outline: none;
+    transition: border-color 0.25s ease;
+  }
+
+  .commitment-input::placeholder {
+    color: rgba(245, 242, 238, 0.35);
+    font-family: 'Inter', sans-serif;
+    font-size: 15px;
+  }
+
+  .commitment-input:focus {
+    border-bottom-color: var(--gold-bright);
+  }
+
+  .primary-btn {
+    display: block;
+    width: 100%;
+    margin-top: 32px;
+    background: linear-gradient(135deg, var(--gold), var(--gold-bright));
+    color: #241633;
+    border: none;
+    border-radius: 999px;
+    font-family: 'Inter', sans-serif;
+    font-weight: 700;
+    font-size: 15px;
+    letter-spacing: 0.03em;
+    padding: 16px 20px;
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease, opacity 0.2s ease;
+    box-shadow: 0 8px 24px rgba(201, 162, 94, 0.25);
+  }
+
+  .primary-btn:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 30px rgba(201, 162, 94, 0.35);
+  }
+
+  .primary-btn:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
+
+  /* ---- Tracker screen ---- */
+  .tracker-header {
+    text-align: center;
+  }
+
+  .week-label {
+    font-size: 12px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 6px;
+  }
+
+  .tracker-title {
+    font-family: 'Playfair Display', serif;
+    font-weight: 600;
+    font-size: 26px;
+    color: var(--white);
+  }
+
+  .tracker-subtitle {
+    font-size: 14px;
+    color: var(--white-dim);
+    margin-top: 8px;
+    font-style: italic;
+  }
+
+  .greeting {
+    text-align: center;
+    font-size: 15px;
+    color: var(--white);
+    margin-top: 22px;
+    padding: 12px 14px;
+    border: 1px solid var(--gold-dim);
+    border-radius: 10px;
+    background: var(--card-bg);
+  }
+
+  .greeting strong {
+    color: var(--gold-bright);
+    font-weight: 600;
+  }
+
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 12px;
+    margin-top: 30px;
+  }
+
+  .day-cell {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .day-number {
+    font-size: 11px;
+    color: var(--white-dim);
+    letter-spacing: 0.04em;
+  }
+
+  .day-circle {
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    border: 1.5px solid var(--gold);
+    background: transparent;
+    color: var(--gold-bright);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 18px;
+    transition: all 0.2s ease;
+  }
+
+  .day-circle:hover {
+    background: var(--gold-dim);
+    transform: scale(1.05);
+  }
+
+  .day-circle.checked {
+    background: linear-gradient(135deg, var(--gold), var(--gold-bright));
+    border-color: var(--gold-bright);
+    color: #241633;
+    box-shadow: 0 4px 14px rgba(201, 162, 94, 0.4);
+  }
+
+  .day-circle.checked::after {
+    content: "\2713";
+    font-weight: 700;
+  }
+
+  .stats {
+    margin-top: 32px;
+    text-align: center;
+  }
+
+  .streak-line {
+    font-family: 'Playfair Display', serif;
+    font-size: 20px;
+    color: var(--gold-bright);
+  }
+
+  .progress-line {
+    font-size: 14px;
+    color: var(--white-dim);
+    margin-top: 6px;
+  }
+
+  .progress-track {
+    width: 100%;
+    height: 6px;
+    border-radius: 999px;
+    background: rgba(245, 242, 238, 0.12);
+    margin-top: 14px;
+    overflow: hidden;
+  }
+
+  .progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--gold), var(--gold-bright));
+    border-radius: 999px;
+    transition: width 0.4s ease;
+  }
+
+  .motivation-line {
+    margin-top: 22px;
+    text-align: center;
+    font-size: 15px;
+    font-style: italic;
+    color: var(--white);
+    line-height: 1.6;
+    min-height: 24px;
+  }
+
+  .reset-btn {
+    display: block;
+    margin: 34px auto 0;
+    background: transparent;
+    border: 1px solid var(--gold-dim);
+    color: var(--white-dim);
+    border-radius: 999px;
+    font-family: 'Inter', sans-serif;
+    font-size: 13px;
+    letter-spacing: 0.03em;
+    padding: 10px 26px;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  .reset-btn:hover {
+    border-color: var(--gold);
+    color: var(--gold-bright);
+  }
+
+  /* ---- Confirm modal ---- */
+  .modal-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(10, 6, 16, 0.7);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    z-index: 10;
+  }
+
+  .modal-box {
+    background: var(--overlay-bg);
+    border: 1px solid var(--gold-dim);
+    border-radius: 16px;
+    padding: 30px 26px;
+    max-width: 380px;
+    text-align: center;
+  }
+
+  .modal-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 19px;
+    color: var(--gold-bright);
+    margin-bottom: 10px;
+  }
+
+  .modal-text {
+    font-size: 14px;
+    color: var(--white-dim);
+    line-height: 1.6;
+  }
+
+  .modal-actions {
+    display: flex;
+    gap: 12px;
+    margin-top: 24px;
+  }
+
+  .modal-actions button {
+    flex: 1;
+    border-radius: 999px;
+    padding: 11px 14px;
+    font-family: 'Inter', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    border: 1px solid var(--gold-dim);
+    transition: all 0.2s ease;
+  }
+
+  .modal-cancel {
+    background: transparent;
+    color: var(--white-dim);
+  }
+
+  .modal-cancel:hover {
+    border-color: var(--gold);
+    color: var(--white);
+  }
+
+  .modal-confirm {
+    background: linear-gradient(135deg, var(--gold), var(--gold-bright));
+    color: #241633;
+    border: none;
+  }
+
+  .modal-confirm:hover {
+    transform: translateY(-1px);
+  }
+
+  @media (max-width: 480px) {
+    .screen { padding: 34px 20px; }
+    .cover-title { font-size: 28px; }
+    .day-circle { width: 36px; height: 36px; font-size: 15px; }
+    .grid { gap: 8px; }
+  }
+</style>
+</head>
+<body>
+
+  <!-- COVER SCREEN -->
+  <div class="screen" id="coverScreen">
+    <div class="brand">The Reset Room</div>
+    <h1 class="cover-title">30-Day Morning<span>Priming Tracker</span></h1>
+    <p class="cover-subtitle">A radical reset to give you permission to choose yourself again. Week 9 &middot; Your Sovereign Self Script.</p>
+    <div class="divider"></div>
+    <div class="commitment-block">
+      <label class="commitment-label" for="nameInput">This is my commitment</label>
+      <input type="text" id="nameInput" class="commitment-input" placeholder="Type your name" maxlength="40" autocomplete="off">
+    </div>
+    <button class="primary-btn" id="beginBtn" disabled>Begin My 30 Days</button>
+  </div>
+
+  <!-- TRACKER SCREEN -->
+  <div class="screen hidden" id="trackerScreen">
+    <div class="tracker-header">
+      <div class="brand">The Reset Room</div>
+      <div class="week-label">Week 9</div>
+      <div class="tracker-title">Morning Priming Tracker</div>
+      <div class="tracker-subtitle">Your sovereign self script. Every morning. 30 days.</div>
+    </div>
+
+    <div class="greeting" id="greeting"></div>
+
+    <div class="grid" id="grid"></div>
+
+    <div class="stats">
+      <div class="streak-line" id="streakLine">Current Streak: 0 days</div>
+      <div class="progress-line" id="progressLine">0 of 30 days complete</div>
+      <div class="progress-track"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
+    </div>
+
+    <div class="motivation-line" id="motivationLine"></div>
+
+    <button class="reset-btn" id="resetBtn">Reset my 30 days</button>
+  </div>
+
+  <!-- CONFIRM MODAL -->
+  <div class="modal-backdrop hidden" id="confirmModal">
+    <div class="modal-box">
+      <div class="modal-title">Start over?</div>
+      <p class="modal-text">This clears all 30 days and your streak. This can't be undone. Are you sure you want to reset your practice?</p>
+      <div class="modal-actions">
+        <button class="modal-cancel" id="cancelReset">Keep my progress</button>
+        <button class="modal-confirm" id="confirmReset">Yes, reset</button>
+      </div>
+    </div>
+  </div>
+
+<script>
+(function () {
+  const STORAGE_KEY = 'reset-room-week9-priming-tracker';
+  const TOTAL_DAYS = 30;
+
+  const coverScreen = document.getElementById('coverScreen');
+  const trackerScreen = document.getElementById('trackerScreen');
+  const nameInput = document.getElementById('nameInput');
+  const beginBtn = document.getElementById('beginBtn');
+  const greeting = document.getElementById('greeting');
+  const grid = document.getElementById('grid');
+  const streakLine = document.getElementById('streakLine');
+  const progressLine = document.getElementById('progressLine');
+  const progressFill = document.getElementById('progressFill');
+  const motivationLine = document.getElementById('motivationLine');
+  const resetBtn = document.getElementById('resetBtn');
+  const confirmModal = document.getElementById('confirmModal');
+  const cancelReset = document.getElementById('cancelReset');
+  const confirmReset = document.getElementById('confirmReset');
+
+  function loadState() {
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (raw) return JSON.parse(raw);
+    } catch (e) {}
+    return null;
+  }
+
+  function saveState(state) {
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+    } catch (e) {}
+  }
+
+  function freshState(name) {
+    return {
+      name: name,
+      days: new Array(TOTAL_DAYS).fill(false)
+    };
+  }
+
+  let state = loadState();
+
+  function computeStreak(days) {
+    // Current streak = consecutive checked days counting back from the
+    // last checked day, but only counts as "current" if it runs to the
+    // most recently completed day in sequence from day 1.
+    let streak = 0;
+    for (let i = 0; i < days.length; i++) {
+      if (days[i]) {
+        streak++;
+      } else {
+        break;
+      }
+    }
+    return streak;
+  }
+
+  function motivationFor(streak) {
+    if (streak >= 30) return "You did it. This is who you are now.";
+    if (streak >= 22) return "Almost. Keep going.";
+    if (streak >= 15) return "Halfway there. Your nervous system is listening.";
+    if (streak >= 8) return "The practice is becoming yours.";
+    if (streak >= 1) return "You are building something real.";
+    return "Your 30 days begin today.";
+  }
+
+  function renderGrid() {
+    grid.innerHTML = '';
+    state.days.forEach((checked, idx) => {
+      const cell = document.createElement('div');
+      cell.className = 'day-cell';
+
+      const num = document.createElement('div');
+      num.className = 'day-number';
+      num.textContent = 'Day ' + (idx + 1);
+
+      const circle = document.createElement('button');
+      circle.className = 'day-circle' + (checked ? ' checked' : '');
+      circle.setAttribute('aria-label', 'Day ' + (idx + 1) + (checked ? ', completed' : ', not completed'));
+      circle.addEventListener('click', () => toggleDay(idx));
+
+      cell.appendChild(num);
+      cell.appendChild(circle);
+      grid.appendChild(cell);
+    });
+  }
+
+  function renderStats() {
+    const completed = state.days.filter(Boolean).length;
+    const streak = computeStreak(state.days);
+    const pct = Math.round((completed / TOTAL_DAYS) * 100);
+
+    streakLine.textContent = 'Current Streak: ' + streak + (streak === 1 ? ' day' : ' days');
+    progressLine.textContent = completed + ' of ' + TOTAL_DAYS + ' days complete';
+    progressFill.style.width = pct + '%';
+    motivationLine.textContent = motivationFor(streak);
+  }
+
+  function renderGreeting() {
+    greeting.innerHTML = 'Hello <strong>' + escapeHtml(state.name) + '</strong>. Your practice starts now.';
+  }
+
+  function escapeHtml(str) {
+    const div = document.createElement('div');
+    div.textContent = str;
+    return div.innerHTML;
+  }
+
+  function toggleDay(idx) {
+    state.days[idx] = !state.days[idx];
+    saveState(state);
+    renderGrid();
+    renderStats();
+  }
+
+  function showTracker() {
+    coverScreen.classList.add('hidden');
+    trackerScreen.classList.remove('hidden');
+    renderGreeting();
+    renderGrid();
+    renderStats();
+  }
+
+  // Cover screen logic
+  nameInput.addEventListener('input', () => {
+    beginBtn.disabled = nameInput.value.trim().length === 0;
+  });
+
+  beginBtn.addEventListener('click', () => {
+    const name = nameInput.value.trim();
+    if (!name) return;
+    state = freshState(name);
+    saveState(state);
+    showTracker();
+  });
+
+  // Reset flow
+  resetBtn.addEventListener('click', () => {
+    confirmModal.classList.remove('hidden');
+  });
+
+  cancelReset.addEventListener('click', () => {
+    confirmModal.classList.add('hidden');
+  });
+
+  confirmReset.addEventListener('click', () => {
+    state = freshState(state.name);
+    saveState(state);
+    confirmModal.classList.add('hidden');
+    renderGrid();
+    renderStats();
+  });
+
+  confirmModal.addEventListener('click', (e) => {
+    if (e.target === confirmModal) confirmModal.classList.add('hidden');
+  });
+
+  // On load: if a saved state already exists, skip straight to tracker
+  if (state && state.name) {
+    showTracker();
+  }
+})();
+</script>
+
+</body>
+</html>
