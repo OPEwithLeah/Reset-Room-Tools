@@ -838,14 +838,15 @@ function compileUserMessage(){
   return parts.join("\n\n");
 }
 
+// Points at your Vercel proxy function, not Anthropic directly.
+const SCRIPT_API_ENDPOINT = "https://sovereign-script-proxy.vercel.app/api/generate-script";
+
 async function generateScript(){
   try{
-    const response = await fetch("https://api.anthropic.com/v1/messages", {
+    const response = await fetch(SCRIPT_API_ENDPOINT, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
-        model: "claude-sonnet-4-6",
-        max_tokens: 1000,
         system: SYSTEM_PROMPT,
         messages: [
           { role: "user", content: compileUserMessage() }
