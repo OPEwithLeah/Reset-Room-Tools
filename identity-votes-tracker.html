@@ -1,0 +1,757 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>My 3 Daily Votes — 21-Day Identity Tracker</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,500;1,600&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --gold: #d4af7a;
+    --gold-bright: #e8c98f;
+    --gold-soft: rgba(212, 175, 122, 0.35);
+    --white: #f7f4ef;
+    --white-dim: rgba(247, 244, 239, 0.72);
+    --overlay: rgba(20, 12, 28, 0.62);
+    --card-bg: rgba(255, 255, 255, 0.05);
+    --card-border: rgba(212, 175, 122, 0.25);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html, body {
+    min-height: 100%;
+  }
+
+  body {
+    font-family: 'Inter', sans-serif;
+    color: var(--white);
+    background-image: url('Blank_Reset_Room_Image.jpg');
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+    background-repeat: no-repeat;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px 16px;
+  }
+
+  .backdrop {
+    position: fixed;
+    inset: 0;
+    background: var(--overlay);
+    z-index: 0;
+  }
+
+  .container {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    max-width: 620px;
+  }
+
+  .panel {
+    background: rgba(20, 12, 28, 0.72);
+    border: 1px solid rgba(212, 175, 122, 0.3);
+    border-radius: 18px;
+    padding: 40px 32px;
+    backdrop-filter: blur(6px);
+    box-shadow: 0 20px 60px rgba(0,0,0,0.35);
+  }
+
+  /* ---------- SCREEN 1 ---------- */
+
+  .title {
+    font-family: 'Playfair Display', serif;
+    font-weight: 600;
+    color: var(--gold-bright);
+    font-size: 34px;
+    text-align: center;
+    letter-spacing: 0.3px;
+    margin-bottom: 12px;
+  }
+
+  .subtitle {
+    text-align: center;
+    color: var(--white-dim);
+    font-size: 15px;
+    line-height: 1.6;
+    max-width: 440px;
+    margin: 0 auto 32px;
+  }
+
+  .field-group {
+    margin-bottom: 20px;
+  }
+
+  .field-label {
+    display: block;
+    font-size: 13px;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 8px;
+    font-weight: 500;
+  }
+
+  input[type="text"] {
+    width: 100%;
+    padding: 13px 15px;
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(212, 175, 122, 0.3);
+    border-radius: 10px;
+    color: var(--white);
+    font-family: 'Inter', sans-serif;
+    font-size: 15px;
+    transition: border-color 0.2s, background 0.2s;
+  }
+
+  input[type="text"]::placeholder {
+    color: rgba(247, 244, 239, 0.35);
+    font-style: italic;
+  }
+
+  input[type="text"]:focus {
+    outline: none;
+    border-color: var(--gold);
+    background: rgba(255,255,255,0.09);
+  }
+
+  .name-field {
+    margin-top: 28px;
+    margin-bottom: 26px;
+  }
+
+  .commitment {
+    text-align: center;
+    font-family: 'Playfair Display', serif;
+    font-style: italic;
+    color: var(--gold-bright);
+    font-size: 16px;
+    line-height: 1.6;
+    margin: 0 auto 30px;
+    max-width: 420px;
+  }
+
+  .btn-primary {
+    display: block;
+    width: 100%;
+    padding: 15px;
+    background: linear-gradient(135deg, var(--gold) 0%, #b8925c 100%);
+    color: #241628;
+    border: none;
+    border-radius: 10px;
+    font-family: 'Inter', sans-serif;
+    font-size: 15px;
+    font-weight: 600;
+    letter-spacing: 0.4px;
+    cursor: pointer;
+    transition: transform 0.15s, box-shadow 0.15s;
+  }
+
+  .btn-primary:hover {
+    transform: translateY(-1px);
+    box-shadow: 0 8px 24px rgba(212, 175, 122, 0.35);
+  }
+
+  .btn-primary:active { transform: translateY(0); }
+
+  .error-msg {
+    color: #e8a0a0;
+    font-size: 13px;
+    text-align: center;
+    margin-top: -8px;
+    margin-bottom: 16px;
+    min-height: 16px;
+  }
+
+  /* ---------- SCREEN 2 ---------- */
+
+  .hidden { display: none !important; }
+
+  .header {
+    font-family: 'Playfair Display', serif;
+    font-weight: 600;
+    font-size: 26px;
+    color: var(--gold-bright);
+    text-align: center;
+    margin-bottom: 26px;
+    line-height: 1.4;
+  }
+
+  .votes-reminder {
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: 12px;
+    padding: 18px 20px;
+    margin-bottom: 30px;
+  }
+
+  .vote-reminder-row {
+    display: flex;
+    gap: 10px;
+    padding: 7px 0;
+    font-size: 14px;
+    line-height: 1.5;
+  }
+
+  .vote-reminder-row + .vote-reminder-row {
+    border-top: 1px solid rgba(212, 175, 122, 0.12);
+  }
+
+  .vote-reminder-label {
+    color: var(--gold);
+    font-weight: 600;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+
+  .vote-reminder-text {
+    color: var(--white-dim);
+  }
+
+  .grid-label {
+    font-size: 13px;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 14px;
+    font-weight: 500;
+  }
+
+  .day-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 10px;
+    margin-bottom: 28px;
+  }
+
+  .day-card {
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: 10px;
+    padding: 10px 6px 12px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    transition: box-shadow 0.3s, border-color 0.3s, transform 0.2s;
+  }
+
+  .day-card.active {
+    border-color: rgba(212, 175, 122, 0.55);
+  }
+
+  .day-card.complete {
+    border-color: var(--gold);
+    box-shadow: 0 0 16px 2px rgba(212, 175, 122, 0.45), inset 0 0 10px rgba(212, 175, 122, 0.15);
+  }
+
+  .day-number {
+    font-size: 12px;
+    color: var(--white-dim);
+    font-weight: 500;
+    letter-spacing: 0.3px;
+  }
+
+  .day-card.complete .day-number {
+    color: var(--gold-bright);
+  }
+
+  .vote-circles {
+    display: flex;
+    gap: 5px;
+  }
+
+  .vote-circle {
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    border: 1.5px solid rgba(212, 175, 122, 0.5);
+    background: transparent;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    transition: background 0.2s, border-color 0.2s, transform 0.15s;
+    flex-shrink: 0;
+  }
+
+  .vote-circle:not(.locked):hover {
+    transform: scale(1.12);
+    border-color: var(--gold-bright);
+  }
+
+  .vote-circle.checked {
+    background: linear-gradient(135deg, var(--gold-bright), var(--gold));
+    border-color: var(--gold);
+  }
+
+  .vote-circle.checked svg {
+    width: 10px;
+    height: 10px;
+  }
+
+  .vote-circle.locked {
+    cursor: default;
+    opacity: 0.35;
+  }
+
+  .stats-block {
+    text-align: center;
+    margin-bottom: 22px;
+  }
+
+  .stat-line {
+    font-size: 15px;
+    color: var(--white);
+    margin-bottom: 6px;
+  }
+
+  .stat-line .stat-num {
+    color: var(--gold-bright);
+    font-weight: 600;
+  }
+
+  .motivational-line {
+    font-family: 'Playfair Display', serif;
+    font-style: italic;
+    color: var(--gold-bright);
+    font-size: 16px;
+    text-align: center;
+    margin: 20px auto 6px;
+    max-width: 400px;
+    line-height: 1.6;
+  }
+
+  .footer-actions {
+    margin-top: 30px;
+    padding-top: 20px;
+    border-top: 1px solid rgba(212, 175, 122, 0.15);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 14px;
+  }
+
+  .btn-edit {
+    background: transparent;
+    border: 1px solid rgba(212, 175, 122, 0.4);
+    color: var(--gold);
+    padding: 9px 22px;
+    border-radius: 8px;
+    font-family: 'Inter', sans-serif;
+    font-size: 13px;
+    cursor: pointer;
+    transition: background 0.2s, border-color 0.2s;
+  }
+
+  .btn-edit:hover {
+    background: rgba(212, 175, 122, 0.1);
+    border-color: var(--gold);
+  }
+
+  .edit-note {
+    font-size: 11px;
+    color: rgba(247, 244, 239, 0.45);
+    text-align: center;
+    max-width: 280px;
+  }
+
+  .btn-reset {
+    background: transparent;
+    border: none;
+    color: rgba(247, 244, 239, 0.4);
+    font-size: 12px;
+    cursor: pointer;
+    text-decoration: underline;
+    padding: 6px;
+  }
+
+  .btn-reset:hover {
+    color: rgba(232, 160, 160, 0.8);
+  }
+
+  /* Confirmation modal */
+  .modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.6);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 10;
+    padding: 20px;
+  }
+
+  .modal-box {
+    background: rgba(30, 18, 38, 0.97);
+    border: 1px solid var(--gold-soft);
+    border-radius: 14px;
+    padding: 28px 26px;
+    max-width: 340px;
+    text-align: center;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+  }
+
+  .modal-text {
+    font-size: 14.5px;
+    color: var(--white);
+    line-height: 1.6;
+    margin-bottom: 22px;
+  }
+
+  .modal-actions {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+  }
+
+  .modal-btn {
+    padding: 10px 18px;
+    border-radius: 8px;
+    font-size: 13px;
+    cursor: pointer;
+    font-family: 'Inter', sans-serif;
+    font-weight: 500;
+  }
+
+  .modal-btn.confirm {
+    background: #b85c5c;
+    border: none;
+    color: white;
+  }
+
+  .modal-btn.cancel {
+    background: transparent;
+    border: 1px solid rgba(212, 175, 122, 0.4);
+    color: var(--gold);
+  }
+
+  @media (max-width: 480px) {
+    .panel { padding: 30px 20px; }
+    .title { font-size: 28px; }
+    .header { font-size: 22px; }
+    .day-grid { gap: 7px; }
+    .vote-circle { width: 16px; height: 16px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="backdrop"></div>
+
+<div class="container">
+  <div class="panel">
+
+    <!-- SCREEN 1: COMMITMENT -->
+    <div id="screen1">
+      <div class="title">My 3 Daily Votes</div>
+      <div class="subtitle">Every action is a vote for the woman you are becoming. Enter your three below.</div>
+
+      <div class="field-group">
+        <label class="field-label" for="vote1">Vote 1</label>
+        <input type="text" id="vote1" placeholder="She does not scroll for the first 20 minutes of the day.">
+      </div>
+      <div class="field-group">
+        <label class="field-label" for="vote2">Vote 2</label>
+        <input type="text" id="vote2" placeholder="She pauses for 10 seconds before every yes.">
+      </div>
+      <div class="field-group">
+        <label class="field-label" for="vote3">Vote 3</label>
+        <input type="text" id="vote3" placeholder="She moves her body for at least 10 minutes.">
+      </div>
+
+      <div class="field-group name-field">
+        <label class="field-label" for="userName">My name</label>
+        <input type="text" id="userName" placeholder="Enter your name">
+      </div>
+
+      <div class="commitment">I commit to casting these three votes every day for the next 21 days.</div>
+
+      <div class="error-msg" id="errorMsg"></div>
+
+      <button class="btn-primary" id="beginBtn">Begin My 21 Days</button>
+    </div>
+
+    <!-- SCREEN 2: TRACKER -->
+    <div id="screen2" class="hidden">
+      <div class="header" id="trackerHeader">Hello. You are voting for her every day.</div>
+
+      <div class="votes-reminder">
+        <div class="vote-reminder-row">
+          <span class="vote-reminder-label">Vote 1</span>
+          <span class="vote-reminder-text" id="reminderVote1"></span>
+        </div>
+        <div class="vote-reminder-row">
+          <span class="vote-reminder-label">Vote 2</span>
+          <span class="vote-reminder-text" id="reminderVote2"></span>
+        </div>
+        <div class="vote-reminder-row">
+          <span class="vote-reminder-label">Vote 3</span>
+          <span class="vote-reminder-text" id="reminderVote3"></span>
+        </div>
+      </div>
+
+      <div class="grid-label">Your 21 Days</div>
+      <div class="day-grid" id="dayGrid"></div>
+
+      <div class="stats-block">
+        <div class="stat-line">Days complete: <span class="stat-num" id="daysCompleteStat">0</span> of 21</div>
+        <div class="stat-line">Current streak: <span class="stat-num" id="streakStat">0</span> days in a row</div>
+        <div class="motivational-line" id="motivationalLine"></div>
+      </div>
+
+      <div class="footer-actions">
+        <button class="btn-edit" id="editVotesBtn">Edit Votes</button>
+        <div class="edit-note">Editing your votes will not reset your progress.</div>
+        <button class="btn-reset" id="resetBtn">Reset progress</button>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- RESET CONFIRMATION MODAL -->
+<div class="modal-overlay hidden" id="resetModal">
+  <div class="modal-box">
+    <div class="modal-text">Are you sure? This will clear all your progress and start over.</div>
+    <div class="modal-actions">
+      <button class="modal-btn cancel" id="cancelResetBtn">Cancel</button>
+      <button class="modal-btn confirm" id="confirmResetBtn">Yes, reset</button>
+    </div>
+  </div>
+</div>
+
+<script>
+(function () {
+  const STORAGE_KEY = 'identityVotesTracker21Day';
+
+  const screen1 = document.getElementById('screen1');
+  const screen2 = document.getElementById('screen2');
+  const vote1Input = document.getElementById('vote1');
+  const vote2Input = document.getElementById('vote2');
+  const vote3Input = document.getElementById('vote3');
+  const nameInput = document.getElementById('userName');
+  const errorMsg = document.getElementById('errorMsg');
+  const beginBtn = document.getElementById('beginBtn');
+
+  const trackerHeader = document.getElementById('trackerHeader');
+  const reminderVote1 = document.getElementById('reminderVote1');
+  const reminderVote2 = document.getElementById('reminderVote2');
+  const reminderVote3 = document.getElementById('reminderVote3');
+  const dayGrid = document.getElementById('dayGrid');
+  const daysCompleteStat = document.getElementById('daysCompleteStat');
+  const streakStat = document.getElementById('streakStat');
+  const motivationalLine = document.getElementById('motivationalLine');
+  const editVotesBtn = document.getElementById('editVotesBtn');
+  const resetBtn = document.getElementById('resetBtn');
+
+  const resetModal = document.getElementById('resetModal');
+  const cancelResetBtn = document.getElementById('cancelResetBtn');
+  const confirmResetBtn = document.getElementById('confirmResetBtn');
+
+  const TOTAL_DAYS = 21;
+
+  function loadState() {
+    try {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (!raw) return null;
+      return JSON.parse(raw);
+    } catch (e) {
+      return null;
+    }
+  }
+
+  function saveState(state) {
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+    } catch (e) {
+      console.error('Could not save progress', e);
+    }
+  }
+
+  function createInitialState(name, votes) {
+    return {
+      name: name,
+      votes: votes, // [v1, v2, v3]
+      // days: array of { v: [bool, bool, bool] } — one entry per day started
+      days: [{ v: [false, false, false] }]
+    };
+  }
+
+  function getMotivationalLine(daysComplete) {
+    if (daysComplete >= 21) return 'You did it. These are no longer habits. This is who you are.';
+    if (daysComplete >= 19) return 'Two days left. Finish what you started.';
+    if (daysComplete >= 15) return 'Almost there. Do not stop now.';
+    if (daysComplete >= 8) return 'You are past the first week. This is where identity shifts happen.';
+    if (daysComplete >= 4) return 'The votes are accumulating. She is becoming more real every day.';
+    return 'You are building something real. Keep going.';
+  }
+
+  function isDayComplete(day) {
+    return day.v[0] && day.v[1] && day.v[2];
+  }
+
+  function countCompleteDays(days) {
+    return days.filter(isDayComplete).length;
+  }
+
+  function renderTracker(state) {
+    trackerHeader.textContent = 'Hello ' + state.name + '. You are voting for her every day.';
+    reminderVote1.textContent = state.votes[0];
+    reminderVote2.textContent = state.votes[1];
+    reminderVote3.textContent = state.votes[2];
+
+    dayGrid.innerHTML = '';
+
+    state.days.forEach((day, index) => {
+      const dayNum = index + 1;
+      const complete = isDayComplete(day);
+      const isActiveDay = index === state.days.length - 1 && !complete;
+
+      const card = document.createElement('div');
+      card.className = 'day-card' + (complete ? ' complete' : (isActiveDay ? ' active' : ''));
+
+      const numEl = document.createElement('div');
+      numEl.className = 'day-number';
+      numEl.textContent = 'Day ' + dayNum;
+      card.appendChild(numEl);
+
+      const circlesWrap = document.createElement('div');
+      circlesWrap.className = 'vote-circles';
+
+      for (let i = 0; i < 3; i++) {
+        const circle = document.createElement('button');
+        const checked = day.v[i];
+        // only the most recent (last) day is interactive; earlier days are locked in place
+        const isLastDay = index === state.days.length - 1;
+        circle.className = 'vote-circle' + (checked ? ' checked' : '') + (isLastDay ? '' : ' locked');
+        circle.setAttribute('aria-label', 'Vote ' + (i + 1) + ' day ' + dayNum);
+        if (checked) {
+          circle.innerHTML = '<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M4 12.5L9.5 18L20 6" stroke="#241628" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/></svg>';
+        }
+        if (isLastDay) {
+          circle.addEventListener('click', () => toggleVote(index, i));
+        }
+        circlesWrap.appendChild(circle);
+      }
+
+      card.appendChild(circlesWrap);
+      dayGrid.appendChild(card);
+    });
+
+    const daysComplete = countCompleteDays(state.days);
+    daysCompleteStat.textContent = daysComplete;
+    streakStat.textContent = daysComplete; // manual/self-paced flow: streak == consecutive completed days
+    motivationalLine.textContent = getMotivationalLine(daysComplete);
+  }
+
+  function toggleVote(dayIndex, voteIndex) {
+    const state = loadState();
+    if (!state) return;
+
+    const day = state.days[dayIndex];
+    day.v[voteIndex] = !day.v[voteIndex];
+
+    // if this day is now complete and it's the last day, and we haven't hit 21, add the next day
+    if (isDayComplete(day) && dayIndex === state.days.length - 1 && state.days.length < TOTAL_DAYS) {
+      state.days.push({ v: [false, false, false] });
+    }
+
+    saveState(state);
+    renderTracker(state);
+  }
+
+  function showScreen(name) {
+    if (name === 'screen1') {
+      screen1.classList.remove('hidden');
+      screen2.classList.add('hidden');
+    } else {
+      screen1.classList.add('hidden');
+      screen2.classList.remove('hidden');
+    }
+  }
+
+  function validateAndBegin() {
+    const v1 = vote1Input.value.trim();
+    const v2 = vote2Input.value.trim();
+    const v3 = vote3Input.value.trim();
+    const name = nameInput.value.trim();
+
+    if (!v1 || !v2 || !v3 || !name) {
+      errorMsg.textContent = 'Please fill in your name and all three votes.';
+      return;
+    }
+    errorMsg.textContent = '';
+
+    const existing = loadState();
+    let state;
+
+    if (existing) {
+      // editing votes — preserve progress
+      existing.name = name;
+      existing.votes = [v1, v2, v3];
+      state = existing;
+    } else {
+      state = createInitialState(name, [v1, v2, v3]);
+    }
+
+    saveState(state);
+    renderTracker(state);
+    showScreen('screen2');
+  }
+
+  function openEditScreen() {
+    const state = loadState();
+    if (!state) return;
+    vote1Input.value = state.votes[0];
+    vote2Input.value = state.votes[1];
+    vote3Input.value = state.votes[2];
+    nameInput.value = state.name;
+    errorMsg.textContent = '';
+    showScreen('screen1');
+  }
+
+  function init() {
+    const state = loadState();
+    if (state) {
+      renderTracker(state);
+      showScreen('screen2');
+    } else {
+      showScreen('screen1');
+    }
+  }
+
+  beginBtn.addEventListener('click', validateAndBegin);
+  editVotesBtn.addEventListener('click', openEditScreen);
+
+  resetBtn.addEventListener('click', () => {
+    resetModal.classList.remove('hidden');
+  });
+
+  cancelResetBtn.addEventListener('click', () => {
+    resetModal.classList.add('hidden');
+  });
+
+  confirmResetBtn.addEventListener('click', () => {
+    localStorage.removeItem(STORAGE_KEY);
+    resetModal.classList.add('hidden');
+    vote1Input.value = '';
+    vote2Input.value = '';
+    vote3Input.value = '';
+    nameInput.value = '';
+    errorMsg.textContent = '';
+    showScreen('screen1');
+  });
+
+  init();
+})();
+</script>
+
+</body>
+</html>
