@@ -1,0 +1,685 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Resistance Audit</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --purple-deep: #1a0f2e;
+    --purple-mid: #2d1b4e;
+    --overlay: rgba(18, 10, 32, 0.78);
+    --overlay-soft: rgba(255, 255, 255, 0.06);
+    --gold: #c9a961;
+    --gold-light: #e8d9b0;
+    --white: #f7f4ef;
+    --white-dim: rgba(247, 244, 239, 0.72);
+    --border-soft: rgba(201, 169, 97, 0.28);
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html, body {
+    min-height: 100%;
+    font-family: 'Inter', sans-serif;
+    color: var(--white);
+  }
+
+  body {
+    min-height: 100vh;
+    background-image:
+      linear-gradient(160deg, rgba(20, 10, 35, 0.55), rgba(12, 6, 22, 0.82)),
+      url('Blank_Reset_Room_Image.jpg');
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+    background-color: var(--purple-deep);
+    padding: 32px 16px;
+    overflow-y: auto;
+  }
+
+  .app {
+    width: 100%;
+    max-width: 660px;
+    margin: 0 auto;
+  }
+
+  .progress-track {
+    width: 100%;
+    height: 4px;
+    background: rgba(255, 255, 255, 0.12);
+    border-radius: 4px;
+    margin-bottom: 24px;
+    overflow: hidden;
+  }
+
+  .progress-fill {
+    height: 100%;
+    width: 0%;
+    background: linear-gradient(90deg, var(--gold), var(--gold-light));
+    border-radius: 4px;
+    transition: width 0.5s ease;
+  }
+
+  .card {
+    background: var(--overlay);
+    border: 1px solid var(--border-soft);
+    border-radius: 18px;
+    padding: 48px 40px;
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    box-shadow: 0 24px 60px rgba(0, 0, 0, 0.4);
+  }
+
+  .screen { display: none; animation: fadeIn 0.5s ease; }
+  .screen.active { display: block; }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  h1.title {
+    font-family: 'Playfair Display', serif;
+    font-weight: 600;
+    color: var(--gold-light);
+    font-size: 2rem;
+    text-align: center;
+    margin-bottom: 14px;
+    letter-spacing: 0.2px;
+  }
+
+  h2.section-title {
+    font-family: 'Playfair Display', serif;
+    font-weight: 500;
+    color: var(--gold-light);
+    font-size: 1.5rem;
+    text-align: center;
+    margin-bottom: 10px;
+  }
+
+  p.subtitle {
+    text-align: center;
+    font-style: italic;
+    color: var(--white-dim);
+    font-size: 1.05rem;
+    margin-bottom: 20px;
+    line-height: 1.6;
+  }
+
+  p.body-text {
+    text-align: center;
+    color: var(--white-dim);
+    font-size: 0.98rem;
+    line-height: 1.7;
+    margin-bottom: 30px;
+  }
+
+  p.framing {
+    text-align: center;
+    font-style: italic;
+    color: var(--gold-light);
+    font-size: 0.95rem;
+    margin-bottom: 32px;
+    opacity: 0.9;
+  }
+
+  .question-block { margin-bottom: 34px; }
+  .question-block:last-child { margin-bottom: 8px; }
+
+  .question-label {
+    font-size: 1.02rem;
+    font-weight: 500;
+    color: var(--white);
+    margin-bottom: 6px;
+    line-height: 1.5;
+  }
+
+  .question-sublabel {
+    font-size: 0.85rem;
+    color: var(--white-dim);
+    font-style: italic;
+    margin-bottom: 14px;
+  }
+
+  .options {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .option-btn {
+    background: var(--overlay-soft);
+    border: 1px solid var(--border-soft);
+    color: var(--white);
+    padding: 14px 18px;
+    border-radius: 10px;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.95rem;
+    text-align: left;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    line-height: 1.5;
+  }
+
+  .option-btn:hover {
+    border-color: var(--gold);
+    background: rgba(201, 169, 97, 0.1);
+  }
+
+  .option-btn.selected {
+    background: rgba(201, 169, 97, 0.18);
+    border-color: var(--gold);
+    box-shadow: 0 0 0 1px var(--gold);
+  }
+
+  textarea {
+    width: 100%;
+    min-height: 110px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--border-soft);
+    border-radius: 10px;
+    color: var(--white);
+    font-family: 'Inter', sans-serif;
+    font-size: 0.95rem;
+    padding: 16px;
+    resize: vertical;
+    line-height: 1.6;
+  }
+
+  textarea::placeholder { color: rgba(247, 244, 239, 0.4); font-style: italic; }
+  textarea:focus, .option-btn:focus { outline: none; }
+
+  .optional-tag {
+    display: inline-block;
+    font-size: 0.72rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--gold);
+    opacity: 0.75;
+    margin-bottom: 8px;
+  }
+
+  .nav-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 36px;
+    gap: 16px;
+  }
+
+  .btn-primary {
+    background: linear-gradient(135deg, var(--gold), #b5904e);
+    color: var(--purple-deep);
+    border: none;
+    padding: 15px 32px;
+    border-radius: 30px;
+    font-family: 'Inter', sans-serif;
+    font-weight: 600;
+    font-size: 0.95rem;
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    box-shadow: 0 8px 20px rgba(201, 169, 97, 0.25);
+    flex: 1;
+  }
+
+  .btn-primary:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 10px 26px rgba(201, 169, 97, 0.35); }
+
+  .btn-primary:disabled {
+    opacity: 0.35;
+    cursor: not-allowed;
+    box-shadow: none;
+  }
+
+  .btn-secondary {
+    background: transparent;
+    color: var(--white-dim);
+    border: 1px solid var(--border-soft);
+    padding: 15px 24px;
+    border-radius: 30px;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  .btn-secondary:hover { border-color: var(--gold); color: var(--gold-light); }
+
+  .btn-center-wrap { display: flex; justify-content: center; margin-top: 8px; }
+
+  /* Results screen */
+  .profile-name {
+    font-family: 'Playfair Display', serif;
+    font-weight: 700;
+    font-style: italic;
+    color: var(--gold);
+    font-size: 2.1rem;
+    text-align: center;
+    margin-bottom: 24px;
+  }
+
+  .result-block {
+    margin-bottom: 22px;
+    line-height: 1.75;
+    color: var(--white);
+    font-size: 0.98rem;
+  }
+
+  .result-block.description { color: var(--white); }
+
+  .result-label {
+    font-size: 0.72rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--gold);
+    opacity: 0.85;
+    margin-bottom: 8px;
+    display: block;
+  }
+
+  .insight-line {
+    font-style: italic;
+    color: var(--white-dim);
+    font-size: 0.88rem;
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px solid rgba(201, 169, 97, 0.15);
+  }
+
+  .reframe-block {
+    background: rgba(201, 169, 97, 0.08);
+    border-left: 3px solid var(--gold);
+    padding: 16px 20px;
+    border-radius: 6px;
+    margin-bottom: 22px;
+    font-style: italic;
+    color: var(--gold-light);
+  }
+
+  .action-block {
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid var(--border-soft);
+    padding: 18px 20px;
+    border-radius: 10px;
+    margin-bottom: 30px;
+  }
+
+  .featured-box {
+    border: 1px solid var(--gold);
+    background: rgba(201, 169, 97, 0.07);
+    border-radius: 12px;
+    padding: 22px 24px;
+    margin-bottom: 20px;
+  }
+
+  .featured-box .result-label { color: var(--gold); }
+
+  .featured-text {
+    font-size: 1.02rem;
+    color: var(--white);
+    line-height: 1.7;
+    font-style: italic;
+  }
+
+  .soft-box {
+    background: rgba(255, 255, 255, 0.03);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    border-radius: 12px;
+    padding: 18px 22px;
+    margin-bottom: 20px;
+  }
+
+  .soft-box .result-label { color: var(--white-dim); opacity: 1; }
+
+  .soft-text {
+    font-size: 0.93rem;
+    color: var(--white-dim);
+    line-height: 1.65;
+    font-style: italic;
+  }
+
+  .closing-line {
+    text-align: center;
+    font-style: italic;
+    color: var(--gold-light);
+    font-family: 'Playfair Display', serif;
+    font-size: 1.15rem;
+    margin: 30px 0 8px;
+    line-height: 1.6;
+  }
+
+  .privacy-note {
+    text-align: center;
+    font-size: 0.75rem;
+    color: var(--white-dim);
+    opacity: 0.6;
+    margin-top: 8px;
+  }
+
+  @media (max-width: 500px) {
+    .card { padding: 34px 22px; }
+    h1.title { font-size: 1.6rem; }
+    .profile-name { font-size: 1.7rem; }
+    .nav-row { flex-direction: column-reverse; }
+    .btn-secondary, .btn-primary { width: 100%; }
+  }
+</style>
+</head>
+<body>
+
+<div class="app">
+  <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+
+  <div class="card">
+
+    <!-- COVER -->
+    <section class="screen active" id="screen-cover">
+      <h1 class="title">The Resistance Audit</h1>
+      <p class="subtitle">You cannot move through resistance you have not named.</p>
+      <p class="body-text">Resistance shows up differently for every woman. This audit helps you identify exactly where yours is coming from, so you know what to do with it.</p>
+      <div class="btn-center-wrap">
+        <button class="btn-primary" onclick="goTo('section1')">Begin the Audit</button>
+      </div>
+    </section>
+
+    <!-- SECTION 1 -->
+    <section class="screen" id="screen-section1">
+      <h2 class="section-title">Let's start with where you are.</h2>
+      <p class="framing">Answer honestly. There are no wrong answers here.</p>
+
+      <div class="question-block">
+        <div class="question-label">1. When you think about continuing this work right now, what is your first honest reaction?</div>
+        <div class="options" data-question="q1">
+          <button class="option-btn" data-value="a">I want to but something keeps stopping me</button>
+          <button class="option-btn" data-value="b">I have been going through the motions without really feeling it</button>
+          <button class="option-btn" data-value="c">Life got genuinely loud and I fell behind</button>
+          <button class="option-btn" data-value="d">I am afraid of what finishing actually means</button>
+          <button class="option-btn" data-value="e">I am not sure I deserve what I am working toward</button>
+          <button class="option-btn" data-value="f">I feel fine, I just needed a moment to check in</button>
+        </div>
+      </div>
+
+      <div class="question-block">
+        <div class="question-label">2. How long have you been feeling this way?</div>
+        <div class="options" data-question="q2">
+          <button class="option-btn" data-value="a">Just this week</button>
+          <button class="option-btn" data-value="b">The last two to three weeks</button>
+          <button class="option-btn" data-value="c">For most of the second half of this program</button>
+          <button class="option-btn" data-value="d">Honestly, on and off the whole time</button>
+        </div>
+      </div>
+
+      <div class="question-block">
+        <div class="question-label">3. When the resistance fires, what does it usually look like for you?</div>
+        <div class="options" data-question="q3">
+          <button class="option-btn" data-value="a">I go quiet and stop reaching out</button>
+          <button class="option-btn" data-value="b">I stay busy with everything except the actual work</button>
+          <button class="option-btn" data-value="c">I tell myself I will start again tomorrow</button>
+          <button class="option-btn" data-value="d">I show up halfway, present but not really there</button>
+          <button class="option-btn" data-value="e">I find reasons why now is not the right time</button>
+        </div>
+      </div>
+
+      <div class="nav-row">
+        <button class="btn-secondary" onclick="goTo('cover')">Back</button>
+        <button class="btn-primary" id="btn-section1-next" disabled onclick="goTo('section2')">Continue</button>
+      </div>
+    </section>
+
+    <!-- SECTION 2 -->
+    <section class="screen" id="screen-section2">
+      <h2 class="section-title">Now let us go a little deeper.</h2>
+      <p class="framing">Your body knows before your mind does. Take a breath before you answer these.</p>
+
+      <div class="question-block">
+        <div class="question-label">4. Is there a specific area of your life where you know you are being resistant, making excuses, or being stubborn, even if you have not said it out loud?</div>
+        <span class="optional-tag">Optional but encouraged</span>
+        <textarea id="q4" placeholder="You do not have to have the full answer. Just write the first thing that comes up."></textarea>
+      </div>
+
+      <div class="question-block">
+        <div class="question-label">5. What is the resistance actually protecting you from?</div>
+        <div class="options" data-question="q5">
+          <button class="option-btn" data-value="a">The vulnerability of being seen changing</button>
+          <button class="option-btn" data-value="b">The responsibility that comes with becoming her</button>
+          <button class="option-btn" data-value="c">The grief of leaving the old version of myself behind</button>
+          <button class="option-btn" data-value="d">The fear that I will finish and things will not be different enough</button>
+          <button class="option-btn" data-value="e">The unknown of who I am without the struggle</button>
+          <button class="option-btn" data-value="f">I am not sure yet</button>
+        </div>
+      </div>
+
+      <div class="question-block">
+        <div class="question-label">6. Complete this sentence honestly, without editing yourself:</div>
+        <div class="question-sublabel">The real reason I have been holding back is...</div>
+        <span class="optional-tag">Optional</span>
+        <textarea id="q6" placeholder="The real reason I have been holding back is..."></textarea>
+      </div>
+
+      <div class="nav-row">
+        <button class="btn-secondary" onclick="goTo('section1')">Back</button>
+        <button class="btn-primary" id="btn-section2-next" disabled onclick="goTo('section3')">Continue</button>
+      </div>
+    </section>
+
+    <!-- SECTION 3 -->
+    <section class="screen" id="screen-section3">
+      <h2 class="section-title">One more thing.</h2>
+      <p class="framing">This is the most important question in the audit.</p>
+
+      <div class="question-block">
+        <div class="question-label">7. What would the woman you described in your sovereign self work do right now, in this exact moment of resistance?</div>
+        <div class="question-sublabel">Not what she would feel. What she would do.</div>
+        <textarea id="q7" placeholder="She would..."></textarea>
+      </div>
+
+      <div class="nav-row">
+        <button class="btn-secondary" onclick="goTo('section2')">Back</button>
+        <button class="btn-primary" id="btn-section3-next" disabled onclick="showResults()">Reveal My Pattern</button>
+      </div>
+    </section>
+
+    <!-- RESULTS -->
+    <section class="screen" id="screen-results">
+      <div class="profile-name" id="resultName"></div>
+
+      <div class="result-block description" id="resultDescription"></div>
+
+      <div class="reframe-block" id="resultReframe"></div>
+
+      <div class="action-block">
+        <span class="result-label">Your Re-Entry Action</span>
+        <div id="resultAction"></div>
+      </div>
+
+      <div class="featured-box">
+        <span class="result-label">You already know what to do</span>
+        <div class="featured-text" id="resultQ7"></div>
+      </div>
+
+      <div class="soft-box" id="resultQ4Box" style="display:none;">
+        <span class="result-label">What you noticed</span>
+        <div class="soft-text" id="resultQ4"></div>
+      </div>
+
+      <div class="soft-box" id="resultQ6Box" style="display:none;">
+        <span class="result-label">What you named</span>
+        <div class="soft-text" id="resultQ6"></div>
+      </div>
+
+      <div class="closing-line" id="resultClosing"></div>
+
+      <div class="btn-center-wrap">
+        <button class="btn-primary" onclick="closeResults()">I am ready. Take me back to the work.</button>
+      </div>
+      <p class="privacy-note">No email button. No data sent. Completely private.</p>
+    </section>
+
+  </div>
+</div>
+
+<script>
+  const answers = { q1: null, q2: null, q3: null, q4: '', q5: null, q6: '', q7: '' };
+
+  const screenOrder = ['cover', 'section1', 'section2', 'section3', 'results'];
+  const progressMap = { cover: 0, section1: 25, section2: 55, section3: 80, results: 100 };
+
+  function goTo(screenKey) {
+    document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+    document.getElementById('screen-' + screenKey).classList.add('active');
+    document.getElementById('progressFill').style.width = progressMap[screenKey] + '%';
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  }
+
+  // Single-select option handling
+  document.querySelectorAll('.options').forEach(group => {
+    const qKey = group.getAttribute('data-question');
+    group.querySelectorAll('.option-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        group.querySelectorAll('.option-btn').forEach(b => b.classList.remove('selected'));
+        btn.classList.add('selected');
+        answers[qKey] = btn.getAttribute('data-value');
+        validateSection();
+      });
+    });
+  });
+
+  // Textarea tracking
+  ['q4', 'q6', 'q7'].forEach(id => {
+    document.getElementById(id).addEventListener('input', (e) => {
+      answers[id] = e.target.value;
+      validateSection();
+    });
+  });
+
+  function validateSection() {
+    document.getElementById('btn-section1-next').disabled = !(answers.q1 && answers.q2 && answers.q3);
+    document.getElementById('btn-section2-next').disabled = !answers.q5;
+    document.getElementById('btn-section3-next').disabled = !(answers.q7 && answers.q7.trim().length > 0);
+  }
+
+  const q2Text = {
+    a: 'just this week', b: 'the last two to three weeks',
+    c: 'most of the second half of this program', d: 'on and off the whole time'
+  };
+
+  const q3Text = {
+    a: 'going quiet and stepping back from reaching out',
+    b: 'staying busy with everything except the actual work',
+    c: 'telling yourself you will start again tomorrow',
+    d: 'showing up halfway, present but not really there',
+    e: 'finding reasons why now is not the right time'
+  };
+
+  const profiles = {
+    protector: {
+      name: 'The Protector',
+      description: 'Your resistance is not laziness. It is your nervous system doing its job, keeping you safe from the vulnerability of real change. The closer you get to becoming her, the louder the protection gets. That is not a flaw. That is intelligence that needs a new assignment.',
+      reframe: 'The resistance is proof you are close. The nervous system only protects what matters.',
+      action: 'Place one hand on your chest. Take three slow breaths. Say out loud: I am safe to become her. Then do one thing, any one thing, from your practice today.',
+      closing: 'Safety is not the absence of change. It is trusting yourself through it.'
+    },
+    griever: {
+      name: 'The Griever',
+      description: 'Part of you is mourning the old version of yourself, even the parts that were not working. That grief is real and it deserves to be acknowledged before you ask yourself to move forward. You cannot fully become who you are becoming while you are still holding on to who you were.',
+      reframe: 'Grief is not resistance to change. It is love for what you are leaving behind. You can honor it and keep moving.',
+      action: 'Find a quiet moment today. Say out loud: I am grateful for who I was. She got me here. And I am ready for what comes next. Then take one step forward.',
+      closing: 'You do not have to stop grieving to keep going. You just have to keep going.'
+    },
+    exhausted: {
+      name: 'The Exhausted One',
+      description: 'Life got loud and the work got heavy and something had to give. That is not failure. That is being human. The question is not why you fell behind. It is what one small thing you can do right now to come back without needing to catch up on everything first.',
+      reframe: 'You do not have to pick up where you left off. You just have to pick up from here.',
+      action: 'Do not try to catch up. Do one practice from your toolkit today, just one. The priming script. The stone practice. The EFT incantation. One thing. That is re-entry.',
+      closing: 'The work does not require a perfect re-entry. It just requires one.'
+    },
+    doubter: {
+      name: 'The Doubter',
+      description: 'Part of you is not sure you deserve what you are working toward. Or you are afraid that when you finish, the evidence will not be there, that you will have done all of this work and still not feel like her. That fear is the oldest pattern in this program. And it is lying to you.',
+      reframe: 'You do not finish and then become her. You become her by finishing.',
+      action: 'Read your sovereign self script out loud right now. Not later. Now. Let your own voice remind you who you already are.',
+      closing: 'The woman in your script is not waiting for proof. She is built from decisions exactly like the one you are making right now.'
+    },
+    coaster: {
+      name: 'The Coaster',
+      description: 'You are showing up, but not all the way in. You are going through the motions without bringing yourself to the work. That is a very specific kind of resistance, the kind that keeps you safe by keeping you present but not truly engaged. It is harder to interrupt than absence because it looks like showing up.',
+      reframe: 'Half presence is its own form of hiding. You have come too far to hide in the home stretch.',
+      action: 'Before your next practice, pause. Put both hands on your chest. Ask yourself: what would it feel like to actually be here right now? Then begin from that place.',
+      closing: 'Showing up is not enough anymore. Showing up fully is the practice.'
+    },
+    checkin: {
+      name: 'The Check-In',
+      description: 'You are here and you are present. The resistance is quieter for you right now, or you caught it early and interrupted it before it gained momentum. This is what the work looks like when it is landing. Stay here.',
+      reframe: 'Consistency is not the absence of resistance. It is what you do when resistance shows up anyway.',
+      action: 'Cast your three daily votes today. Do your priming script. Stay in the practice. You are exactly where you need to be.',
+      closing: 'The women who finish strong are the ones who keep showing up when they feel like this, not just when the fire is high.'
+    }
+  };
+
+  function determineProfile() {
+    switch (answers.q1) {
+      case 'a': return profiles.protector;
+      case 'b': return profiles.coaster;
+      case 'c': return profiles.exhausted;
+      case 'd': return profiles.griever;
+      case 'e':
+        return (answers.q5 === 'a' || answers.q5 === 'b') ? profiles.protector : profiles.doubter;
+      case 'f': return profiles.checkin;
+      default: return profiles.checkin;
+    }
+  }
+
+  function showResults() {
+    const profile = determineProfile();
+
+    document.getElementById('resultName').textContent = profile.name;
+    document.getElementById('resultDescription').innerHTML = profile.description;
+
+    // Contextual insight line from Q2 / Q3, depth not branching
+    if (answers.q2 && answers.q3) {
+      const insight = document.createElement('div');
+      insight.className = 'insight-line';
+      insight.textContent = 'For you, this has shown up as ' + q3Text[answers.q3] + ', over ' + q2Text[answers.q2] + '.';
+      document.getElementById('resultDescription').appendChild(insight);
+    }
+
+    document.getElementById('resultReframe').textContent = profile.reframe;
+    document.getElementById('resultAction').textContent = profile.action;
+    document.getElementById('resultClosing').textContent = profile.closing;
+    document.getElementById('resultQ7').textContent = answers.q7 || '';
+
+    const q4Box = document.getElementById('resultQ4Box');
+    if (answers.q4 && answers.q4.trim().length > 0) {
+      document.getElementById('resultQ4').textContent = answers.q4;
+      q4Box.style.display = 'block';
+    } else {
+      q4Box.style.display = 'none';
+    }
+
+    const q6Box = document.getElementById('resultQ6Box');
+    if (answers.q6 && answers.q6.trim().length > 0) {
+      document.getElementById('resultQ6').textContent = answers.q6;
+      q6Box.style.display = 'block';
+    } else {
+      q6Box.style.display = 'none';
+    }
+
+    goTo('results');
+  }
+
+  function closeResults() {
+    // Commitment-moment button. No data is sent or stored.
+    goTo('cover');
+    // Reset state for a fresh pass
+    Object.keys(answers).forEach(k => answers[k] = (typeof answers[k] === 'string' ? '' : null));
+    document.querySelectorAll('.option-btn.selected').forEach(b => b.classList.remove('selected'));
+    document.querySelectorAll('textarea').forEach(t => t.value = '');
+    validateSection();
+  }
+</script>
+
+</body>
+</html>
